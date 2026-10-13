@@ -34,6 +34,10 @@ A conta de exemplo criada pelo seed é `dev@habithub.local`, com a senha `senha-
 
 Em desenvolvimento, os e-mails não são enviados: o texto e os links aparecem no terminal (`EMAIL_TRANSPORT=console`).
 
+## Deploy
+
+O app roda na Vercel (funções em São Paulo), com o banco no Neon e os erros no Sentry. Cada merge na `main` publica sozinho: antes do build, um script cria uma cópia de backup do banco e aplica as migrações. O passo a passo e as variáveis de ambiente estão em [docs/deploy.md](docs/deploy.md).
+
 ## Testes
 
 | Comando                                                       | O que roda                                                                                               |
