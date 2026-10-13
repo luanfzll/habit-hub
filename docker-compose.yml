@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: habithub-db
+    environment:
+      POSTGRES_USER: habithub
+      POSTGRES_PASSWORD: habithub
+      POSTGRES_DB: habithub
+    ports:
+      - "5434:5432"
+    volumes:
+      - habithub-db:/var/lib/postgresql/data
+      - ./docker/create-test-database.sql:/docker-entrypoint-initdb.d/create-test-database.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U habithub -d habithub"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+volumes:
+  habithub-db:

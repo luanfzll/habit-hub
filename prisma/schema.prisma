@@ -1,0 +1,152 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Better Auth tables (field names must match what Better Auth expects)
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false) @map("email_verified")
+  image         String?
+  /// IANA time zone (e.g. "America/Sao_Paulo"). Every "today" is computed with it.
+  timezone      String
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
+  sessions      Session[]
+  accounts      Account[]
+  habits        Habit[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime @map("expires_at")
+  token     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String    @map("account_id")
+  providerId            String    @map("provider_id")
+  userId                String    @map("user_id")
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@index([identifier])
+  @@map("verifications")
+}
+
+model RateLimit {
+  id          String @id
+  key         String @unique
+  count       Int
+  lastRequest BigInt @map("last_request")
+
+  @@map("rate_limits")
+}
+
+// ---------------------------------------------------------------------------
+// Habits
+// ---------------------------------------------------------------------------
+
+enum HabitColor {
+  green
+  blue
+  purple
+  pink
+  red
+  orange
+  yellow
+  teal
+
+  @@map("habit_color")
+}
+
+model Habit {
+  id         String               @id @default(uuid(7)) @db.Uuid
+  /// Short, random, immutable id used in the README image URL.
+  publicId   String               @unique @map("public_id")
+  userId     String               @map("user_id")
+  user       User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String               @db.VarChar(40)
+  color      HabitColor           @default(green)
+  unit       String?              @db.VarChar(15)
+  isPublic   Boolean              @default(false) @map("is_public")
+  /// Calendar date (user's time zone) of creation. Days before it are not tracked.
+  startDate  DateTime             @map("start_date") @db.Date
+  archivedAt DateTime?            @map("archived_at")
+  createdAt  DateTime             @default(now()) @map("created_at")
+  updatedAt  DateTime             @updatedAt @map("updated_at")
+  versions   HabitConfigVersion[]
+  entries    HabitEntry[]
+
+  @@index([userId, createdAt])
+  @@map("habits")
+}
+
+/// Target and schedule valid from `effectiveFrom` until the next version.
+model HabitConfigVersion {
+  habitId       String   @map("habit_id") @db.Uuid
+  habit         Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  effectiveFrom DateTime @map("effective_from") @db.Date
+  target        Int
+  /// Bitmask of scheduled weekdays: bit 0 = Sunday ... bit 6 = Saturday (127 = every day).
+  weekdays      Int
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@id([habitId, effectiveFrom])
+  @@map("habit_config_versions")
+}
+
+/// One row per habit per day that has a value or was skipped. No row = empty day.
+model HabitEntry {
+  habitId   String   @map("habit_id") @db.Uuid
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  date      DateTime @db.Date
+  value     Int      @default(0)
+  skipped   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@id([habitId, date])
+  @@map("habit_entries")
+}
