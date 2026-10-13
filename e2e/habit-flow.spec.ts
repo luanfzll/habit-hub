@@ -1,42 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
-
-const randomOctet = () => Math.floor(Math.random() * 256);
-
-async function signUp(page: Page) {
-  const email = `e2e-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
-  // Auth endpoints allow 3 attempts per 10 s per IP in production; each test acts as its own client.
-  const ip = `10.${randomOctet()}.${randomOctet()}.${randomOctet()}`;
-  await page.setExtraHTTPHeaders({ "x-forwarded-for": ip });
-  await page.goto("/cadastro");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Senha").fill("senha-segura-123");
-  await page.getByRole("button", { name: "Criar conta" }).click();
-  await expect(page).toHaveURL(/\/painel$/);
-  return email;
-}
-
-async function createHabit(page: Page, { name, target, unit }: { name: string; target?: number; unit?: string }) {
-  await page
-    .getByRole("link", { name: /Novo hábito|Criar primeiro hábito/ })
-    .first()
-    .click();
-  await page.getByLabel("Nome").fill(name);
-  if (target) await page.getByLabel("Meta diária").fill(String(target));
-  if (unit) await page.getByLabel("Unidade (opcional)").fill(unit);
-  await page.getByRole("button", { name: "Criar hábito" }).click();
-  await expect(page).toHaveURL(/\/painel$/);
-}
-
-/** The UI updates optimistically; wait until no card is still saving before reloading. */
-async function reloadAfterSave(page: Page) {
-  await expect(page.locator('article[aria-busy="true"]')).toHaveCount(0);
-  await page.reload();
-}
-
-function card(page: Page, name: string) {
-  return page.getByRole("article", { name });
-}
+import { expect, test } from "@playwright/test";
+import { card, createHabit, reloadAfterSave, signUp } from "./helpers";
 
 test("sign up, create a habit and mark today", async ({ page }) => {
   await signUp(page);
