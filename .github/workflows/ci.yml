@@ -35,6 +35,8 @@ jobs:
       BETTER_AUTH_SECRET: ci-only-secret-never-used-outside-this-workflow
       BETTER_AUTH_URL: http://localhost:3100
       EMAIL_TRANSPORT: console
+      # The end-to-end tests create accounts against a production build.
+      SIGNUP_ALLOWLIST: "*"
 
     steps:
       - uses: actions/checkout@v5

@@ -28,6 +28,7 @@
     "invalidCredentials": "E-mail ou senha incorretos.",
     "emailTaken": "Não foi possível criar a conta com esse e-mail.",
     "weakPassword": "A senha precisa ter pelo menos 8 caracteres.",
+    "signupsClosed": "Os cadastros estão fechados por enquanto.",
     "genericError": "Algo deu errado. Tente de novo."
   },
   "dashboard": {

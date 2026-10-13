@@ -5,6 +5,7 @@ import { APIError } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { isValidTimeZone } from "@/domain/calendar-date";
 import { db } from "./db";
+import { isSignupAllowed } from "./signup-policy";
 
 const DAY_IN_SECONDS = 60 * 60 * 24;
 
@@ -33,6 +34,9 @@ export const auth = betterAuth({
     user: {
       create: {
         before: async (user) => {
+          if (!isSignupAllowed(user.email)) {
+            throw APIError.from("FORBIDDEN", { code: "SIGNUPS_CLOSED", message: "Sign-ups are closed" });
+          }
           if (typeof user.timezone !== "string" || !isValidTimeZone(user.timezone)) {
             throw new APIError("BAD_REQUEST", { message: "Invalid time zone" });
           }
