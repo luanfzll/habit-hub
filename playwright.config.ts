@@ -23,6 +23,8 @@ export default defineConfig({
     command: process.env.CI ? `npm run start` : `npm run dev`,
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
+    // Production builds keep sign-ups closed unless configured; the tests need to create accounts.
+    env: { ...(process.env as Record<string, string>), SIGNUP_ALLOWLIST: process.env.SIGNUP_ALLOWLIST || "*" },
     timeout: 120_000,
   },
 });

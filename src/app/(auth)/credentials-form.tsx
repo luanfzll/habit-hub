@@ -13,6 +13,7 @@ type Mode = "sign-in" | "sign-up";
 
 function errorKey(mode: Mode, code: string | undefined) {
   if (mode === "sign-in") return code === "INVALID_EMAIL_OR_PASSWORD" ? "invalidCredentials" : "genericError";
+  if (code === "SIGNUPS_CLOSED") return "signupsClosed";
   if (code === "PASSWORD_TOO_SHORT") return "weakPassword";
   if (code === "USER_ALREADY_EXISTS" || code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") return "emailTaken";
   return "genericError";
