@@ -1,8 +1,13 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
+const randomOctet = () => Math.floor(Math.random() * 256);
+
 async function signUp(page: Page) {
   const email = `e2e-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
+  // Auth endpoints allow 3 attempts per 10 s per IP in production; each test acts as its own client.
+  const ip = `10.${randomOctet()}.${randomOctet()}.${randomOctet()}`;
+  await page.setExtraHTTPHeaders({ "x-forwarded-for": ip });
   await page.goto("/cadastro");
   await page.getByLabel("E-mail").fill(email);
   await page.getByLabel("Senha").fill("senha-segura-123");
