@@ -1,3 +1,4 @@
+import { withSentryConfig } from "@sentry/nextjs/config";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -18,4 +19,14 @@ const nextConfig: NextConfig = {
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
-export default withNextIntl(nextConfig);
+// Source maps are uploaded to Sentry only when SENTRY_AUTH_TOKEN is set (Vercel builds),
+// then deleted so they are never served to browsers.
+export default withSentryConfig(withNextIntl(nextConfig), {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: !process.env.CI && !process.env.VERCEL,
+  widenClientFileUpload: true,
+  telemetry: false,
+  sourcemaps: { deleteSourcemapsAfterUpload: true },
+});

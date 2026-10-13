@@ -1,4 +1,5 @@
 import "server-only";
+import * as Sentry from "@sentry/nextjs";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
@@ -16,6 +17,8 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return null;
   const { id, email, timezone } = session.user;
+  // Lets an error be traced to an account without sending its e-mail to Sentry.
+  Sentry.setUser({ id });
   return { id, email, timezone };
 });
 
