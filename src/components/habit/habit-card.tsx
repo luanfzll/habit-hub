@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import type { CalendarDate } from "@/domain/calendar-date";
 import { paletteVariables } from "@/lib/palette";
@@ -23,15 +24,24 @@ export function HabitCard({ habit, today }: { habit: HabitView; today: CalendarD
       aria-busy={tracker.saving}
     >
       <header className="flex flex-wrap items-center gap-x-4 gap-y-4">
-        <StreakTile count={tracker.stats.currentStreak} animate={tracker.animateStreak} />
-        <div className="min-w-0 flex-1">
-          <h2 id={`habit-${habit.id}`} className="truncate text-lg font-semibold">
-            <Link href={`/habitos/${habit.id}`} className="underline-offset-4 hover:underline">
-              {habit.name}
-            </Link>
-          </h2>
-          <p className="truncate text-sm text-muted-foreground">{summary}</p>
-        </div>
+        {/* Scoreboard and title open the habit page; the chevron shows it on touch screens too. */}
+        <Link
+          href={`/habitos/${habit.id}`}
+          aria-labelledby={`habit-${habit.id}`}
+          className="group flex min-w-0 flex-1 items-center gap-4 rounded-[1.25rem] outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
+          <StreakTile count={tracker.stats.currentStreak} animate={tracker.animateStreak} />
+          <div className="min-w-0 flex-1">
+            <h2 id={`habit-${habit.id}`} className="flex items-center gap-1 text-lg font-semibold">
+              <span className="truncate underline-offset-4 group-hover:underline">{habit.name}</span>
+              <ChevronRightIcon
+                aria-hidden
+                className="size-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
+              />
+            </h2>
+            <p className="truncate text-sm text-muted-foreground">{summary}</p>
+          </div>
+        </Link>
         {/* Wraps under the title on narrow screens. */}
         <div className="w-full sm:w-auto">
           <TodayControl
