@@ -15,6 +15,11 @@ interface HabitGridProps {
   /** Cell that receives focus first when tabbing into the grid. */
   initialFocus: CalendarDate;
   onSelectDay: (day: DayState, anchor: HTMLButtonElement) => void;
+  /**
+   * "clip" (dashboard): on narrow screens the oldest weeks are cut off.
+   * "scroll" (habit page): the whole year scrolls sideways, starting at today.
+   */
+  overflow?: "clip" | "scroll";
 }
 
 const ROWS = 7;
@@ -29,7 +34,7 @@ function isInteractive(day: DayState): boolean {
  * GitHub-style grid. The whole grid is a single Tab stop; arrow keys move between
  * days and Enter (or a click) opens the day menu.
  */
-export function HabitGrid({ layout, name, unit, initialFocus, onSelectDay }: HabitGridProps) {
+export function HabitGrid({ layout, name, unit, initialFocus, onSelectDay, overflow = "clip" }: HabitGridProps) {
   const t = useTranslations("grid");
   const [focusDate, setFocusDate] = useState(initialFocus);
   const buttons = useRef(new Map<CalendarDate, HTMLButtonElement>());
@@ -70,14 +75,14 @@ export function HabitGrid({ layout, name, unit, initialFocus, onSelectDay }: Hab
   }
 
   return (
-    // Cells grow to fill the card on wide screens (up to 16px) and stop shrinking at 10px;
-    // below that the oldest weeks are cut off instead.
+    // Cells grow to fill the card on wide screens (up to 16px) and stop shrinking at a minimum
+    // size; below that the oldest weeks are cut off or scroll, depending on `overflow`.
     <div className="@container">
       <div
         className="flex gap-1.5 text-[10px] leading-none text-muted-foreground"
         style={
           {
-            "--cell-size": `clamp(10px, calc((100cqi - ${LABELS_WIDTH}px - ${columns.length - 1} * var(--cell-gap)) / ${columns.length}), 16px)`,
+            "--cell-size": `clamp(${overflow === "scroll" ? 12 : 10}px, calc((100cqi - ${LABELS_WIDTH}px - ${columns.length - 1} * var(--cell-gap)) / ${columns.length}), 16px)`,
           } as CSSProperties
         }
       >
@@ -97,8 +102,15 @@ export function HabitGrid({ layout, name, unit, initialFocus, onSelectDay }: Hab
           ))}
         </div>
 
-        {/* On narrow screens the oldest weeks are cut off on the left. */}
-        <div className="flex min-w-0 flex-1 justify-end overflow-hidden">
+        {/* Right-aligned so today stays visible; row-reverse makes scrolling start at the right end. */}
+        <div
+          className={
+            overflow === "scroll"
+              ? "flex min-w-0 flex-1 flex-row-reverse overflow-x-auto pb-2"
+              : // 716px = labels + 53 columns at the 10px minimum; below it the cut edge fades out.
+                "flex min-w-0 flex-1 justify-end overflow-hidden @max-[716px]:[mask-image:linear-gradient(to_right,transparent,black_1.5rem)]"
+          }
+        >
           <div>
             <div
               aria-hidden
