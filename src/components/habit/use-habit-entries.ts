@@ -33,7 +33,7 @@ export function useHabitEntries(habit: HabitView) {
     () => ({
       startDate: habit.startDate,
       versions: habit.versions,
-      entries: new Map(entries.map(({ date, value, skipped }) => [date, { value, skipped }])),
+      entries: new Map(entries.map(({ date, value, skipped, skipReason }) => [date, { value, skipped, skipReason }])),
     }),
     [habit.startDate, habit.versions, entries],
   );
@@ -41,7 +41,7 @@ export function useHabitEntries(habit: HabitView) {
   function save(date: CalendarDate, change: EntryChange) {
     const entry: DayEntry | null =
       "skip" in change
-        ? { value: 0, skipped: true }
+        ? { value: 0, skipped: true, skipReason: change.reason ?? null }
         : change.value === 0
           ? null
           : { value: change.value, skipped: false };

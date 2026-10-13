@@ -70,7 +70,8 @@
       "offSchedule": "{date}: fora da agenda",
       "extra": "{date}: {amount}, fora da agenda",
       "skipped": "{date}: pulado",
-      "beforeStart": "{date}: antes do início do hábito"
+      "beforeStart": "{date}: antes do início do hábito",
+      "skippedReason": "{date}: pulado ({reason})"
     },
     "amount": "{value} de {target}",
     "amountUnit": "{value} de {target} {unit}",
@@ -86,11 +87,18 @@
     "save": "Salvar",
     "clear": "Limpar dia",
     "skip": "Pular dia",
-    "skipConfirm": "Apagar {amount} e pular?",
-    "skipConfirmDone": "Desmarcar e pular?",
     "skipHint": "Um dia pulado não quebra a sequência nem conta na taxa.",
     "skipped": "Dia pulado",
-    "unskip": "Desfazer pulo"
+    "unskip": "Desfazer pulo",
+    "skipSubmit": "Confirmar pulo",
+    "reasonLabel": "Motivo (opcional)",
+    "reasonPlaceholder": "Ex.: viagem, gripe, plantão",
+    "skipDiscard": "Isso apaga {amount} registrados neste dia.",
+    "skipDiscardDone": "Isso desmarca o dia como feito.",
+    "noReason": "Sem justificativa.",
+    "addReason": "Adicionar motivo",
+    "editReason": "Editar motivo",
+    "saveReason": "Salvar motivo"
   },
   "habitForm": {
     "createTitle": "Novo hábito",
@@ -150,7 +158,10 @@
     "archive": "Arquivar",
     "archived": "“{name}” foi arquivado.",
     "undo": "Desfazer",
-    "statsLabel": "Estatísticas"
+    "statsLabel": "Estatísticas",
+    "skippedDays": "Dias pulados",
+    "skippedDaysHint": "Só você vê esta lista e os motivos.",
+    "noReason": "Sem justificativa"
   },
   "deleteHabit": {
     "button": "Excluir",

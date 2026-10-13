@@ -11,6 +11,7 @@ import { computeStats, type DayState } from "@/domain/day-state";
 import { buildGrid } from "@/domain/grid";
 import { configOn, EVERY_DAY, weekdaysToList } from "@/domain/habit-config";
 import { LOCALE } from "@/i18n/request";
+import { formatShortDate } from "@/lib/format";
 import { paletteVariables } from "@/lib/palette";
 import { archiveHabitAction, unarchiveHabitAction } from "@/server/habits/actions";
 import type { HabitView } from "@/server/habits/service";
@@ -37,6 +38,14 @@ export function HabitDetail({ habit, today }: { habit: HabitView; today: Calenda
   const stats = useMemo(() => computeStats(history, today, layout.start), [history, today, layout.start]);
   const todayState = layout.columns.at(-1)?.find((day) => day?.isToday && day.kind !== "before-start") ?? undefined;
   const config = configOn(habit.versions, maxDate(today, habit.startDate)) ?? habit.versions[0];
+  const skippedDays = useMemo(
+    () =>
+      [...history.entries]
+        .filter(([, entry]) => entry.skipped)
+        .map(([date, entry]) => ({ date, reason: entry.skipReason ?? null }))
+        .sort((a, b) => (a.date < b.date ? 1 : -1)),
+    [history.entries],
+  );
 
   const schedule =
     config.weekdays === EVERY_DAY
@@ -121,6 +130,27 @@ export function HabitDetail({ habit, today }: { habit: HabitView; today: Calenda
         />
         <GridLegend />
       </section>
+
+      {skippedDays.length > 0 && (
+        <section aria-labelledby="skipped-days" className="flex flex-col gap-3">
+          <div>
+            <h2 id="skipped-days" className="text-lg font-semibold">
+              {t("skippedDays")}
+            </h2>
+            <p className="text-sm text-muted-foreground">{t("skippedDaysHint")}</p>
+          </div>
+          <ul className="flex flex-col divide-y rounded-xl border bg-card">
+            {skippedDays.map(({ date, reason }) => (
+              <li key={date} className="flex flex-col gap-0.5 px-4 py-3 sm:flex-row sm:gap-6">
+                <span className="shrink-0 text-sm text-muted-foreground tabular-nums sm:w-44">
+                  {formatShortDate(date)}
+                </span>
+                <span className={reason ? "break-words" : "text-muted-foreground"}>{reason ?? t("noReason")}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <DayMenu
         selection={selection}
