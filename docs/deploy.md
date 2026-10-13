@@ -19,7 +19,7 @@ Guia para colocar o app no ar na Vercel com o banco no Neon e os erros no Sentry
 
 ### 2.1 Importar o projeto
 
-Add New → Project → importe `luanfzll/habit-hub`. Nome do projeto: **`habithub`**, para o endereço ficar `habithub.vercel.app`. O framework é detectado como Next.js. Não altere os comandos de build.
+Add New → Project → importe `luanfzll/habit-hub`. Nome do projeto: **`habithub`**. O endereço de produção é **`habithub-app.vercel.app`**, adicionado em Settings → Domains (`habithub.vercel.app` pertence a outra conta). O framework é detectado como Next.js. Não altere os comandos de build.
 
 ### 2.2 Variáveis de ambiente
 
@@ -30,7 +30,7 @@ Em Settings → Environment Variables. Os valores secretos nunca vão para o cha
 | `DATABASE_URL` | Production, Preview | Connection string **pooled** do Neon (Neon → Connect → "Connection pooling" ligado). Preenchida pela integração do passo 2.3, se você usá-la. |
 | `DATABASE_URL_UNPOOLED` | Production, Preview | Connection string **direta** (pooling desligado). Usada só pelas migrações. |
 | `BETTER_AUTH_SECRET` | Production, Preview | Gere com `openssl rand -base64 32`. Use um valor diferente do `.env` local. |
-| `BETTER_AUTH_URL` | **só Production** | `https://habithub.vercel.app`. Nas previews, o Better Auth usa o endereço da própria preview. |
+| `BETTER_AUTH_URL` | **só Production** | `https://habithub-app.vercel.app`. Nas previews, o Better Auth usa o endereço da própria preview. |
 | `SIGNUP_ALLOWLIST` | Production, Preview | O seu e-mail. Até o M4, só ele pode criar conta. |
 | `EMAIL_TRANSPORT` | Production, Preview | `console` (nenhum e-mail é enviado antes do M3) |
 | `NEXT_PUBLIC_SENTRY_DSN` | Production, Preview | O DSN do Sentry (não é segredo) |
@@ -55,7 +55,7 @@ O plano grátis do Neon permite 10 branches por projeto. A principal, os 3 backu
 
 1. Faça o deploy (ou o merge de um PR na `main`).
 2. No log do build, procure `[deploy] Backup branch created` e a lista de migrações aplicadas.
-3. Abra `https://habithub.vercel.app/cadastro` e crie a sua conta com o e-mail da `SIGNUP_ALLOWLIST`.
+3. Abra `https://habithub-app.vercel.app/cadastro` e crie a sua conta com o e-mail da `SIGNUP_ALLOWLIST`.
 4. Crie seus hábitos e comece a usar todos os dias: é isso que enche a vitrine.
 
 ## Se algo der errado
