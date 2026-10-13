@@ -6,11 +6,12 @@ As decisões de produto e de arquitetura, cada uma com a justificativa, estão e
 
 ## Estado atual
 
-| Marco             | Conteúdo                                                                                                 | Situação                                                |
-| ----------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| M0, Fundação      | Next.js, Prisma, Postgres local, testes, CI                                                              | Pronto localmente. Falta conectar Neon, Vercel e Sentry |
-| M1, Versão mínima | Cadastro e login, fuso no perfil, criar e editar hábito, registrar dias, grade                           | Pronto localmente                                       |
-| M2 a M5           | Pular e arquivar, estatísticas completas, perfil público, imagem do README, contas completas, lançamento | A fazer                                                 |
+| Marco                | Conteúdo                                                                                              | Situação                                                 |
+| -------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| M0, Fundação         | Next.js, Prisma, Postgres local, testes, CI, cadastro fechado em produção                             | Pronto localmente. Falta conectar Neon, Vercel e Sentry  |
+| M1, Versão mínima    | Cadastro e login, fuso no perfil, criar e editar hábito, registrar dias, grade                        | Pronto                                                   |
+| M2, Regras completas | Pular dia, arquivar e excluir, página do hábito com estatísticas, tema claro/escuro, grade no celular | Pronto. A revisão de cores fica para a mudança de visual |
+| M3 a M5              | Perfil público e imagem do README, contas completas, lançamento                                       | A fazer                                                  |
 
 ## Stack
 

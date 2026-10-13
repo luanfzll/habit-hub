@@ -27,22 +27,35 @@ export function TodayControl({ today, startDate, unit, onChange }: TodayControlP
     return <p className="text-sm text-muted-foreground">{t("startsOn", { date: formatDayMonth(startDate) })}</p>;
   }
 
-  if (today.target === 1) {
-    const done = today.value >= 1;
-    return (
-      <Button
-        variant={done ? "default" : "outline"}
-        aria-pressed={done}
-        onClick={() => onChange(done ? 0 : 1)}
-        className="min-w-36 self-start"
-      >
-        {done && <CheckIcon data-icon="inline-start" />}
-        {done ? t("doneToday") : t("markToday")}
-      </Button>
+  const control =
+    today.target === 1 ? (
+      <DoneButton done={today.value >= 1} onChange={onChange} />
+    ) : (
+      <QuantityControl key={today.value} today={today} unit={unit} onChange={onChange} />
     );
-  }
 
-  return <QuantityControl key={today.value} today={today} unit={unit} onChange={onChange} />;
+  if (today.kind !== "skipped") return control;
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      {control}
+      <span className="text-sm text-muted-foreground">{t("skippedToday")}</span>
+    </div>
+  );
+}
+
+function DoneButton({ done, onChange }: { done: boolean; onChange: (value: number) => void }) {
+  const t = useTranslations("habit");
+  return (
+    <Button
+      variant={done ? "default" : "outline"}
+      aria-pressed={done}
+      onClick={() => onChange(done ? 0 : 1)}
+      className="min-w-36 self-start"
+    >
+      {done && <CheckIcon data-icon="inline-start" />}
+      {done ? t("doneToday") : t("markToday")}
+    </Button>
+  );
 }
 
 function QuantityControl({

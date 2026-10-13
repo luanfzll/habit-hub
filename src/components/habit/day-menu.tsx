@@ -57,8 +57,13 @@ function DayMenuBody({
   onChange: (change: EntryChange) => void;
 }) {
   const t = useTranslations("dayMenu");
+  const tGrid = useTranslations("grid");
   const [value, setValue] = useState(String(day.value));
-  const done = day.value >= day.target;
+  const [confirmingSkip, setConfirmingSkip] = useState(false);
+  const skipped = day.kind === "skipped";
+  const done = !skipped && day.value >= day.target;
+  // Skipping only makes sense on days the habit was scheduled.
+  const canSkip = day.scheduled && !skipped;
 
   function submit(event: FormEvent) {
     event.preventDefault();
@@ -66,16 +71,48 @@ function DayMenuBody({
     if (Number.isInteger(parsed) && parsed >= 0 && parsed <= MAX_VALUE) onChange({ value: parsed });
   }
 
+  function skip() {
+    // Skipping discards the registered value, so ask once when there is one.
+    if (day.value > 0 && !confirmingSkip) {
+      setConfirmingSkip(true);
+      return;
+    }
+    onChange({ skip: true });
+  }
+
+  const skipConfirmLabel =
+    day.target === 1
+      ? t("skipConfirmDone")
+      : t("skipConfirm", {
+          amount: unit
+            ? tGrid("extraAmountUnit", { value: day.value, unit })
+            : tGrid("extraAmount", { value: day.value }),
+        });
+
   return (
     <>
       <PopoverPrimitive.Title className="font-medium first-letter:uppercase">
         {formatLongDate(day.date)}
       </PopoverPrimitive.Title>
 
+      {skipped && (
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-muted-foreground">{t("skipped")}</span>
+          <Button size="sm" variant="outline" onClick={() => onChange({ value: 0 })}>
+            {t("unskip")}
+          </Button>
+        </div>
+      )}
+
       {day.target === 1 ? (
         <div className="flex items-center justify-between gap-2">
-          <span className="text-muted-foreground">{done ? t("statusDone") : t("statusNotDone")}</span>
-          <Button size="sm" variant={done ? "outline" : "default"} onClick={() => onChange({ value: done ? 0 : 1 })}>
+          {!skipped && <span className="text-muted-foreground">{done ? t("statusDone") : t("statusNotDone")}</span>}
+          <Button
+            size="sm"
+            variant={done ? "outline" : "default"}
+            className={skipped ? "ml-auto" : undefined}
+            onClick={() => onChange({ value: done ? 0 : 1 })}
+          >
             {done ? t("unmark") : t("markDone")}
           </Button>
         </div>
@@ -112,6 +149,15 @@ function DayMenuBody({
             </Button>
           )}
         </form>
+      )}
+
+      {canSkip && (
+        <div className="flex flex-col gap-1 border-t pt-3">
+          <Button size="sm" variant={confirmingSkip ? "destructive" : "ghost"} className="self-start" onClick={skip}>
+            {confirmingSkip ? skipConfirmLabel : t("skip")}
+          </Button>
+          <p className="text-xs text-muted-foreground">{t("skipHint")}</p>
+        </div>
       )}
     </>
   );

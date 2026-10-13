@@ -7,7 +7,7 @@ import { HabitCard } from "@/components/habit/habit-card";
 import { TimezoneBanner } from "@/components/timezone-banner";
 import { buttonVariants } from "@/components/ui/button";
 import { MAX_ACTIVE_HABITS } from "@/domain/habit-config";
-import { listActiveHabits } from "@/server/habits/service";
+import { listActiveHabits, listArchivedHabits } from "@/server/habits/service";
 import { requireUser, userToday } from "@/server/session";
 
 export const metadata: Metadata = { title: "Seus hábitos · HabitHub" };
@@ -32,7 +32,7 @@ export default function DashboardPage() {
 async function Dashboard() {
   const user = await requireUser();
   const today = userToday(user);
-  const habits = await listActiveHabits(user.id);
+  const [habits, archived] = await Promise.all([listActiveHabits(user.id), listArchivedHabits(user.id)]);
   const t = await getTranslations("dashboard");
 
   return (
@@ -55,6 +55,14 @@ async function Dashboard() {
             <p className="text-sm text-muted-foreground">{t("limitReached", { max: MAX_ACTIVE_HABITS })}</p>
           )}
         </div>
+      )}
+      {archived.length > 0 && (
+        <Link
+          href="/habitos/arquivados"
+          className="self-start text-sm text-muted-foreground underline-offset-4 hover:underline"
+        >
+          {t("archivedLink", { count: archived.length })}
+        </Link>
       )}
     </>
   );

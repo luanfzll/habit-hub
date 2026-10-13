@@ -38,7 +38,8 @@
     "emptyText": "Crie o primeiro e marque um quadradinho por dia.",
     "createFirst": "Criar primeiro hábito",
     "limitReached": "Você chegou ao limite de {max} hábitos ativos.",
-    "edit": "Editar {name}"
+    "edit": "Editar {name}",
+    "archivedLink": "Hábitos arquivados ({count})"
   },
   "habit": {
     "streak": "{count, plural, =0 {Nenhum dia seguido} one {# dia seguido} other {# dias seguidos}}",
@@ -49,7 +50,8 @@
     "decrease": "Diminuir",
     "increase": "Aumentar",
     "todayValue": "Quantidade de hoje",
-    "todayProgressUnit": "de {target} {unit}"
+    "todayProgressUnit": "de {target} {unit}",
+    "skippedToday": "Hoje foi pulado."
   },
   "grid": {
     "label": "Grade de {name}: últimos 12 meses",
@@ -82,7 +84,13 @@
     "statusNotDone": "Não registrado",
     "value": "Quantidade",
     "save": "Salvar",
-    "clear": "Limpar dia"
+    "clear": "Limpar dia",
+    "skip": "Pular dia",
+    "skipConfirm": "Apagar {amount} e pular?",
+    "skipConfirmDone": "Desmarcar e pular?",
+    "skipHint": "Um dia pulado não quebra a sequência nem conta na taxa.",
+    "skipped": "Dia pulado",
+    "unskip": "Desfazer pulo"
   },
   "habitForm": {
     "createTitle": "Novo hábito",
@@ -125,5 +133,44 @@
     "text": "Parece que você está em outro fuso ({browser}). Seu perfil usa {profile}.",
     "update": "Usar {browser}",
     "dismiss": "Manter"
+  },
+  "habitPage": {
+    "back": "Seus hábitos",
+    "everyDay": "Todos os dias",
+    "targetDone": "Feito ou não feito",
+    "targetAmount": "Meta: {target} por dia",
+    "targetAmountUnit": "Meta: {target} {unit} por dia",
+    "currentStreak": "Sequência atual",
+    "longestStreak": "Maior sequência",
+    "completion": "Conclusão em 12 meses",
+    "completionDetail": "{done} de {total} dias",
+    "noData": "Sem dados ainda",
+    "days": "{count, plural, one {# dia} other {# dias}}",
+    "edit": "Editar",
+    "archive": "Arquivar",
+    "archived": "“{name}” foi arquivado.",
+    "undo": "Desfazer",
+    "statsLabel": "Estatísticas"
+  },
+  "deleteHabit": {
+    "button": "Excluir",
+    "title": "Excluir “{name}”?",
+    "description": "O hábito e todo o histórico dele serão apagados. Não dá para desfazer.",
+    "confirm": "Excluir hábito",
+    "deleted": "“{name}” foi excluído."
+  },
+  "archived": {
+    "title": "Hábitos arquivados",
+    "intro": "Hábitos arquivados não aparecem no painel. Os dias em que ficaram arquivados contam como não registrados.",
+    "empty": "Nenhum hábito arquivado.",
+    "archivedOn": "Arquivado em {date}",
+    "unarchive": "Desarquivar",
+    "unarchived": "“{name}” voltou para o painel."
+  },
+  "theme": {
+    "label": "Tema",
+    "system": "Tema do sistema",
+    "light": "Tema claro",
+    "dark": "Tema escuro"
   }
 }

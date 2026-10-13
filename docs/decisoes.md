@@ -224,6 +224,7 @@ Nenhuma decisão ficou em aberto. As duas abaixo foram tomadas "por enquanto" e 
 | Decisão | Situação atual | O que precisa acontecer para decidir |
 |---|---|---|
 | Versão em inglês | Só pt-BR, com a estrutura de tradução pronta | Decidir quando o autor for se candidatar a vagas fora do Brasil. O custo é escrever o `en.json`, um seletor de idioma e um parâmetro de idioma na imagem do README. |
+| Revisão de contraste da paleta das 8 cores | Paleta inicial baseada nas cores do GitHub e do Tailwind, sem verificação formal de contraste | O autor quer mudar o visual antes do primeiro deploy. A verificação de contraste entra junto com essa mudança. |
 | Domínio próprio | Só `habithub.vercel.app` | Rever se os e-mails do Gmail começarem a cair no spam, se o Gmail limitar a conta ou se o projeto virar produto. Um domínio adicionado ao mesmo projeto na Vercel mantém `habithub.vercel.app` funcionando, então as imagens já coladas não quebram, desde que o projeto continue na Vercel. |
 
 ## 5. Riscos e dúvidas técnicas
