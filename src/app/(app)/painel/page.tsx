@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { Suspense } from "react";
 import { HabitCard } from "@/components/habit/habit-card";
+import { GridLegend } from "@/components/habit/habit-grid";
 import { TimezoneBanner } from "@/components/timezone-banner";
 import { buttonVariants } from "@/components/ui/button";
 import { MAX_ACTIVE_HABITS } from "@/domain/habit-config";
@@ -17,7 +18,7 @@ export default function DashboardPage() {
   return (
     <>
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-[1.75rem]">{t("title")}</h1>
         <Link href="/habitos/novo" className={buttonVariants()}>
           {t("newHabit")}
         </Link>
@@ -39,7 +40,7 @@ async function Dashboard() {
     <>
       <TimezoneBanner profileTimezone={user.timezone} />
       {habits.length === 0 ? (
-        <section className="flex flex-col items-center gap-3 rounded-xl border border-dashed px-6 py-12 text-center">
+        <section className="flex flex-col items-center gap-3 rounded-[1.75rem] bg-card px-6 py-14 text-center">
           <h2 className="text-lg font-medium">{t("emptyTitle")}</h2>
           <p className="text-muted-foreground">{t("emptyText")}</p>
           <Link href="/habitos/novo" className={buttonVariants()}>
@@ -51,6 +52,7 @@ async function Dashboard() {
           {habits.map((habit) => (
             <HabitCard key={habit.id} habit={habit} today={today} />
           ))}
+          <GridLegend className="px-1" />
           {habits.length >= MAX_ACTIVE_HABITS && (
             <p className="text-sm text-muted-foreground">{t("limitReached", { max: MAX_ACTIVE_HABITS })}</p>
           )}
@@ -72,7 +74,7 @@ function DashboardSkeleton() {
   return (
     <div className="flex flex-col gap-4" aria-hidden>
       {[0, 1].map((key) => (
-        <div key={key} className="h-56 animate-pulse rounded-xl border bg-muted/40 motion-reduce:animate-none" />
+        <div key={key} className="h-56 animate-pulse rounded-[1.75rem] bg-card motion-reduce:animate-none" />
       ))}
     </div>
   );

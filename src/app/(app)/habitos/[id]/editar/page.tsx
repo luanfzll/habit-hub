@@ -14,7 +14,7 @@ export default function EditHabitPage({ params }: PageProps<"/habitos/[id]/edita
   const t = useTranslations("habitForm");
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-6">
-      <h1 className="text-2xl font-semibold tracking-tight">{t("editTitle")}</h1>
+      <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-[1.75rem]">{t("editTitle")}</h1>
       <Suspense fallback={<div className="h-96 animate-pulse rounded-xl bg-muted/40 motion-reduce:animate-none" />}>
         <EditForm params={params} />
       </Suspense>

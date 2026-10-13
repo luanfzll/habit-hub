@@ -57,7 +57,9 @@ export function CredentialsForm({ mode }: { mode: Mode }) {
   const signUp = mode === "sign-up";
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold tracking-tight">{signUp ? t("signUpTitle") : t("signInTitle")}</h1>
+      <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-[1.75rem]">
+        {signUp ? t("signUpTitle") : t("signInTitle")}
+      </h1>
       <form onSubmit={submit} className="flex flex-col gap-6">
         <FieldGroup>
           <Field>
