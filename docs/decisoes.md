@@ -179,6 +179,7 @@ Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidad
 | E-mail enviado por um Gmail criado só para o app, via SMTP com senha de app (Nodemailer), atrás de uma interface `EmailSender`. Em desenvolvimento e nos testes, uma versão falsa mostra os links no terminal | É grátis e funciona sem domínio próprio. Trocar pelo Resend no futuro é mexer em um arquivo. |
 | **Tailwind CSS + shadcn/ui** | Componentes acessíveis prontos sem uma cara genérica, com o esforço visual concentrado na grade. |
 | **Sentry** no plano grátis, para erros do servidor e do navegador. Sem estatísticas de uso | No plano grátis, a Vercel guarda os logs por cerca de 1 hora. |
+| Sentry com dados na região da União Europeia, só erros (sem métricas de desempenho nem gravação de sessão) e com a coleta de dados restrita: sem cookies, corpos de requisição, parâmetros de banco nem variáveis locais. Dos cabeçalhos, só o user-agent. O usuário é identificado apenas pelo id interno | A versão 11 do SDK coleta tudo isso por padrão. A UE tem a GDPR, mais próxima da LGPD. |
 | Hospedagem na **Vercel**, no plano grátis (Hobby) | Combina com o Next.js, não tem custo e serve para uso não comercial. |
 
 ### 2.10 Qualidade, CI e deploy
@@ -190,7 +191,8 @@ Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidad
 | Testes ponta a ponta (Playwright) em 4 fluxos: cadastro → hábito → marcar → grade; recuperação de senha com o e-mail falso; publicar → perfil público; a imagem retorna um SVG. Mais a verificação de acessibilidade com axe | Cobre o produto de ponta a ponta. |
 | A CI roda a cada pull request: lint, checagem de tipos e as três camadas de teste. Sem meta de porcentagem de cobertura | O que vale é cobrir as partes críticas, e o avaliador confere isso pela pasta de testes. |
 | Cada pull request ganha uma versão de teste do site na Vercel, com uma cópia própria do banco no Neon (integração Neon–Vercel) | A versão de teste nunca toca os dados reais. |
-| As migrações rodam no build de produção: o script só age quando `VERCEL_ENV=production`, cria o backup e depois roda `prisma migrate deploy`. As migrações precisam ser compatíveis com a versão anterior do código (adicionar primeiro, remover depois) | Durante o deploy, o código antigo roda com o banco novo, e o processo não depende de memória humana. |
+| As migrações rodam no build de produção: o script só age quando `VERCEL_ENV=production`, cria o backup e depois roda `prisma migrate deploy`. Sem as credenciais do Neon, o build falha. As migrações usam a conexão direta (`DATABASE_URL_UNPOOLED`), e o app usa a conexão com pooling. As migrações precisam ser compatíveis com a versão anterior do código (adicionar primeiro, remover depois) | Durante o deploy, o código antigo roda com o banco novo, e o processo não depende de memória humana. |
+| As previews só migram com `MIGRATE_PREVIEW_DATABASE=true`, ligado apenas quando cada preview tem um banco próprio | Sem essa garantia, uma preview poderia migrar o banco de produção sem backup. |
 
 ### 2.11 Repositório e ambiente local
 
