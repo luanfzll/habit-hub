@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import { card, createHabit, reloadAfterSave, signUp } from "./helpers";
+import { card, createHabit, reloadAfterSave, signUp, streak } from "./helpers";
 
 test("sign up, create a habit and mark today", async ({ page }) => {
   await signUp(page);
@@ -8,16 +8,16 @@ test("sign up, create a habit and mark today", async ({ page }) => {
 
   await createHabit(page, { name: "Meditar" });
   const meditate = card(page, "Meditar");
-  await expect(meditate.getByText("Nenhum dia seguido")).toBeVisible();
+  await expect(streak(meditate)).toHaveText(/^0\s*dias seguidos$/);
 
   await meditate.getByRole("button", { name: "Marcar hoje" }).click();
   await expect(meditate.getByRole("button", { name: "Feito hoje" })).toHaveAttribute("aria-pressed", "true");
-  await expect(meditate.getByText("1 dia seguido")).toBeVisible();
+  await expect(streak(meditate)).toHaveText(/^1\s*dia seguido$/);
   await expect(meditate.getByRole("button", { name: /hoje.*: feito|: feito/ })).toHaveAttribute("data-level", "4");
 
   // Persisted on the server, not only in the optimistic state.
   await reloadAfterSave(page);
-  await expect(card(page, "Meditar").getByText("1 dia seguido")).toBeVisible();
+  await expect(streak(card(page, "Meditar"))).toHaveText(/^1\s*dia seguido$/);
 });
 
 test("register a quantity towards a daily target", async ({ page }) => {
@@ -30,7 +30,7 @@ test("register a quantity towards a daily target", async ({ page }) => {
 
   await reading.getByLabel("Quantidade de hoje").fill("20");
   await reading.getByLabel("Quantidade de hoje").press("Enter");
-  await expect(reading.getByText("1 dia seguido")).toBeVisible();
+  await expect(streak(reading)).toHaveText(/^1\s*dia seguido$/);
 
   await reloadAfterSave(page);
   await expect(card(page, "Ler").getByLabel("Quantidade de hoje")).toHaveValue("20");

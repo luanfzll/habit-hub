@@ -145,12 +145,26 @@ Resultado da entrevista de produto feita entre 09/10/2026 e 13/10/2026. Cada dec
 | Botão de hoje: com meta 1, um toque alterna. Com meta maior que 1, há botões − e + e o número pode ser digitado | O registro do dia leva um toque. |
 | Clicar num quadradinho abre um menu com a data por extenso, o valor (alternar ou digitar) e "Pular dia" / "Desfazer pulo" | Evita marcações por engano em quadradinhos de 11 px e deixa o "pular" fácil de achar. |
 | No celular, a tela principal mostra só as semanas mais recentes que cabem na largura (alinhadas à direita, com a sobra da esquerda cortada só com CSS). A página do hábito tem a grade completa com rolagem lateral | Sem rolagem dentro de rolagem, e com o mesmo HTML gerado no servidor para todas as telas. |
-| Cada hábito escolhe uma cor de uma paleta fixa de 8, cada uma com 4 tons para o tema claro e o escuro, verde por padrão | Os cartões ficam fáceis de distinguir, com contraste garantido nos dois temas e na imagem SVG. |
+| Cada hábito escolhe uma de 8 cores com nome (Menta, Oceano, Uva, Chiclete, Tomate, Tangerina, Girassol, Lagoa), Menta por padrão. Os 4 tons da grade são derivados da cor do hábito, misturada com o cinza do quadradinho vazio, e calculados em TypeScript para o app e a imagem do README | Os cartões ficam fáceis de distinguir, e os nomes deixam a escolha mais divertida. Um teste garante que o número sobre cada cor tenha contraste de pelo menos 4,5:1 nos dois temas. |
 | Tema claro e escuro, seguindo o sistema, com um botão para trocar | Devs esperam modo escuro, e a imagem do README precisa dos dois temas de qualquer forma. |
 | Painel vazio: botão "Criar primeiro hábito" e 3 sugestões (Ler 10 páginas, Beber 8 copos de água, Exercício seg/qua/sex) que preenchem o formulário | Mostra logo na primeira tela que existem meta numérica e dias da semana. |
 | Tom dos textos: "você", informal e sem culpa. O app nunca diz "falhou": um dia vazio é "não registrado" | Combina com a grade sem vermelho. |
 | Acessibilidade no nível WCAG 2.2 AA: cada quadradinho tem uma descrição para leitores de tela; o foco do teclado fica visível; cada grade é uma única parada da tecla Tab, com as setas andando entre os dias e o Enter abrindo o menu; a cor nunca é a única informação (hachura nos dias neutros, contorno no dia de hoje) | A grade é a peça central do capricho de front-end. |
-| Animação: preenchimento do quadradinho (cerca de 150 ms) e transições dos menus, desligadas para quem ativou "reduzir movimento". Sem confete | Dá retorno sem distrair. |
+| Animação: preenchimento do quadradinho (cerca de 150 ms) e transições dos menus. Ao registrar um dia, o quadradinho dá um "pulo" e o número da sequência sobe. Nada anima ao carregar a página, e tudo é desligado para quem ativou "reduzir movimento". Sem confete | É o retorno sutil escolhido: responde à ação da pessoa sem distrair. |
+
+### 2.8.1 Direção visual
+
+Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidade própria, referências Spotify, Uber e Linear, nada com cara de SaaS genérico, tipografia técnica e geométrica, tema claro como versão oficial, ousadia na cor e no placar, cartões arejados e retorno sutil.
+
+| Decisão | Justificativa |
+|---|---|
+| Fundo "névoa" `#F1F3F2`, superfícies brancas `#FFFFFF`, tinta preta `#000000`, texto secundário `#5B616B`. No escuro: `#0F1113`, `#181B1E` e `#F4F6F5` | A cor fica nos hábitos, não na moldura. O preto e o branco firmes vêm da referência do Uber. |
+| Figtree para o texto e Unbounded (geométrica larga) só para números, títulos e a marca | Técnica e geométrica, como pedido. A Unbounded dá personalidade aos números sem pesar no texto corrido. |
+| O elemento memorável é o **placar**: um bloco sólido na cor do hábito com a sequência em número grande, no cartão e, maior, na página do hábito | Junta as duas escolhas (cor e placar) num único gesto, inspirado nas capas do Spotify. Todo o resto fica discreto. |
+| Cartões sem borda nem sombra, com cantos bem arredondados. Botões em pílula. Quadradinhos com cantos de 3 px | Foge do "kit SaaS" (cartões iguais com sombra cinza). Cada forma tem um raio próprio, conforme a hierarquia. |
+| "Feito hoje" e a quantidade que atingiu a meta assumem a cor do hábito | O momento de cumprir fica visível sem precisar de comemoração. |
+| A legenda da grade é neutra (tons de cinza) e aparece uma vez por página, não em cada cartão | Menos repetição no painel, mais calma. |
+| Marca: "habithub" em minúsculas na Unbounded, com 4 quadradinhos coloridos | É a grade reduzida a um símbolo. |
 
 ### 2.9 Stack e arquitetura
 
@@ -225,7 +239,6 @@ Nenhuma decisão ficou em aberto. As duas abaixo foram tomadas "por enquanto" e 
 | Decisão | Situação atual | O que precisa acontecer para decidir |
 |---|---|---|
 | Versão em inglês | Só pt-BR, com a estrutura de tradução pronta | Decidir quando o autor for se candidatar a vagas fora do Brasil. O custo é escrever o `en.json`, um seletor de idioma e um parâmetro de idioma na imagem do README. |
-| Revisão de contraste da paleta das 8 cores | Paleta inicial baseada nas cores do GitHub e do Tailwind, sem verificação formal de contraste | O autor quer mudar o visual antes do primeiro deploy. A verificação de contraste entra junto com essa mudança. |
 | Domínio próprio | Só `habithub.vercel.app` | Rever se os e-mails do Gmail começarem a cair no spam, se o Gmail limitar a conta ou se o projeto virar produto. Um domínio adicionado ao mesmo projeto na Vercel mantém `habithub.vercel.app` funcionando, então as imagens já coladas não quebram, desde que o projeto continue na Vercel. |
 
 ## 5. Riscos e dúvidas técnicas

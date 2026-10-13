@@ -44,3 +44,8 @@ export function card(page: Page, name: string) {
 export function todayCell(container: ReturnType<Page["locator"]>) {
   return container.locator('[data-today="true"]');
 }
+
+/** The streak scoreboard of a habit ("12 dias seguidos"). */
+export function streak(container: ReturnType<Page["locator"]>) {
+  return container.locator("[data-streak]");
+}

@@ -27,7 +27,7 @@ export function DayMenu({ selection, unit, onChange, onClose }: DayMenuProps) {
         <PopoverPrimitive.Positioner anchor={selection?.anchor} side="top" sideOffset={8} className="isolate z-50">
           <PopoverPrimitive.Popup
             finalFocus={() => selection?.anchor ?? true}
-            className="flex w-64 flex-col gap-3 rounded-lg bg-popover p-3 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-hidden duration-100 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 motion-reduce:animate-none"
+            className="flex w-64 flex-col gap-3 rounded-2xl bg-popover p-3 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-hidden duration-100 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 motion-reduce:animate-none"
           >
             {selection && (
               <DayMenuBody

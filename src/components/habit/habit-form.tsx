@@ -11,7 +11,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import type { Weekday } from "@/domain/calendar-date";
 import { EVERY_DAY, MAX_ACTIVE_HABITS, MAX_TARGET, weekdaysFromList, weekdaysToList } from "@/domain/habit-config";
 import type { HabitColor } from "@/generated/prisma/enums";
-import { PALETTE } from "@/lib/palette";
+import { HABIT_COLORS, habitPalette } from "@/lib/palette";
 import type { HabitFormState } from "@/server/habits/form-state";
 
 export interface HabitFormValues {
@@ -24,7 +24,6 @@ export interface HabitFormValues {
 
 const NEW_HABIT: HabitFormValues = { name: "", color: "green", unit: null, target: 1, weekdays: EVERY_DAY };
 const WEEKDAYS: Weekday[] = [0, 1, 2, 3, 4, 5, 6];
-const COLORS = Object.keys(PALETTE) as HabitColor[];
 
 interface HabitFormProps {
   mode: "create" | "edit";
@@ -133,18 +132,17 @@ export function HabitForm({ mode, action, defaults = NEW_HABIT }: HabitFormProps
             name="color"
             value={color}
             onValueChange={(value) => setColor(value as HabitColor)}
-            className="flex flex-wrap gap-3"
+            className="grid grid-cols-2 gap-3 sm:grid-cols-4"
           >
-            {COLORS.map((option) => (
+            {HABIT_COLORS.map((option) => (
               <label key={option} className="flex items-center gap-2 text-sm">
                 <RadioGroupItem value={option} aria-label={t(`colors.${option}`)} />
                 <span
                   aria-hidden
-                  className="size-5 rounded-sm"
-                  style={{
-                    background: `linear-gradient(135deg, ${PALETTE[option].light[1]}, ${PALETTE[option].light[3]})`,
-                  }}
+                  className="size-5 rounded-md"
+                  style={{ background: habitPalette(option, "light").base }}
                 />
+                <span aria-hidden>{t(`colors.${option}`)}</span>
               </label>
             ))}
           </RadioGroup>

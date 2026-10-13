@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { MAX_ACTIVE_HABITS } from "@/domain/habit-config";
 import type { HabitColor } from "@/generated/prisma/enums";
 import { LOCALE } from "@/i18n/request";
-import { PALETTE } from "@/lib/palette";
+import { habitPalette } from "@/lib/palette";
 import { unarchiveHabitAction } from "@/server/habits/actions";
 
 interface ArchivedHabit {
@@ -37,14 +37,14 @@ export function ArchivedHabitList({ habits, timezone }: { habits: ArchivedHabit[
   }
 
   return (
-    <ul className="flex flex-col divide-y rounded-xl border bg-card">
+    <ul className="flex flex-col divide-y rounded-[1.25rem] bg-card">
       {habits.map((habit) => (
         <li key={habit.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-center gap-3">
             <span
               aria-hidden
               className="size-3 shrink-0 rounded-sm"
-              style={{ background: PALETTE[habit.color].light[2] }}
+              style={{ background: habitPalette(habit.color, "light").base }}
             />
             <div className="min-w-0">
               <p className="truncate font-medium">{habit.name}</p>

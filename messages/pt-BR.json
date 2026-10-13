@@ -13,7 +13,8 @@
   },
   "home": {
     "createAccount": "Criar conta",
-    "signIn": "Entrar"
+    "signIn": "Entrar",
+    "tagline": "Um quadradinho por dia para cada hábito. Calmo de usar, bom de ver crescer."
   },
   "auth": {
     "email": "E-mail",
@@ -42,7 +43,6 @@
     "archivedLink": "Hábitos arquivados ({count})"
   },
   "habit": {
-    "streak": "{count, plural, =0 {Nenhum dia seguido} one {# dia seguido} other {# dias seguidos}}",
     "startsOn": "Começa em {date}",
     "doneToday": "Feito hoje",
     "markToday": "Marcar hoje",
@@ -51,7 +51,8 @@
     "increase": "Aumentar",
     "todayValue": "Quantidade de hoje",
     "todayProgressUnit": "de {target} {unit}",
-    "skippedToday": "Hoje foi pulado."
+    "skippedToday": "Hoje foi pulado.",
+    "streakCaption": "{count, plural, =0 {dias seguidos} one {dia seguido} other {dias seguidos}}"
   },
   "grid": {
     "label": "Grade de {name}: últimos 12 meses",
@@ -116,14 +117,14 @@
     "weekdaysRequired": "Escolha pelo menos um dia.",
     "color": "Cor",
     "colors": {
-      "green": "Verde",
-      "blue": "Azul",
-      "purple": "Roxo",
-      "pink": "Rosa",
-      "red": "Vermelho",
-      "orange": "Laranja",
-      "yellow": "Amarelo",
-      "teal": "Verde-água"
+      "green": "Menta",
+      "blue": "Oceano",
+      "purple": "Uva",
+      "pink": "Chiclete",
+      "red": "Tomate",
+      "orange": "Tangerina",
+      "yellow": "Girassol",
+      "teal": "Lagoa"
     },
     "configChangeNote": "Mudanças na meta ou nos dias valem a partir de hoje. Os dias anteriores continuam como estavam.",
     "create": "Criar hábito",
@@ -144,16 +145,11 @@
   },
   "habitPage": {
     "back": "Seus hábitos",
-    "everyDay": "Todos os dias",
-    "targetDone": "Feito ou não feito",
-    "targetAmount": "Meta: {target} por dia",
-    "targetAmountUnit": "Meta: {target} {unit} por dia",
-    "currentStreak": "Sequência atual",
     "longestStreak": "Maior sequência",
     "completion": "Conclusão em 12 meses",
     "completionDetail": "{done} de {total} dias",
     "noData": "Sem dados ainda",
-    "days": "{count, plural, one {# dia} other {# dias}}",
+    "days": "{count, plural, =0 {# dias} one {# dia} other {# dias}}",
     "edit": "Editar",
     "archive": "Arquivar",
     "archived": "“{name}” foi arquivado.",
@@ -161,7 +157,8 @@
     "statsLabel": "Estatísticas",
     "skippedDays": "Dias pulados",
     "skippedDaysHint": "Só você vê esta lista e os motivos.",
-    "noReason": "Sem justificativa"
+    "noReason": "Sem justificativa",
+    "longestStreakValue": "{count, plural, =0 {dias} one {dia} other {dias}}"
   },
   "deleteHabit": {
     "button": "Excluir",
@@ -183,5 +180,12 @@
     "system": "Tema do sistema",
     "light": "Tema claro",
     "dark": "Tema escuro"
+  },
+  "summary": {
+    "targetDone": "Feito ou não feito",
+    "targetAmount": "{target} por dia",
+    "targetAmountUnit": "{target} {unit} por dia",
+    "everyDay": "todos os dias",
+    "withSchedule": "{target}, {schedule}"
   }
 }

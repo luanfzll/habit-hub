@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { card, createHabit, reloadAfterSave, signUp, todayCell } from "./helpers";
+import { card, createHabit, reloadAfterSave, signUp, streak, todayCell } from "./helpers";
 
 test("skip today with a reason, see it in the history and undo it", async ({ page }) => {
   await signUp(page);
@@ -50,7 +50,8 @@ test("habit page shows stats; a habit can be archived, restored and deleted", as
   await card(page, "Ler").getByRole("link", { name: "Ler" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Ler" })).toBeVisible();
   const stats = page.getByRole("region", { name: "Estatísticas" });
-  await expect(stats.getByText("Sequência atual")).toBeVisible();
+  await expect(stats.getByText("Maior sequência")).toBeVisible();
+  await expect(streak(page.getByRole("article", { name: "Ler" }))).toHaveText(/^1\s*dia seguido$/);
   await expect(stats.getByText("100%")).toBeVisible();
 
   await page.getByRole("button", { name: "Arquivar" }).click();

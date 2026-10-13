@@ -10,7 +10,7 @@ export default function SettingsPage() {
   const t = useTranslations("settings");
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-6">
-      <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+      <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-[1.75rem]">{t("title")}</h1>
       <Suspense fallback={<div className="h-24 animate-pulse rounded-xl bg-muted/40 motion-reduce:animate-none" />}>
         <Settings />
       </Suspense>

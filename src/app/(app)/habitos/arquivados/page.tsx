@@ -16,7 +16,7 @@ export default function ArchivedHabitsPage() {
         ← {t("habitPage.back")}
       </Link>
       <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold tracking-tight">{t("archived.title")}</h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-[1.75rem]">{t("archived.title")}</h1>
         <p className="text-sm text-muted-foreground">{t("archived.intro")}</p>
       </div>
       <Suspense fallback={<div className="h-32 animate-pulse rounded-xl bg-muted/40 motion-reduce:animate-none" />}>
