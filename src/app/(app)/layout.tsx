@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { SignOutButton } from "@/components/sign-out-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { buttonVariants } from "@/components/ui/button";
 
 // Static chrome: everything that depends on the session lives inside each page's Suspense boundary.
@@ -14,6 +15,7 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
             {t("appName")}
           </Link>
           <div className="flex items-center gap-1">
+            <ThemeToggle />
             <Link href="/configuracoes" className={buttonVariants({ variant: "ghost", size: "sm" })}>
               {t("settings")}
             </Link>
