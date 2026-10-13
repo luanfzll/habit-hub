@@ -1,49 +1,83 @@
 import type { HabitColor } from "@/generated/prisma/enums";
 
-/**
- * Four tones per habit color (level 1 to 4), for light and dark themes.
- * Kept in TypeScript so the app and the README image share the same values.
- */
-export const PALETTE: Record<HabitColor, { light: readonly string[]; dark: readonly string[] }> = {
-  green: {
-    light: ["#9be9a8", "#40c463", "#30a14e", "#216e39"],
-    dark: ["#0e4429", "#006d32", "#26a641", "#39d353"],
-  },
-  blue: {
-    light: ["#bfdbfe", "#60a5fa", "#2563eb", "#1e40af"],
-    dark: ["#1e3a8a", "#1d4ed8", "#3b82f6", "#93c5fd"],
-  },
-  purple: {
-    light: ["#ddd6fe", "#a78bfa", "#7c3aed", "#5b21b6"],
-    dark: ["#4c1d95", "#6d28d9", "#8b5cf6", "#c4b5fd"],
-  },
-  pink: {
-    light: ["#fbcfe8", "#f472b6", "#db2777", "#9d174d"],
-    dark: ["#831843", "#be185d", "#ec4899", "#f9a8d4"],
-  },
-  red: {
-    light: ["#fecaca", "#f87171", "#dc2626", "#991b1b"],
-    dark: ["#7f1d1d", "#b91c1c", "#ef4444", "#fca5a5"],
-  },
-  orange: {
-    light: ["#fed7aa", "#fb923c", "#ea580c", "#9a3412"],
-    dark: ["#7c2d12", "#c2410c", "#f97316", "#fdba74"],
-  },
-  yellow: {
-    light: ["#fde68a", "#fbbf24", "#d97706", "#92400e"],
-    dark: ["#78350f", "#b45309", "#f59e0b", "#fcd34d"],
-  },
-  teal: {
-    light: ["#99f6e4", "#2dd4bf", "#0d9488", "#115e59"],
-    dark: ["#134e4a", "#0f766e", "#14b8a6", "#5eead4"],
-  },
+type Theme = "light" | "dark";
+
+/** Full-strength color of each habit, per theme (brighter on dark backgrounds). */
+const BASE: Record<HabitColor, Record<Theme, string>> = {
+  green: { light: "#14b86e", dark: "#2bd585" },
+  blue: { light: "#2f6bff", dark: "#5c8dff" },
+  purple: { light: "#7b4dff", dark: "#9b7aff" },
+  pink: { light: "#ff4fa0", dark: "#ff6fb3" },
+  red: { light: "#f2463a", dark: "#ff6a5e" },
+  orange: { light: "#ff7a1c", dark: "#ff9447" },
+  yellow: { light: "#f5b700", dark: "#ffc93d" },
+  teal: { light: "#0eb3a9", dark: "#2ed3c8" },
 };
 
-/** CSS variables consumed by the `.habit-cell` styles in globals.css. */
+/** Empty grid square; the four tones blend from it to the habit color. Mirrors --cell-empty in globals.css. */
+const EMPTY: Record<Theme, string> = { light: "#e5e8e7", dark: "#23272b" };
+const TONE_STRENGTH = [0.28, 0.52, 0.76, 1];
+
+export const HABIT_COLORS = Object.keys(BASE) as HabitColor[];
+
+function channels(hex: string): [number, number, number] {
+  const value = Number.parseInt(hex.slice(1), 16);
+  return [(value >> 16) & 255, (value >> 8) & 255, value & 255];
+}
+
+function toHex(rgb: number[]): string {
+  return `#${rgb.map((c) => Math.round(c).toString(16).padStart(2, "0")).join("")}`;
+}
+
+function mix(from: string, to: string, amount: number): string {
+  const a = channels(from);
+  const b = channels(to);
+  return toHex(a.map((c, i) => c + (b[i] - c) * amount));
+}
+
+function luminance(hex: string): number {
+  const [r, g, b] = channels(hex).map((c) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+export function contrast(a: string, b: string): number {
+  const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (light + 0.05) / (dark + 0.05);
+}
+
+/** Black or white, whichever reads better on the habit color. */
+export function textOn(background: string): string {
+  return contrast(background, "#000000") >= contrast(background, "#ffffff") ? "#000000" : "#ffffff";
+}
+
+export interface HabitPalette {
+  base: string;
+  /** Tones for levels 1 to 4. */
+  tones: string[];
+  /** Text color used on top of `base`. */
+  text: string;
+}
+
+export function habitPalette(color: HabitColor, theme: Theme): HabitPalette {
+  const base = BASE[color][theme];
+  return {
+    base,
+    tones: TONE_STRENGTH.map((strength) => mix(EMPTY[theme], base, strength)),
+    text: textOn(base),
+  };
+}
+
+/** CSS variables consumed by globals.css (grid tones, streak tile, buttons in the habit color). */
 export function paletteVariables(color: HabitColor): Record<string, string> {
-  const { light, dark } = PALETTE[color];
-  return Object.fromEntries([
-    ...light.map((value, i) => [`--habit-light-${i + 1}`, value]),
-    ...dark.map((value, i) => [`--habit-dark-${i + 1}`, value]),
-  ]);
+  const variables: Record<string, string> = {};
+  for (const theme of ["light", "dark"] as const) {
+    const { base, tones, text } = habitPalette(color, theme);
+    variables[`--habit-${theme}`] = base;
+    variables[`--habit-${theme}-text`] = text;
+    tones.forEach((tone, i) => (variables[`--habit-${theme}-${i + 1}`] = tone));
+  }
+  return variables;
 }
