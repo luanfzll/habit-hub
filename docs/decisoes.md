@@ -41,7 +41,7 @@ Resultado da entrevista de produto feita entre 09/10/2026 e 13/10/2026. Cada dec
 
 | Decisão | Justificativa |
 |---|---|
-| Toda meta é numérica: um inteiro de 1 a 9999 (padrão 1), com unidade opcional. Cada dia guarda um inteiro | Um único modelo cobre "feito ou não feito" (meta 1) e quantidades ("Ler 20 páginas"), e mantém os tons de verde. |
+| Toda meta é numérica: um inteiro de 1 a 99.999 (padrão 1), com unidade opcional. Cada dia guarda um inteiro de 0 a 99.999. Não há decimais | Um único modelo cobre "feito ou não feito" (meta 1) e quantidades ("Ler 20 páginas", "10.000 passos"). Quem precisaria de decimais usa uma unidade menor ("450 min" em vez de "7,5 h"). |
 | Campos: nome (até 40 caracteres), cor (paleta de 8), meta, unidade (até 15 caracteres), dias da semana, público ou privado (privado por padrão). Sem descrição nem emoji | O mínimo necessário para o produto funcionar. |
 | Frequência: todos os dias ou dias fixos da semana | Atende "academia seg/qua/sex" sem quebrar a lógica de um quadradinho por dia. |
 | Meta e agenda são guardadas em **versões com a data em que passaram a valer**. Cada dia é avaliado pela versão que valia naquele dia. Uma mudança vale a partir de hoje, e várias mudanças no mesmo dia substituem a versão de hoje. Nome e cor não têm versões | Mudar um objetivo não reescreve o histórico. |
@@ -183,7 +183,9 @@ Resultado da entrevista de produto feita entre 09/10/2026 e 13/10/2026. Cada dec
 | Repositório público com licença MIT | É o padrão em portfólio. |
 | Toda mudança passa por um pull request, a `main` só aceita mudanças com a CI verde, e os commits seguem o padrão Conventional Commits | O processo de trabalho fica visível para o avaliador. |
 | **npm** e Node 24 LTS | É ferramenta que o autor já conhece, e o pnpm não traria ganho relevante para um app único. |
-| Postgres 17 em Docker Compose (a mesma versão da CI e do Neon), um `.env.example` com todas as variáveis, e um script de dados de teste **só para o banco local** | Quem clonar o repositório roda o projeto com `docker compose up` + `npm run dev`. |
+| Postgres 17 em Docker Compose (porta 5434, a mesma versão da CI e do Neon), um `.env.example` com todas as variáveis, e um script de dados de teste **só para o banco local** (`npm run db:seed`) | Quem clonar o repositório roda o projeto com `docker compose up` + `npm run dev`. |
+| Servidor de desenvolvimento na porta 3100 | A porta 3000 já é usada por outro projeto na máquina do autor. |
+| Prettier (largura 120) com verificação na CI | Formatação consistente sem discussão. |
 
 ## 3. Fora do escopo da v1
 
@@ -242,7 +244,8 @@ Nenhuma decisão ficou em aberto. As duas abaixo foram tomadas "por enquanto" e 
 | Já existe o app "Habit Hub: Routine Tracker" na App Store, do mesmo nicho | Risco aceito, porque o projeto é de portfólio e não tem fins comerciais. |
 | O painel pode ter até 20 grades × 371 quadradinhos (cerca de 7.400 elementos), o que pode deixar o app lento no celular | Medir com 20 hábitos num celular mediano. Se ficar lento, simplificar o HTML de cada quadradinho. |
 | O README pode mostrar dados com até 1 hora de atraso (inclusive na virada do dia), e o proxy do GitHub pode guardar a imagem por mais tempo | Atraso aceito. Conferir na prática quanto tempo o proxy do GitHub guarda a imagem. |
-| Dúvida: se a pessoa mudar o fuso para um que está "atrás", um hábito criado hoje pode ficar com a data de início no "futuro" | Definir na especificação. Sugestão: nesse caso, considerar hoje como o início. |
-| Dúvida: o que acontece ao pular um dia que já tem um valor registrado | Definir na especificação. Sugestão: pular apaga o valor, depois de pedir confirmação. |
-| Dúvida: dias pulados e dias fora da agenda usam o mesmo visual hachurado | Definir no design. Sugestão: dois padrões de hachura diferentes, e o menu do dia diz qual é o caso. |
-| Dúvida: o valor máximo de um registro não foi definido | Sugestão: o mesmo limite da meta (9999). |
+| ~~Dúvida~~ Resolvido (padrão adotado): mudar o fuso para um que está "atrás" pode deixar a data de início no "futuro" | A data de início não muda. Até ela chegar, o cartão mostra "Começa em …" e não há registro possível. Uma mudança de meta ou agenda feita nesse intervalo vale a partir da data de início. |
+| ~~Dúvida~~ Resolvido (padrão adotado): pular um dia que já tem valor | Pular apaga o valor (o banco garante "pulado → valor 0"). A interface pede confirmação dentro do próprio menu (M2). Registrar um valor num dia pulado desfaz o pulo. |
+| ~~Dúvida~~ Resolvido (padrão adotado): o visual de cada estado | Vazio = cinza; tons 1 a 4 = cor do hábito; fora da agenda = hachura diagonal; pulado = cinza com um traço no centro; antes do início = só um contorno fraco; hoje = contorno por cima; dias futuros da semana atual não são desenhados. Há uma legenda abaixo de cada grade. |
+| ~~Dúvida~~ Resolvido (padrão adotado): limites de meta e valor | Os dois vão até 99.999, e só inteiros (ver seção 2.2). |
+| Vulnerabilidades apontadas pelo `npm audit` em dependências indiretas: `mysql2` (dependência opcional do Better Auth e do Prisma, mas o projeto não usa MySQL), `deepmerge-ts` (linha de comando do Prisma) e `braces`/`fast-glob` (linha de comando do shadcn) | Nenhuma está no caminho de uma requisição do app. O conserto automático rebaixaria o Prisma para a v6. Revisar quando as dependências publicarem correções. |
