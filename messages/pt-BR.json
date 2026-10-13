@@ -1,0 +1,128 @@
+{
+  "common": {
+    "appName": "HabitHub",
+    "tagline": "Seus hábitos numa grade, um quadradinho por dia.",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "back": "Voltar",
+    "saving": "Salvando…",
+    "loading": "Carregando…",
+    "signOut": "Sair",
+    "settings": "Configurações",
+    "saveFailed": "Não foi possível salvar. Tente de novo."
+  },
+  "home": {
+    "createAccount": "Criar conta",
+    "signIn": "Entrar"
+  },
+  "auth": {
+    "email": "E-mail",
+    "password": "Senha",
+    "passwordHint": "Pelo menos 8 caracteres.",
+    "signUpTitle": "Criar conta",
+    "signUpSubmit": "Criar conta",
+    "signUpFooter": "Já tem conta?",
+    "signInTitle": "Entrar",
+    "signInSubmit": "Entrar",
+    "signInFooter": "Ainda não tem conta?",
+    "invalidCredentials": "E-mail ou senha incorretos.",
+    "emailTaken": "Não foi possível criar a conta com esse e-mail.",
+    "weakPassword": "A senha precisa ter pelo menos 8 caracteres.",
+    "genericError": "Algo deu errado. Tente de novo."
+  },
+  "dashboard": {
+    "title": "Seus hábitos",
+    "newHabit": "Novo hábito",
+    "emptyTitle": "Nenhum hábito ainda",
+    "emptyText": "Crie o primeiro e marque um quadradinho por dia.",
+    "createFirst": "Criar primeiro hábito",
+    "limitReached": "Você chegou ao limite de {max} hábitos ativos.",
+    "edit": "Editar {name}"
+  },
+  "habit": {
+    "streak": "{count, plural, =0 {Nenhum dia seguido} one {# dia seguido} other {# dias seguidos}}",
+    "startsOn": "Começa em {date}",
+    "doneToday": "Feito hoje",
+    "markToday": "Marcar hoje",
+    "todayProgress": "de {target}",
+    "decrease": "Diminuir",
+    "increase": "Aumentar",
+    "todayValue": "Quantidade de hoje",
+    "todayProgressUnit": "de {target} {unit}"
+  },
+  "grid": {
+    "label": "Grade de {name}: últimos 12 meses",
+    "less": "Menos",
+    "more": "Mais",
+    "offSchedule": "fora da agenda",
+    "skipped": "pulado",
+    "weekdayShort": "{day, select, 0 {Dom} 1 {Seg} 2 {Ter} 3 {Qua} 4 {Qui} 5 {Sex} 6 {Sáb} other {}}",
+    "cell": {
+      "done": "{date}: feito",
+      "doneValue": "{date}: {amount}, meta cumprida",
+      "partial": "{date}: {amount}",
+      "missed": "{date}: não registrado",
+      "pending": "{date}, hoje: {amount}",
+      "pendingEmpty": "{date}, hoje: ainda não registrado",
+      "offSchedule": "{date}: fora da agenda",
+      "extra": "{date}: {amount}, fora da agenda",
+      "skipped": "{date}: pulado",
+      "beforeStart": "{date}: antes do início do hábito"
+    },
+    "amount": "{value} de {target}",
+    "amountUnit": "{value} de {target} {unit}",
+    "extraAmount": "{value}",
+    "extraAmountUnit": "{value} {unit}"
+  },
+  "dayMenu": {
+    "markDone": "Marcar como feito",
+    "unmark": "Desmarcar",
+    "statusDone": "Feito",
+    "statusNotDone": "Não registrado",
+    "value": "Quantidade",
+    "save": "Salvar",
+    "clear": "Limpar dia"
+  },
+  "habitForm": {
+    "createTitle": "Novo hábito",
+    "editTitle": "Editar hábito",
+    "name": "Nome",
+    "namePlaceholder": "Ex.: Ler",
+    "target": "Meta diária",
+    "targetHint": "Use 1 para hábitos de feito ou não feito.",
+    "unit": "Unidade (opcional)",
+    "unitPlaceholder": "Ex.: páginas",
+    "frequency": "Frequência",
+    "everyDay": "Todos os dias",
+    "specificDays": "Dias específicos",
+    "weekdaysLabel": "Dias da semana",
+    "weekdaysRequired": "Escolha pelo menos um dia.",
+    "color": "Cor",
+    "colors": {
+      "green": "Verde",
+      "blue": "Azul",
+      "purple": "Roxo",
+      "pink": "Rosa",
+      "red": "Vermelho",
+      "orange": "Laranja",
+      "yellow": "Amarelo",
+      "teal": "Verde-água"
+    },
+    "configChangeNote": "Mudanças na meta ou nos dias valem a partir de hoje. Os dias anteriores continuam como estavam.",
+    "create": "Criar hábito",
+    "invalid": "Confira os campos destacados.",
+    "limitReached": "Você chegou ao limite de {max} hábitos ativos."
+  },
+  "settings": {
+    "title": "Configurações",
+    "timezone": "Fuso horário",
+    "timezoneHint": "O dia vira à meia-noite deste fuso.",
+    "saved": "Fuso horário atualizado.",
+    "invalidTimezone": "Fuso horário inválido."
+  },
+  "timezoneBanner": {
+    "text": "Parece que você está em outro fuso ({browser}). Seu perfil usa {profile}.",
+    "update": "Usar {browser}",
+    "dismiss": "Manter"
+  }
+}
