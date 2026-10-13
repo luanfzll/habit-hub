@@ -139,13 +139,15 @@ model HabitConfigVersion {
 
 /// One row per habit per day that has a value or was skipped. No row = empty day.
 model HabitEntry {
-  habitId   String   @map("habit_id") @db.Uuid
-  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
-  date      DateTime @db.Date
-  value     Int      @default(0)
-  skipped   Boolean  @default(false)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  habitId    String   @map("habit_id") @db.Uuid
+  habit      Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  date       DateTime @db.Date
+  value      Int      @default(0)
+  skipped    Boolean  @default(false)
+  /// Optional, private note on why a skipped day was skipped.
+  skipReason String?  @map("skip_reason") @db.VarChar(200)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
   @@id([habitId, date])
   @@map("habit_entries")

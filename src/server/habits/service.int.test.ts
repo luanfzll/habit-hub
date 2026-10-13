@@ -32,7 +32,7 @@ describe("dates", () => {
     const [habit] = await listActiveHabits(user.id);
     expect(habit.startDate).toBe("2026-10-13");
     expect(habit.versions[0].effectiveFrom).toBe("2026-10-13");
-    expect(habit.entries).toEqual([{ date: "2026-10-13", value: 5, skipped: false }]);
+    expect(habit.entries).toEqual([{ date: "2026-10-13", value: 5, skipped: false, skipReason: null }]);
 
     const rows = await db.$queryRaw<{ date: string }[]>`
       SELECT to_char(date, 'YYYY-MM-DD') AS date FROM habit_entries`;
@@ -63,7 +63,9 @@ describe("entries", () => {
 
     await setEntry(user.id, id, today, { value: 5 }, today);
     await setEntry(user.id, id, today, { value: 12 }, today);
-    expect((await listActiveHabits(user.id))[0].entries).toEqual([{ date: today, value: 12, skipped: false }]);
+    expect((await listActiveHabits(user.id))[0].entries).toEqual([
+      { date: today, value: 12, skipped: false, skipReason: null },
+    ]);
 
     await setEntry(user.id, id, today, { value: 0 }, today);
     expect((await listActiveHabits(user.id))[0].entries).toEqual([]);
@@ -74,7 +76,9 @@ describe("entries", () => {
     const { id } = await createHabit(user.id, reading, today);
     await setEntry(user.id, id, today, { value: 5 }, today);
     await setEntry(user.id, id, today, { skip: true }, today);
-    expect((await listActiveHabits(user.id))[0].entries).toEqual([{ date: today, value: 0, skipped: true }]);
+    expect((await listActiveHabits(user.id))[0].entries).toEqual([
+      { date: today, value: 0, skipped: true, skipReason: null },
+    ]);
   });
 
   it("rejects days before the start and after today", async () => {
@@ -82,6 +86,30 @@ describe("entries", () => {
     const { id } = await createHabit(user.id, reading, today);
     await expect(setEntry(user.id, id, addDays(today, -1), { value: 1 }, today)).rejects.toThrow(DayNotEditableError);
     await expect(setEntry(user.id, id, addDays(today, 1), { value: 1 }, today)).rejects.toThrow(DayNotEditableError);
+  });
+
+  it("stores an optional reason for a skipped day and drops it when the day gets a value", async () => {
+    const user = await createUser();
+    const { id } = await createHabit(user.id, reading, addDays(today, -2));
+    const yesterday = addDays(today, -1);
+    const entryOf = async () => (await listActiveHabits(user.id))[0].entries[0];
+
+    await setEntry(user.id, id, yesterday, { skip: true, reason: "Viagem a trabalho" }, today);
+    expect(await entryOf()).toEqual({ date: yesterday, value: 0, skipped: true, skipReason: "Viagem a trabalho" });
+
+    await setEntry(user.id, id, yesterday, { skip: true, reason: "Gripe" }, today);
+    expect((await entryOf()).skipReason).toBe("Gripe");
+
+    await setEntry(user.id, id, yesterday, { value: 3 }, today);
+    expect(await entryOf()).toEqual({ date: yesterday, value: 3, skipped: false, skipReason: null });
+  });
+
+  it("is protected by the database against a reason on a day that was not skipped", async () => {
+    const user = await createUser();
+    const { id } = await createHabit(user.id, reading, today);
+    await expect(
+      db.habitEntry.create({ data: { habitId: id, date: toDbDate(today), value: 3, skipReason: "x" } }),
+    ).rejects.toThrow();
   });
 
   it("is protected by the database against a skipped day with a value", async () => {
@@ -158,7 +186,7 @@ describe("archive and delete", () => {
     await unarchiveHabit(user.id, first.id);
     const habits = await listActiveHabits(user.id);
     expect(habits.map((habit) => habit.name)).toEqual(["Primeiro", "Segundo"]);
-    expect(habits[0].entries).toEqual([{ date: today, value: 4, skipped: false }]);
+    expect(habits[0].entries).toEqual([{ date: today, value: 4, skipped: false, skipReason: null }]);
   });
 
   it("refuses to unarchive beyond the active limit", async () => {
