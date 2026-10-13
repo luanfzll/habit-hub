@@ -5,6 +5,7 @@ export const MAX_TARGET = 99_999;
 export const MAX_VALUE = 99_999;
 export const EVERY_DAY = 0b1111111;
 export const MAX_ACTIVE_HABITS = 20;
+export const MAX_SKIP_REASON = 200;
 
 /** Target and schedule that apply from `effectiveFrom` until the next version. */
 export interface ConfigVersion {

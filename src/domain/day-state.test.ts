@@ -94,6 +94,14 @@ describe("evaluateDays", () => {
     ]);
   });
 
+  it("keeps the reason of skipped days only", () => {
+    const h = history("2026-10-01", daily, { "2026-10-02": "skip", "2026-10-03": 1 });
+    const entries = new Map(h.entries);
+    entries.set(d("2026-10-02"), { value: 0, skipped: true, skipReason: "Gripe" });
+    const days = evaluateDays({ ...h, entries }, d("2026-10-02"), d("2026-10-03"), d("2026-10-04"));
+    expect(days.map((day) => day.skipReason)).toEqual(["Gripe", null]);
+  });
+
   it("shows skipped days as neutral", () => {
     const h = history("2026-10-01", daily, { "2026-10-02": "skip" });
     const [day] = evaluateDays(h, d("2026-10-02"), d("2026-10-02"), d("2026-10-03"));

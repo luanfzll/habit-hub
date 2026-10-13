@@ -60,7 +60,7 @@ Resultado da entrevista de produto feita entre 09/10/2026 e 13/10/2026. Cada dec
 | Os registros são guardados como data de calendário (`DATE`), sem hora | Mudar de fuso não desloca o histórico. |
 | O dia vira à meia-noite do fuso do perfil | Quem fez algo depois da meia-noite marca o dia anterior. Uma virada configurável complicaria todo cálculo de datas. |
 | Qualquer dia desde o início do hábito pode ser editado. Dias futuros são bloqueados pelo servidor | Esquecer de marcar é o caso mais comum, e a grade é pessoal. |
-| Existe a opção "Pular dia", sem limite, no menu do dia | Um dia de doença não deve zerar uma sequência longa. |
+| Existe a opção "Pular dia", sem limite, no menu do dia, com um **motivo opcional** de até 200 caracteres que pode ser editado depois. Os dias pulados e seus motivos aparecem numa lista "Dias pulados" na página do hábito. Desfazer o pulo, ou registrar um valor no dia, apaga o motivo | Um dia de doença não deve zerar uma sequência longa, e o motivo deixa um histórico de por que o dia foi pulado. |
 | O período, os limites dos tons e o início da semana são parâmetros da função que calcula a grade, não valores fixos no código | Trocar o período ou o dia de início da semana no futuro vira mudar um argumento. |
 
 **Estados de um dia:**
@@ -94,6 +94,7 @@ Resultado da entrevista de produto feita entre 09/10/2026 e 13/10/2026. Cada dec
 | Decisão | Justificativa |
 |---|---|
 | A privacidade é definida por hábito, e todo hábito é privado por padrão | Ninguém publica algo sem querer. |
+| O motivo de um dia pulado nunca aparece no perfil público nem na imagem do README, nem quando o hábito é público. O dia aparece só como "pulado" | Motivos como "estava doente" são informação sensível. |
 | O nome de usuário é escolhido na primeira vez que você publica algo, e publicar exige e-mail confirmado | O cadastro fica curto, e ninguém cria perfis públicos com e-mails falsos. |
 | Formato do nome de usuário: de 3 a 20 caracteres, só `[a-z0-9-]`, sem hífen no começo ou no fim, único sem diferenciar maiúsculas de minúsculas. Uma lista curta de nomes é bloqueada (`admin`, `suporte`, `habithub`…) | Todo perfil fica em `/u/`, então não colide com rotas do app. A lista só evita alguém se passar pelo app. |
 | Trocar o nome de usuário libera o nome antigo na hora, e os links antigos do perfil quebram. Excluir a conta também libera os nomes | É o mais simples. As imagens do README não são afetadas, porque usam o código do hábito. |
@@ -133,7 +134,7 @@ Resultado da entrevista de produto feita entre 09/10/2026 e 13/10/2026. Cada dec
 - **Usuário**: as tabelas do Better Auth (usuário, sessão, conta vinculada, verificação, limite de tentativas), mais o fuso (nome IANA) e o nome de usuário (opcional e único).
 - **Hábito**: id interno, código público da imagem, dono, nome, cor, unidade, público, data de arquivamento, data de início e data de criação.
 - **Versão da configuração**: hábito, data em que passa a valer, meta e dias da semana. Única por (hábito, data).
-- **Registro do dia**: hábito, data, valor e pulado. Único por (hábito, data). Um dia sem registro é um dia vazio.
+- **Registro do dia**: hábito, data, valor, pulado e motivo do pulo (opcional, só em dias pulados). Único por (hábito, data). Um dia sem registro é um dia vazio.
 
 ### 2.8 Interface
 
@@ -199,7 +200,7 @@ Resultado da entrevista de produto feita entre 09/10/2026 e 13/10/2026. Cada dec
 - Integração com o GitHub para marcar hábitos a partir de commits
 - Importar dados de outros apps
 - Versão em inglês (a estrutura de tradução fica pronta, mas sem o texto em inglês)
-- Anotações por dia
+- Anotações por dia (a única exceção é o motivo opcional de um dia pulado)
 - Grade combinada de todos os hábitos
 - Seletor para ver anos anteriores
 - Prévia de link com a grade (Open Graph dinâmico)

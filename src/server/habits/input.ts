@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { isCalendarDate, type CalendarDate } from "@/domain/calendar-date";
-import { MAX_TARGET, MAX_VALUE, MIN_TARGET } from "@/domain/habit-config";
+import { MAX_SKIP_REASON, MAX_TARGET, MAX_VALUE, MIN_TARGET } from "@/domain/habit-config";
 import { HabitColor } from "@/generated/prisma/enums";
 
 export const HABIT_COLORS = Object.values(HabitColor);
@@ -27,7 +27,15 @@ export const calendarDateSchema = z
 
 export const entryChangeSchema = z.union([
   z.object({ value: z.number().int().min(0).max(MAX_VALUE) }),
-  z.object({ skip: z.literal(true) }),
+  z.object({
+    skip: z.literal(true),
+    reason: z
+      .string()
+      .trim()
+      .max(MAX_SKIP_REASON)
+      .transform((reason) => reason || null)
+      .nullish(),
+  }),
 ]);
 
 export type EntryChange = z.output<typeof entryChangeSchema>;

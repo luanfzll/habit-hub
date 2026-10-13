@@ -28,6 +28,8 @@ function random() {
   return state / 2 ** 31;
 }
 
+const SKIP_REASONS = ["Viagem a trabalho", "Gripe", "Plantão no hospital", null];
+
 interface SeedHabit {
   name: string;
   color: HabitColor;
@@ -110,7 +112,8 @@ async function main() {
         continue;
       }
       if (habit.skipChance && random() < habit.skipChance) {
-        entries.push({ date: toDbDate(date), value: 0, skipped: true });
+        const reason = SKIP_REASONS[Math.floor(random() * SKIP_REASONS.length)];
+        entries.push({ date: toDbDate(date), value: 0, skipped: true, skipReason: reason });
       } else if (random() < habit.rate) {
         entries.push({ date: toDbDate(date), value: habit.value(config.target), skipped: false });
       }

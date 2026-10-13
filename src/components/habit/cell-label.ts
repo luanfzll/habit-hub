@@ -27,7 +27,7 @@ export function cellLabel(t: GridTranslator, day: DayState, unit: string | null)
       return t("cell.extra", { date, amount: extra });
     }
     case "skipped":
-      return t("cell.skipped", { date });
+      return day.skipReason ? t("cell.skippedReason", { date, reason: day.skipReason }) : t("cell.skipped", { date });
     case "before-start":
     case "future":
       return t("cell.beforeStart", { date });

@@ -4,6 +4,8 @@ import { configOn, isScheduledOn, sortVersions, type ConfigVersion } from "./hab
 export interface DayEntry {
   value: number;
   skipped: boolean;
+  /** Optional, private note on why the day was skipped. */
+  skipReason?: string | null;
 }
 
 /** Everything needed to evaluate any day of a habit. */
@@ -44,6 +46,8 @@ export interface DayState {
   target: number;
   scheduled: boolean;
   isToday: boolean;
+  /** Only set on skipped days. */
+  skipReason: string | null;
 }
 
 /** 0 = nothing, 1 = up to 1/3 of the target, 2 = up to 2/3, 3 = below target, 4 = target reached. */
@@ -97,6 +101,7 @@ export function evaluateDays(
       target,
       scheduled,
       isToday,
+      skipReason: kind === "skipped" ? (entry?.skipReason ?? null) : null,
     });
   }
   return states;

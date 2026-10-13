@@ -41,7 +41,7 @@ type HabitRow = {
   unit: string | null;
   startDate: Date;
   versions: { effectiveFrom: Date; target: number; weekdays: number }[];
-  entries: { date: Date; value: number; skipped: boolean }[];
+  entries: { date: Date; value: number; skipped: boolean; skipReason: string | null }[];
 };
 
 function toHabitView(habit: HabitRow): HabitView {
@@ -56,6 +56,7 @@ function toHabitView(habit: HabitRow): HabitView {
       date: fromDbDate(entry.date),
       value: entry.value,
       skipped: entry.skipped,
+      skipReason: entry.skipReason,
     })),
   };
 }
@@ -179,7 +180,11 @@ export async function updateHabit(userId: string, habitId: string, input: HabitI
   });
 }
 
-/** Registers a value (0 clears the day) or skips the day. Skipping discards any value. */
+/**
+ * Registers a value (0 clears the day) or skips the day, with an optional reason.
+ * Skipping discards any value; registering a value un-skips the day and drops the reason.
+ * Skipping an already skipped day only updates its reason.
+ */
 export async function setEntry(
   userId: string,
   habitId: string,
@@ -195,7 +200,10 @@ export async function setEntry(
   if (!isEditableDay(date, fromDbDate(habit.startDate), today)) throw new DayNotEditableError();
 
   const key = { habitId_date: { habitId: habit.id, date: toDbDate(date) } };
-  const data = "skip" in change ? { value: 0, skipped: true } : { value: change.value, skipped: false };
+  const data =
+    "skip" in change
+      ? { value: 0, skipped: true, skipReason: change.reason ?? null }
+      : { value: change.value, skipped: false, skipReason: null };
 
   if (!data.skipped && data.value === 0) {
     await db.habitEntry.deleteMany({ where: { habitId: habit.id, date: toDbDate(date) } });
