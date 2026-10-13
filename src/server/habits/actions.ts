@@ -7,11 +7,14 @@ import { getCurrentUser, requireUser, userToday } from "../session";
 import type { HabitFormState } from "./form-state";
 import { calendarDateSchema, entryChangeSchema, habitInputSchema } from "./input";
 import {
+  archiveHabit,
   createHabit,
   DayNotEditableError,
+  deleteHabit,
   HabitLimitError,
   HabitNotFoundError,
   setEntry,
+  unarchiveHabit,
   updateHabit,
 } from "./service";
 
@@ -77,4 +80,38 @@ export async function setEntryAction(habitId: string, date: string, change: unkn
   }
   refresh();
   return { ok: true };
+}
+
+type ActionResult = { ok: true } | { ok: false; error?: "limitReached" };
+
+/** Runs an ownership-checked change on one habit and refreshes the page. */
+async function changeHabit(
+  habitId: string,
+  change: (userId: string, id: string) => Promise<void>,
+): Promise<ActionResult> {
+  const user = await getCurrentUser();
+  const id = habitIdSchema.safeParse(habitId);
+  if (!user || !id.success) return { ok: false };
+
+  try {
+    await change(user.id, id.data);
+  } catch (error) {
+    if (error instanceof HabitNotFoundError) return { ok: false };
+    if (error instanceof HabitLimitError) return { ok: false, error: "limitReached" };
+    throw error;
+  }
+  refresh();
+  return { ok: true };
+}
+
+export async function archiveHabitAction(habitId: string) {
+  return changeHabit(habitId, archiveHabit);
+}
+
+export async function unarchiveHabitAction(habitId: string) {
+  return changeHabit(habitId, unarchiveHabit);
+}
+
+export async function deleteHabitAction(habitId: string) {
+  return changeHabit(habitId, deleteHabit);
 }

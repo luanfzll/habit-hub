@@ -5,13 +5,18 @@ import { db } from "@/server/db";
 import { toDbDate } from "@/server/db-dates";
 import { createUser } from "../../../tests/support/factories";
 import {
+  archiveHabit,
   createHabit,
   DayNotEditableError,
+  deleteHabit,
   getHabitForEdit,
+  getHabitView,
   HabitLimitError,
   HabitNotFoundError,
   listActiveHabits,
+  listArchivedHabits,
   setEntry,
+  unarchiveHabit,
   updateHabit,
 } from "./service";
 
@@ -134,5 +139,50 @@ describe("limits", () => {
       await createHabit(user.id, { ...reading, name: `Hábito ${i}` }, today);
     }
     await expect(createHabit(user.id, reading, today)).rejects.toThrow(HabitLimitError);
+  });
+});
+
+describe("archive and delete", () => {
+  it("hides archived habits, keeps their history and restores them in their original place", async () => {
+    const user = await createUser();
+    const first = await createHabit(user.id, { ...reading, name: "Primeiro" }, today);
+    await createHabit(user.id, { ...reading, name: "Segundo" }, today);
+    await setEntry(user.id, first.id, today, { value: 4 }, today);
+
+    await archiveHabit(user.id, first.id);
+    expect((await listActiveHabits(user.id)).map((habit) => habit.name)).toEqual(["Segundo"]);
+    expect((await listArchivedHabits(user.id)).map((habit) => habit.name)).toEqual(["Primeiro"]);
+    await expect(getHabitView(user.id, first.id)).rejects.toThrow(HabitNotFoundError);
+    await expect(setEntry(user.id, first.id, today, { value: 1 }, today)).rejects.toThrow(HabitNotFoundError);
+
+    await unarchiveHabit(user.id, first.id);
+    const habits = await listActiveHabits(user.id);
+    expect(habits.map((habit) => habit.name)).toEqual(["Primeiro", "Segundo"]);
+    expect(habits[0].entries).toEqual([{ date: today, value: 4, skipped: false }]);
+  });
+
+  it("refuses to unarchive beyond the active limit", async () => {
+    const user = await createUser();
+    const archived = await createHabit(user.id, reading, today);
+    await archiveHabit(user.id, archived.id);
+    for (let i = 0; i < MAX_ACTIVE_HABITS; i++) {
+      await createHabit(user.id, { ...reading, name: `Hábito ${i}` }, today);
+    }
+    await expect(unarchiveHabit(user.id, archived.id)).rejects.toThrow(HabitLimitError);
+  });
+
+  it("deletes a habit with all its data, only for its owner", async () => {
+    const owner = await createUser();
+    const stranger = await createUser();
+    const { id } = await createHabit(owner.id, reading, today);
+    await setEntry(owner.id, id, today, { value: 2 }, today);
+
+    await expect(deleteHabit(stranger.id, id)).rejects.toThrow(HabitNotFoundError);
+    await expect(archiveHabit(stranger.id, id)).rejects.toThrow(HabitNotFoundError);
+
+    await deleteHabit(owner.id, id);
+    expect(await listActiveHabits(owner.id)).toEqual([]);
+    expect(await db.habitEntry.count()).toBe(0);
+    expect(await db.habitConfigVersion.count()).toBe(0);
   });
 });

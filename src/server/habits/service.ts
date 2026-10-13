@@ -34,14 +34,18 @@ function toVersion(row: { effectiveFrom: Date; target: number; weekdays: number 
   return { effectiveFrom: fromDbDate(row.effectiveFrom), target: row.target, weekdays: row.weekdays };
 }
 
-/** Active habits in creation order. */
-export async function listActiveHabits(userId: string): Promise<HabitView[]> {
-  const habits = await db.habit.findMany({
-    where: { userId, archivedAt: null },
-    orderBy: { createdAt: "asc" },
-    include: { versions: true, entries: true },
-  });
-  return habits.map((habit) => ({
+type HabitRow = {
+  id: string;
+  name: string;
+  color: HabitColor;
+  unit: string | null;
+  startDate: Date;
+  versions: { effectiveFrom: Date; target: number; weekdays: number }[];
+  entries: { date: Date; value: number; skipped: boolean }[];
+};
+
+function toHabitView(habit: HabitRow): HabitView {
+  return {
     id: habit.id,
     name: habit.name,
     color: habit.color,
@@ -53,7 +57,35 @@ export async function listActiveHabits(userId: string): Promise<HabitView[]> {
       value: entry.value,
       skipped: entry.skipped,
     })),
-  }));
+  };
+}
+
+/** Active habits in creation order. */
+export async function listActiveHabits(userId: string): Promise<HabitView[]> {
+  const habits = await db.habit.findMany({
+    where: { userId, archivedAt: null },
+    orderBy: { createdAt: "asc" },
+    include: { versions: true, entries: true },
+  });
+  return habits.map(toHabitView);
+}
+
+/** One active habit, for its own page. */
+export async function getHabitView(userId: string, habitId: string): Promise<HabitView> {
+  const habit = await db.habit.findFirst({
+    where: { id: habitId, userId, archivedAt: null },
+    include: { versions: true, entries: true },
+  });
+  if (!habit) throw new HabitNotFoundError();
+  return toHabitView(habit);
+}
+
+export async function listArchivedHabits(userId: string) {
+  return db.habit.findMany({
+    where: { userId, archivedAt: { not: null } },
+    orderBy: { createdAt: "asc" },
+    select: { id: true, name: true, color: true, archivedAt: true },
+  });
 }
 
 /** Values for the edit form: name, color, unit and the configuration in effect today. */
@@ -174,4 +206,35 @@ export async function setEntry(
     create: { habitId: habit.id, date: toDbDate(date), ...data },
     update: data,
   });
+}
+
+/**
+ * Archiving only hides the habit. Its days keep counting as empty days, so the
+ * streak breaks and the rate drops exactly as if the habit had not been done.
+ */
+export async function archiveHabit(userId: string, habitId: string) {
+  const { count } = await db.habit.updateMany({
+    where: { id: habitId, userId, archivedAt: null },
+    data: { archivedAt: new Date() },
+  });
+  if (count === 0) throw new HabitNotFoundError();
+}
+
+export async function unarchiveHabit(userId: string, habitId: string) {
+  await db.$transaction(async (tx) => {
+    const habit = await tx.habit.findFirst({
+      where: { id: habitId, userId, archivedAt: { not: null } },
+      select: { id: true },
+    });
+    if (!habit) throw new HabitNotFoundError();
+    const active = await tx.habit.count({ where: { userId, archivedAt: null } });
+    if (active >= MAX_ACTIVE_HABITS) throw new HabitLimitError();
+    await tx.habit.update({ where: { id: habit.id }, data: { archivedAt: null } });
+  });
+}
+
+/** Deletes the habit with its versions and entries. Works for active and archived habits. */
+export async function deleteHabit(userId: string, habitId: string) {
+  const { count } = await db.habit.deleteMany({ where: { id: habitId, userId } });
+  if (count === 0) throw new HabitNotFoundError();
 }
