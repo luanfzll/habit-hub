@@ -6,6 +6,7 @@ import type { CalendarDate } from "@/domain/calendar-date";
 import type { DayState } from "@/domain/day-state";
 import type { GridLayout } from "@/domain/grid";
 import { formatMonthLabel } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import { cellLabel } from "./cell-label";
 
 interface HabitGridProps {
@@ -20,6 +21,9 @@ interface HabitGridProps {
    * "scroll" (habit page): the whole year scrolls sideways, starting at today.
    */
   overflow?: "clip" | "scroll";
+  /** Day whose square should play the "registered" pop once. */
+  popDate?: CalendarDate | null;
+  onPopEnd?: () => void;
 }
 
 const ROWS = 7;
@@ -34,7 +38,16 @@ function isInteractive(day: DayState): boolean {
  * GitHub-style grid. The whole grid is a single Tab stop; arrow keys move between
  * days and Enter (or a click) opens the day menu.
  */
-export function HabitGrid({ layout, name, unit, initialFocus, onSelectDay, overflow = "clip" }: HabitGridProps) {
+export function HabitGrid({
+  layout,
+  name,
+  unit,
+  initialFocus,
+  onSelectDay,
+  overflow = "clip",
+  popDate = null,
+  onPopEnd,
+}: HabitGridProps) {
   const t = useTranslations("grid");
   const [focusDate, setFocusDate] = useState(initialFocus);
   const buttons = useRef(new Map<CalendarDate, HTMLButtonElement>());
@@ -158,6 +171,8 @@ export function HabitGrid({ layout, name, unit, initialFocus, onSelectDay, overf
                       data-kind={day.kind}
                       data-level={day.level}
                       data-today={day.isToday}
+                      data-pop={day.date === popDate}
+                      onAnimationEnd={onPopEnd}
                       tabIndex={day.date === focusDate ? 0 : -1}
                       aria-label={cellLabel(t, day, unit)}
                       onFocus={() => setFocusDate(day.date)}
@@ -174,10 +189,22 @@ export function HabitGrid({ layout, name, unit, initialFocus, onSelectDay, overf
   );
 }
 
-export function GridLegend() {
+/** Neutral legend (shades of the text color), shown once per page rather than on every habit. */
+export function GridLegend({ className }: { className?: string }) {
   const t = useTranslations("grid");
+  const neutralTones = Object.fromEntries(
+    [25, 45, 70, 100].map((strength, i) => [
+      `--tone-${i + 1}`,
+      `color-mix(in oklab, var(--foreground) ${strength}%, var(--cell-empty))`,
+    ]),
+  ) as CSSProperties;
+
   return (
-    <div aria-hidden className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+    <div
+      aria-hidden
+      className={cn("flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground", className)}
+      style={neutralTones}
+    >
       <span className="flex items-center gap-1">
         {t("less")}
         {[0, 1, 2, 3, 4].map((level) => (
@@ -185,11 +212,11 @@ export function GridLegend() {
         ))}
         {t("more")}
       </span>
-      <span className="flex items-center gap-1">
+      <span className="flex items-center gap-1.5">
         <span className="habit-cell" data-kind="off-schedule" />
         {t("offSchedule")}
       </span>
-      <span className="flex items-center gap-1">
+      <span className="flex items-center gap-1.5">
         <span className="habit-cell" data-kind="skipped" />
         {t("skipped")}
       </span>

@@ -1,64 +1,63 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useMemo, useState } from "react";
 import type { CalendarDate } from "@/domain/calendar-date";
-import { computeStats, type DayState } from "@/domain/day-state";
-import { buildGrid } from "@/domain/grid";
 import { paletteVariables } from "@/lib/palette";
 import type { HabitView } from "@/server/habits/service";
 import { DayMenu } from "./day-menu";
-import { GridLegend, HabitGrid } from "./habit-grid";
+import { HabitGrid } from "./habit-grid";
+import { StreakTile } from "./streak-tile";
 import { TodayControl } from "./today-control";
-import { useHabitEntries } from "./use-habit-entries";
+import { useHabitTracker } from "./use-habit-entries";
+import { useHabitSummary } from "./use-habit-summary";
 
 export function HabitCard({ habit, today }: { habit: HabitView; today: CalendarDate }) {
-  const t = useTranslations("habit");
-  const { history, save, saving } = useHabitEntries(habit);
-  const [selection, setSelection] = useState<{ day: DayState; anchor: HTMLButtonElement } | null>(null);
-
-  const layout = useMemo(() => buildGrid(history, { today }), [history, today]);
-  const stats = useMemo(() => computeStats(history, today, layout.start), [history, today, layout.start]);
-  const todayState = layout.columns.at(-1)?.find((day) => day?.isToday && day.kind !== "before-start") ?? undefined;
+  const tracker = useHabitTracker(habit, today);
+  const summary = useHabitSummary(habit, today);
 
   return (
     <article
-      className="flex flex-col gap-4 rounded-xl border bg-card p-4 text-card-foreground shadow-xs sm:p-5"
+      className="habit-scope flex flex-col gap-5 rounded-[1.75rem] bg-card p-5 text-card-foreground sm:p-6"
       style={paletteVariables(habit.color)}
       aria-labelledby={`habit-${habit.id}`}
-      aria-busy={saving}
+      aria-busy={tracker.saving}
     >
-      <header className="min-w-0">
-        <h2 id={`habit-${habit.id}`} className="truncate text-base font-semibold">
-          <Link href={`/habitos/${habit.id}`} className="underline-offset-4 hover:underline">
-            {habit.name}
-          </Link>
-        </h2>
-        <p className="text-sm text-muted-foreground">{t("streak", { count: stats.currentStreak })}</p>
+      <header className="flex flex-wrap items-center gap-x-4 gap-y-4">
+        <StreakTile count={tracker.stats.currentStreak} animate={tracker.animateStreak} />
+        <div className="min-w-0 flex-1">
+          <h2 id={`habit-${habit.id}`} className="truncate text-lg font-semibold">
+            <Link href={`/habitos/${habit.id}`} className="underline-offset-4 hover:underline">
+              {habit.name}
+            </Link>
+          </h2>
+          <p className="truncate text-sm text-muted-foreground">{summary}</p>
+        </div>
+        {/* Wraps under the title on narrow screens. */}
+        <div className="w-full sm:w-auto">
+          <TodayControl
+            today={tracker.todayState}
+            startDate={habit.startDate}
+            unit={habit.unit}
+            onChange={(value) => tracker.register(today, { value })}
+          />
+        </div>
       </header>
 
-      <TodayControl
-        today={todayState}
-        startDate={habit.startDate}
-        unit={habit.unit}
-        onChange={(value) => save(today, { value })}
-      />
-
       <HabitGrid
-        layout={layout}
+        layout={tracker.layout}
         name={habit.name}
         unit={habit.unit}
         initialFocus={today}
-        onSelectDay={(day, anchor) => setSelection({ day, anchor })}
+        popDate={tracker.popDate}
+        onPopEnd={tracker.clearPop}
+        onSelectDay={(day, anchor) => tracker.setSelection({ day, anchor })}
       />
-      <GridLegend />
 
       <DayMenu
-        selection={selection}
+        selection={tracker.selection}
         unit={habit.unit}
-        onChange={(day, change) => save(day.date, change)}
-        onClose={() => setSelection(null)}
+        onChange={(day, change) => tracker.register(day.date, change)}
+        onClose={() => tracker.setSelection(null)}
       />
     </article>
   );
