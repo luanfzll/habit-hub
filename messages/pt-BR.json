@@ -242,5 +242,19 @@
     "title": "Página não encontrada",
     "description": "O endereço pode estar errado, ou a página não está mais disponível.",
     "home": "Ir para o início"
+  },
+  "emails": {
+    "resetPassword": {
+      "subject": "Redefina sua senha do HabitHub",
+      "text": "Olá!\n\nRecebemos um pedido para redefinir a senha da sua conta no HabitHub. Para escolher uma nova senha, abra o link abaixo:\n\n{url}\n\nO link vale por 1 hora e só funciona uma vez. Se não foi você que pediu, ignore este e-mail: sua senha continua a mesma.\n\nHabitHub"
+    },
+    "confirmEmail": {
+      "subject": "Confirme seu e-mail no HabitHub",
+      "text": "Olá!\n\nPara confirmar o e-mail da sua conta no HabitHub, abra o link abaixo:\n\n{url}\n\nO link vale por 24 horas. Se você não criou uma conta no HabitHub, ignore este e-mail.\n\nHabitHub"
+    },
+    "changeEmail": {
+      "subject": "Confirme seu novo e-mail no HabitHub",
+      "text": "Olá!\n\nRecebemos um pedido para trocar o e-mail de uma conta no HabitHub para este endereço. Para confirmar a troca, abra o link abaixo:\n\n{url}\n\nO link vale por 24 horas. Se não foi você que pediu, ignore este e-mail: nada muda.\n\nHabitHub"
+    }
   }
 }
