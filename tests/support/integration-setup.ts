@@ -8,7 +8,7 @@ const { db } = await import("@/server/db");
 
 beforeEach(async () => {
   await db.$executeRawUnsafe(
-    'TRUNCATE "users", "sessions", "accounts", "verifications", "rate_limits", "habits" CASCADE',
+    'TRUNCATE "users", "sessions", "accounts", "verifications", "rate_limits", "habits", "tasks" CASCADE',
   );
 });
 

@@ -30,9 +30,9 @@ export async function createHabit(
   await expect(page).toHaveURL(/\/painel$/);
 }
 
-/** The UI updates optimistically; wait until no card is still saving before reloading. */
+/** The UI updates optimistically; wait until nothing is still saving before reloading. */
 export async function reloadAfterSave(page: Page) {
-  await expect(page.locator('article[aria-busy="true"]')).toHaveCount(0);
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
   await page.reload();
 }
 
@@ -48,4 +48,14 @@ export function todayCell(container: ReturnType<Page["locator"]>) {
 /** The streak scoreboard of a habit ("12 dias seguidos"). */
 export function streak(container: ReturnType<Page["locator"]>) {
   return container.locator("[data-streak]");
+}
+
+/** The "Hábitos de hoje" panel. */
+export function todayHabits(page: Page) {
+  return page.getByRole("region", { name: "Hábitos de hoje" });
+}
+
+/** The "Tarefas do dia" panel. */
+export function todayTasks(page: Page) {
+  return page.getByRole("region", { name: "Tarefas do dia" });
 }

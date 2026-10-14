@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { card, createHabit, reloadAfterSave, signUp, streak, todayCell } from "./helpers";
+import { card, createHabit, reloadAfterSave, signUp, streak, todayCell, todayHabits } from "./helpers";
 
 test("skip today with a reason, see it in the history and undo it", async ({ page }) => {
   await signUp(page);
@@ -13,7 +13,7 @@ test("skip today with a reason, see it in the history and undo it", async ({ pag
   await menu.getByRole("button", { name: "Confirmar pulo" }).click();
   await expect(todayCell(meditate)).toHaveAttribute("data-kind", "skipped");
   await expect(todayCell(meditate)).toHaveAccessibleName(/pulado \(Plantão no hospital\)/);
-  await expect(meditate.getByText("Hoje foi pulado.")).toBeVisible();
+  await expect(todayHabits(page).getByText("pulado")).toBeVisible();
 
   await reloadAfterSave(page);
   await card(page, "Meditar").getByRole("link", { name: "Meditar" }).click();
@@ -30,7 +30,7 @@ test("skipping a day that has a value warns that it will be discarded", async ({
   await signUp(page);
   await createHabit(page, { name: "Correr", target: 5, unit: "km" });
   const running = card(page, "Correr");
-  await running.getByRole("button", { name: "Aumentar" }).click();
+  await todayHabits(page).getByRole("button", { name: "Adicionar 1 a Correr" }).click();
 
   await todayCell(running).click();
   const menu = page.getByRole("dialog");
@@ -38,13 +38,13 @@ test("skipping a day that has a value warns that it will be discarded", async ({
   await expect(menu.getByText("Isso apaga 1 km registrados neste dia.")).toBeVisible();
   await menu.getByRole("button", { name: "Confirmar pulo" }).click();
   await expect(todayCell(running)).toHaveAttribute("data-kind", "skipped");
-  await expect(running.getByLabel("Quantidade de hoje")).toHaveValue("0");
+  await expect(todayHabits(page).getByText("0 de 5 km")).toBeVisible();
 });
 
 test("habit page shows stats; a habit can be archived, restored and deleted", async ({ page }) => {
   await signUp(page);
   await createHabit(page, { name: "Ler" });
-  await card(page, "Ler").getByRole("button", { name: "Marcar hoje" }).click();
+  await todayHabits(page).getByRole("checkbox", { name: "Ler" }).click();
   await reloadAfterSave(page);
 
   await card(page, "Ler").getByRole("link", { name: "Ler" }).click();

@@ -28,7 +28,7 @@ Resultado da entrevista de produto feita entre 09/10/2026 e 13/10/2026. Cada dec
 | Decisão | Justificativa |
 |---|---|
 | Nome **HabitHub**, no endereço **`habithub-app.vercel.app`**, sem domínio próprio | Projeto de portfólio sem custo. `habithub.vercel.app` pertence a outra conta (o 404 da verificação inicial vinha de um projeto sem deploy, não de um nome livre). É o endereço permanente das imagens nos READMEs. |
-| A v1 inclui: cadastro, login, recuperação de senha e exclusão de conta; criar, editar, arquivar e excluir hábitos; registrar hoje e dias passados; uma grade por hábito e um painel; sequência atual, maior sequência e taxa de conclusão; perfil público e imagem para README; exportação em JSON; página de privacidade | Cobre o produto de ponta a ponta, sem itens que não mostram nada novo. |
+| A v1 inclui: o painel "Hoje" (hábitos do dia e tarefas avulsas); cadastro, login, recuperação de senha e exclusão de conta; criar, editar, arquivar e excluir hábitos; registrar hoje e dias passados; uma grade por hábito e um painel; sequência atual, maior sequência e taxa de conclusão; perfil público e imagem para README; exportação em JSON; página de privacidade | Cobre o produto de ponta a ponta, sem itens que não mostram nada novo. |
 | Diferencial: perfil público + imagem SVG da grade para o README, com os tons de intensidade como apoio | Nenhum concorrente faz isso. O avaliador vê funcionando no README do autor. Mostra geração de imagem no servidor, cache e controle de privacidade. |
 | Interface em português. Todos os textos ficam num arquivo de mensagens, com a biblioteca de tradução configurada só para pt-BR. Datas formatadas com `Intl` | Traduzir no futuro vira adicionar um arquivo, sem mexer nos componentes. |
 | Código, identificadores e commits em inglês. README em português | Inglês é o padrão de mercado no código. O README acompanha o idioma do produto. |
@@ -89,6 +89,20 @@ Resultado da entrevista de produto feita entre 09/10/2026 e 13/10/2026. Cada dec
 | Taxa de conclusão: últimos 12 meses, dividindo os dias cumpridos pelos dias agendados que já terminaram (sem contar os pulados). Hoje só entra se já tiver sido cumprido | O número bate com a grade exibida e não cai pela manhã só porque o dia ainda não acabou. |
 | O cartão mostra a sequência atual. A página do hábito mostra os três números | Painel enxuto, com os detalhes na página do hábito. |
 
+### 2.4.1 Hoje: hábitos e tarefas do dia
+
+Acrescentado depois das primeiras semanas de uso. Tarefas avulsas são um recurso à parte: não entram nas sequências, na grade, nas estatísticas nem no perfil público.
+
+| Decisão | Justificativa |
+|---|---|
+| Bloco "Hoje" no topo do painel, com dois painéis lado a lado no desktop e empilhados no celular: "Hábitos de hoje" e "Tarefas do dia" | A grade continua sendo o elemento central, logo abaixo. |
+| "Hábitos de hoje" lista só os hábitos agendados para hoje, em ordem de criação fixa (um treino extra num dia de folga é registrado pelo menu do quadradinho). Cada hábito tem uma caixa de marcar quadrada na cor dele, e **um clique completa a meta inteira**. Meta maior que 1 também mostra o progresso ("2 de 8 copos") e os botões −1 e +1. Desmarcar zera o dia, e quando isso apaga uma quantidade, um aviso oferece "Desfazer". Os feitos ficam riscados, e um dia pulado aparece como "pulado" | Marcar o dia sem rolar até o cartão e sem clicar 20 vezes. O −1 e o "Desfazer" corrigem cliques errados. A ordem fixa evita que os itens mudem de lugar enquanto a pessoa marca. |
+| O estado otimista dos hábitos é compartilhado entre o "Hoje" e os cartões | Marcar no "Hoje" atualiza na hora a grade e o placar do cartão. |
+| Uma tarefa tem só o título (até 120 caracteres) e é criada para hoje, num campo em que o Enter salva. As caixas das tarefas são redondas | É o caso de uso descrito: coisas únicas daquele dia. O formato redondo diferencia tarefas de hábitos. |
+| Uma tarefa não concluída continua aparecendo nos dias seguintes até ser marcada como feita, com a indicação "desde seg., 12/10". O cálculo usa a data de criação e o fuso do perfil, sem nenhuma rotina agendada | Nada se perde quando o dia vira, e não há rotina para manter. |
+| Uma tarefa concluída fica riscada até o fim do dia e depois some da tela. Ela fica guardada no banco, para a exportação do M4. Tarefas podem ser excluídas | O dia termina limpo, sem perder o histórico. |
+| No máximo 50 tarefas pendentes. Tarefas são sempre privadas. Ordem: as mais antigas primeiro | O limite protege a tela e o banco grátis. As mais antigas no topo chamam atenção para o que está atrasado. |
+
 ### 2.5 Perfil público e imagem do README
 
 | Decisão | Justificativa |
@@ -135,13 +149,14 @@ Resultado da entrevista de produto feita entre 09/10/2026 e 13/10/2026. Cada dec
 - **Hábito**: id interno, código público da imagem, dono, nome, cor, unidade, público, data de arquivamento, data de início e data de criação.
 - **Versão da configuração**: hábito, data em que passa a valer, meta e dias da semana. Única por (hábito, data).
 - **Registro do dia**: hábito, data, valor, pulado e motivo do pulo (opcional, só em dias pulados). Único por (hábito, data). Um dia sem registro é um dia vazio.
+- **Tarefa**: dono, título, dia para o qual foi criada e dia em que foi concluída (vazio enquanto pendente).
 
 ### 2.8 Interface
 
 | Decisão | Justificativa |
 |---|---|
 | A grade mostra os últimos 12 meses até hoje (53 colunas), com a semana começando no domingo | É igual ao perfil do GitHub e ao calendário brasileiro. Dá para mudar depois por parâmetro. |
-| Tela principal: um cartão por hábito, com nome, botão de hoje, sequência atual e grade. A página do hábito tem as estatísticas, as configurações, a grade completa e o botão de código para o README | Corresponde ao escopo, sem componentes extras. |
+| Tela principal: o bloco "Hoje" no topo (seção 2.4.1) e, abaixo, um cartão por hábito com o placar, o nome e a grade. O registro do dia sai dos cartões e fica só no "Hoje" e no menu de cada dia. A página do hábito tem as estatísticas, as configurações, o controle de hoje, a grade completa e o botão de código para o README | "O que fazer hoje" em cima e "como estou indo" embaixo, sem o mesmo botão em dois lugares. |
 | Botão de hoje: com meta 1, um toque alterna. Com meta maior que 1, há botões − e + e o número pode ser digitado | O registro do dia leva um toque. |
 | Clicar num quadradinho abre um menu com a data por extenso, o valor (alternar ou digitar) e "Pular dia" / "Desfazer pulo" | Evita marcações por engano em quadradinhos de 11 px e deixa o "pular" fácil de achar. |
 | No celular, a tela principal mostra só as semanas mais recentes que cabem na largura (alinhadas à direita, com a sobra da esquerda cortada só com CSS). A página do hábito tem a grade completa com rolagem lateral | Sem rolagem dentro de rolagem, e com o mesmo HTML gerado no servidor para todas as telas. |
@@ -217,6 +232,7 @@ Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidad
 - Importar dados de outros apps
 - Versão em inglês (a estrutura de tradução fica pronta, mas sem o texto em inglês)
 - Anotações por dia (a única exceção é o motivo opcional de um dia pulado)
+- Tarefas com data futura, edição do título de uma tarefa, descrição em tarefas e uma tela de histórico de tarefas
 - Grade combinada de todos os hábitos
 - Seletor para ver anos anteriores
 - Prévia de link com a grade (Open Graph dinâmico)

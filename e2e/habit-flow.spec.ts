@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import { card, createHabit, reloadAfterSave, signUp, streak } from "./helpers";
+import { card, createHabit, reloadAfterSave, signUp, streak, todayHabits } from "./helpers";
 
 test("sign up, create a habit and mark today", async ({ page }) => {
   await signUp(page);
@@ -10,8 +10,10 @@ test("sign up, create a habit and mark today", async ({ page }) => {
   const meditate = card(page, "Meditar");
   await expect(streak(meditate)).toHaveText(/^0\s*dias seguidos$/);
 
-  await meditate.getByRole("button", { name: "Marcar hoje" }).click();
-  await expect(meditate.getByRole("button", { name: "Feito hoje" })).toHaveAttribute("aria-pressed", "true");
+  // Ticking it in "Today" updates its card below at once.
+  const check = todayHabits(page).getByRole("checkbox", { name: "Meditar" });
+  await check.click();
+  await expect(check).toHaveAttribute("aria-checked", "true");
   await expect(streak(meditate)).toHaveText(/^1\s*dia seguido$/);
   await expect(meditate.getByRole("button", { name: /hoje.*: feito|: feito/ })).toHaveAttribute("data-level", "4");
 
@@ -23,17 +25,23 @@ test("sign up, create a habit and mark today", async ({ page }) => {
 test("register a quantity towards a daily target", async ({ page }) => {
   await signUp(page);
   await createHabit(page, { name: "Ler", target: 20, unit: "páginas" });
+  const today = todayHabits(page);
+
+  await today.getByRole("button", { name: "Adicionar 1 a Ler" }).click();
+  await expect(today.getByText("1 de 20 páginas")).toBeVisible();
+
+  // Larger amounts go through the day menu of the card.
   const reading = card(page, "Ler");
-
-  await reading.getByRole("button", { name: "Aumentar" }).click();
-  await expect(reading.getByLabel("Quantidade de hoje")).toHaveValue("1");
-
-  await reading.getByLabel("Quantidade de hoje").fill("20");
-  await reading.getByLabel("Quantidade de hoje").press("Enter");
+  await reading.getByRole("button", { name: /hoje: 1 de 20 páginas/ }).click();
+  await page
+    .getByRole("dialog")
+    .getByLabel(/Quantidade/)
+    .fill("20");
+  await page.getByRole("dialog").getByRole("button", { name: "Salvar" }).click();
   await expect(streak(reading)).toHaveText(/^1\s*dia seguido$/);
 
   await reloadAfterSave(page);
-  await expect(card(page, "Ler").getByLabel("Quantidade de hoje")).toHaveValue("20");
+  await expect(todayHabits(page).getByText("20 de 20 páginas")).toBeVisible();
 });
 
 test("edit today's value from the grid menu", async ({ page }) => {
@@ -57,4 +65,29 @@ test("dashboard has no detectable accessibility violations", async ({ page }) =>
   await expect(page).toHaveTitle(/HabitHub/);
   const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
   expect(results.violations).toEqual([]);
+});
+
+test("the check completes a numeric target in one click; minus and undo fix mistakes", async ({ page }) => {
+  await signUp(page);
+  await createHabit(page, { name: "Ler", target: 20, unit: "páginas" });
+  const today = todayHabits(page);
+  const check = today.getByRole("checkbox", { name: /Ler/ });
+
+  await check.click();
+  await expect(check).toHaveAttribute("aria-checked", "true");
+  await expect(today.getByText("20 de 20 páginas")).toBeVisible();
+
+  await today.getByRole("button", { name: "Remover 1 de Ler" }).click();
+  await expect(today.getByText("19 de 20 páginas")).toBeVisible();
+  await expect(check).toHaveAttribute("aria-checked", "false");
+
+  // Unchecking a done day clears it; the toast puts the amount back.
+  await today.getByRole("button", { name: "Adicionar 1 a Ler" }).click();
+  await check.click();
+  await expect(today.getByText("0 de 20 páginas")).toBeVisible();
+  await page.getByRole("button", { name: "Desfazer" }).click();
+  await expect(today.getByText("20 de 20 páginas")).toBeVisible();
+
+  await reloadAfterSave(page);
+  await expect(todayHabits(page).getByText("20 de 20 páginas")).toBeVisible();
 });

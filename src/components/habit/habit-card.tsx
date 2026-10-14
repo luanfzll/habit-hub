@@ -8,7 +8,6 @@ import type { HabitView } from "@/server/habits/service";
 import { DayMenu } from "./day-menu";
 import { GridLegend, HabitGrid } from "./habit-grid";
 import { StreakTile } from "./streak-tile";
-import { TodayControl } from "./today-control";
 import { useHabitTracker } from "./use-habit-entries";
 import { useHabitSummary } from "./use-habit-summary";
 
@@ -23,7 +22,7 @@ export function HabitCard({ habit, today }: { habit: HabitView; today: CalendarD
       aria-labelledby={`habit-${habit.id}`}
       aria-busy={tracker.saving}
     >
-      <header className="flex flex-wrap items-center gap-x-4 gap-y-4">
+      <header className="flex items-center">
         {/* Scoreboard and title open the habit page; the chevron shows it on touch screens too. */}
         <Link
           href={`/habitos/${habit.id}`}
@@ -42,15 +41,6 @@ export function HabitCard({ habit, today }: { habit: HabitView; today: CalendarD
             <p className="truncate text-sm text-muted-foreground">{summary}</p>
           </div>
         </Link>
-        {/* Wraps under the title on narrow screens. */}
-        <div className="w-full sm:w-auto">
-          <TodayControl
-            today={tracker.todayState}
-            startDate={habit.startDate}
-            unit={habit.unit}
-            onChange={(value) => tracker.register(today, { value })}
-          />
-        </div>
       </header>
 
       <HabitGrid

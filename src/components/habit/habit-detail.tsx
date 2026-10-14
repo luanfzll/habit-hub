@@ -17,13 +17,21 @@ import { DeleteHabitDialog } from "./delete-habit-dialog";
 import { GridLegend, HabitGrid } from "./habit-grid";
 import { StreakTile } from "./streak-tile";
 import { TodayControl } from "./today-control";
-import { useHabitTracker } from "./use-habit-entries";
+import { HabitEntriesProvider, useHabitTracker } from "./use-habit-entries";
 import { useHabitSummary } from "./use-habit-summary";
 
 const percent = new Intl.NumberFormat(LOCALE, { style: "percent", maximumFractionDigits: 0 });
 
 /** The habit's own page: the scoreboard, the whole year and the habit's actions. */
 export function HabitDetail({ habit, today }: { habit: HabitView; today: CalendarDate }) {
+  return (
+    <HabitEntriesProvider habits={[habit]}>
+      <HabitDetailContent habit={habit} today={today} />
+    </HabitEntriesProvider>
+  );
+}
+
+function HabitDetailContent({ habit, today }: { habit: HabitView; today: CalendarDate }) {
   const t = useTranslations("habitPage");
   const tCommon = useTranslations("common");
   const router = useRouter();
