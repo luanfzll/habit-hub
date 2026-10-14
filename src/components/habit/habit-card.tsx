@@ -6,7 +6,7 @@ import type { CalendarDate } from "@/domain/calendar-date";
 import { paletteVariables } from "@/lib/palette";
 import type { HabitView } from "@/server/habits/service";
 import { DayMenu } from "./day-menu";
-import { HabitGrid } from "./habit-grid";
+import { GridLegend, HabitGrid } from "./habit-grid";
 import { StreakTile } from "./streak-tile";
 import { TodayControl } from "./today-control";
 import { useHabitTracker } from "./use-habit-entries";
@@ -62,6 +62,7 @@ export function HabitCard({ habit, today }: { habit: HabitView; today: CalendarD
         onPopEnd={tracker.clearPop}
         onSelectDay={(day, anchor) => tracker.setSelection({ day, anchor })}
       />
+      <GridLegend {...tracker.legend} />
 
       <DayMenu
         selection={tracker.selection}

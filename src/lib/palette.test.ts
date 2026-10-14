@@ -14,6 +14,6 @@ describe("habit palette", () => {
     const { base, tones } = habitPalette("blue", "light");
     expect(tones).toHaveLength(4);
     expect(tones[3]).toBe(base);
-    expect(contrast(tones[0], "#e5e8e7")).toBeLessThan(contrast(tones[3], "#e5e8e7"));
+    expect(contrast(tones[0], "#d3d9d7")).toBeLessThan(contrast(tones[3], "#d3d9d7"));
   });
 });

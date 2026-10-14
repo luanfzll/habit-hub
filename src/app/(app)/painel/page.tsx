@@ -4,7 +4,6 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { Suspense } from "react";
 import { HabitCard } from "@/components/habit/habit-card";
-import { GridLegend } from "@/components/habit/habit-grid";
 import { TimezoneBanner } from "@/components/timezone-banner";
 import { buttonVariants } from "@/components/ui/button";
 import { MAX_ACTIVE_HABITS } from "@/domain/habit-config";
@@ -52,7 +51,6 @@ async function Dashboard() {
           {habits.map((habit) => (
             <HabitCard key={habit.id} habit={habit} today={today} />
           ))}
-          <GridLegend className="px-1" />
           {habits.length >= MAX_ACTIVE_HABITS && (
             <p className="text-sm text-muted-foreground">{t("limitReached", { max: MAX_ACTIVE_HABITS })}</p>
           )}

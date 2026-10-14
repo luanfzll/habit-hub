@@ -15,7 +15,7 @@ const BASE: Record<HabitColor, Record<Theme, string>> = {
 };
 
 /** Empty grid square; the four tones blend from it to the habit color. Mirrors --cell-empty in globals.css. */
-const EMPTY: Record<Theme, string> = { light: "#e5e8e7", dark: "#23272b" };
+const EMPTY: Record<Theme, string> = { light: "#d3d9d7", dark: "#383e44" };
 const TONE_STRENGTH = [0.28, 0.52, 0.76, 1];
 
 export const HABIT_COLORS = Object.keys(BASE) as HabitColor[];

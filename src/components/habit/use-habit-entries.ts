@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import type { CalendarDate } from "@/domain/calendar-date";
 import { computeStats, type DayEntry, type DayState, type HabitHistory } from "@/domain/day-state";
 import { buildGrid } from "@/domain/grid";
+import { EVERY_DAY } from "@/domain/habit-config";
 import { setEntryAction } from "@/server/habits/actions";
 import type { EntryChange } from "@/server/habits/input";
 import type { HabitView } from "@/server/habits/service";
@@ -87,5 +88,9 @@ export function useHabitTracker(habit: HabitView, today: CalendarDate) {
     popDate,
     clearPop: () => setPopDate(null),
     animateStreak: registered,
+    legend: {
+      showOffSchedule: habit.versions.some((version) => version.weekdays !== EVERY_DAY),
+      showSkipped: [...history.entries.values()].some((entry) => entry.skipped),
+    },
   };
 }
