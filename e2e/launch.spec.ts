@@ -12,8 +12,7 @@ test("the home page shows an example grid and links to the privacy page", async 
   await expect(
     page.getByRole("heading", { level: 1, name: "Seus hábitos numa grade, um quadradinho por dia." }),
   ).toBeVisible();
-  const example = page.getByRole("article", { name: "Ler" });
-  await expect(example.getByText("Exemplo")).toBeVisible();
+  const example = page.getByRole("region", { name: /^Exemplo/ }).getByRole("article", { name: "Ler" });
   await expect(streak(example)).toHaveText(/^12\s*dias seguidos$/);
   await expectNoAxeViolations(page);
 

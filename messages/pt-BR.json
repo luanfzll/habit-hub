@@ -22,7 +22,8 @@
     "author": "Um projeto de Luan Leal",
     "footer": "Links do rodapé",
     "sourceCode": "Código-fonte",
-    "privacy": "Privacidade"
+    "privacy": "Privacidade",
+    "exampleCaption": "Um hábito de leitura depois de um ano de uso."
   },
   "auth": {
     "email": "E-mail",

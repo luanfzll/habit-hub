@@ -11,11 +11,8 @@ import { StreakTile } from "./streak-tile";
 import { historyOf, legendFor } from "./use-habit-entries";
 import { useHabitSummary } from "./use-habit-summary";
 
-/**
- * The owner's habit card as visitors see it: same scoreboard and grid, nothing to click.
- * `badge` marks it, e.g. as the home page's example.
- */
-export function PublicHabitCard({ habit, today, badge }: { habit: HabitView; today: CalendarDate; badge?: string }) {
+/** The owner's habit card as visitors see it: same scoreboard and grid, nothing to click. */
+export function PublicHabitCard({ habit, today }: { habit: HabitView; today: CalendarDate }) {
   const summary = useHabitSummary(habit, today);
   const history = useMemo(() => historyOf(habit), [habit]);
   const layout = useMemo(() => buildGrid(history, { today }), [history, today]);
@@ -30,16 +27,9 @@ export function PublicHabitCard({ habit, today, badge }: { habit: HabitView; tod
       <header className="flex items-center gap-4">
         <StreakTile count={currentStreak} />
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <h2 id={`habit-${habit.id}`} className="truncate text-lg font-semibold">
-              {habit.name}
-            </h2>
-            {badge && (
-              <span className="shrink-0 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-                {badge}
-              </span>
-            )}
-          </div>
+          <h2 id={`habit-${habit.id}`} className="truncate text-lg font-semibold">
+            {habit.name}
+          </h2>
           <p className="truncate text-sm text-muted-foreground">{summary}</p>
         </div>
       </header>

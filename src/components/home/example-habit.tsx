@@ -22,5 +22,5 @@ export function ExampleHabit() {
   const habit = useMemo(() => (today ? exampleHabit(today, t("exampleName"), t("exampleUnit")) : null), [today, t]);
 
   if (!habit || !today) return <div aria-hidden className="h-72 rounded-[1.75rem] bg-card sm:h-80" />;
-  return <PublicHabitCard habit={habit} today={today} badge={t("exampleBadge")} />;
+  return <PublicHabitCard habit={habit} today={today} />;
 }

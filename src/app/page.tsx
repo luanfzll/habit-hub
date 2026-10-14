@@ -15,12 +15,7 @@ export default function HomePage() {
       <header>
         <nav className="mx-auto flex h-16 w-full max-w-4xl items-center justify-between gap-2 px-4">
           <Wordmark className="text-lg" />
-          <div className="flex items-center gap-1">
-            <ThemeToggle />
-            <Link href="/entrar" className={buttonVariants({ variant: "ghost", size: "sm" })}>
-              {t("signIn")}
-            </Link>
-          </div>
+          <ThemeToggle />
         </nav>
       </header>
 
@@ -39,7 +34,16 @@ export default function HomePage() {
             </Link>
           </div>
         </section>
-        <ExampleHabit />
+        {/* Labelled outside the card, so "Exemplo" does not read as part of the habit. */}
+        <section aria-labelledby="example-label" className="flex flex-col gap-3">
+          <p id="example-label" className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+            <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground">
+              {t("exampleBadge")}
+            </span>
+            {t("exampleCaption")}
+          </p>
+          <ExampleHabit />
+        </section>
       </main>
 
       <footer className="mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-8 text-sm text-muted-foreground">
