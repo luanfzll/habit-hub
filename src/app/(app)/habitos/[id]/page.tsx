@@ -6,6 +6,8 @@ import { Suspense } from "react";
 import { z } from "zod";
 import { HabitDetail } from "@/components/habit/habit-detail";
 import { getHabitView, HabitNotFoundError } from "@/server/habits/service";
+import { getUsername } from "@/server/public/service";
+import { requestOrigin } from "@/server/request-origin";
 import { requireUser, userToday } from "@/server/session";
 
 export const metadata: Metadata = { title: "Hábito · HabitHub" };
@@ -29,12 +31,13 @@ async function Habit({ params }: { params: Promise<{ id: string }> }) {
   if (!z.uuid().safeParse(id).success) notFound();
 
   const user = await requireUser();
-  let habit;
-  try {
-    habit = await getHabitView(user.id, id);
-  } catch (error) {
-    if (error instanceof HabitNotFoundError) notFound();
-    throw error;
-  }
-  return <HabitDetail habit={habit} today={userToday(user)} />;
+  const [habit, username, origin] = await Promise.all([
+    getHabitView(user.id, id).catch((error) => {
+      if (error instanceof HabitNotFoundError) notFound();
+      throw error;
+    }),
+    getUsername(user.id),
+    requestOrigin(),
+  ]);
+  return <HabitDetail habit={habit} today={userToday(user)} username={username} origin={origin} />;
 }

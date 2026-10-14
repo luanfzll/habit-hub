@@ -15,7 +15,8 @@ interface HabitGridProps {
   unit: string | null;
   /** Cell that receives focus first when tabbing into the grid. */
   initialFocus: CalendarDate;
-  onSelectDay: (day: DayState, anchor: HTMLButtonElement) => void;
+  /** Without it the grid is read-only (public profile): each square is an image with its description. */
+  onSelectDay?: (day: DayState, anchor: HTMLButtonElement) => void;
   /**
    * "clip" (dashboard): on narrow screens the oldest weeks are cut off.
    * "scroll" (habit page): the whole year scrolls sideways, starting at today.
@@ -153,7 +154,7 @@ export function HabitGrid({
                 gridAutoColumns: "var(--cell-size)",
                 gap: "var(--cell-gap)",
               }}
-              onKeyDown={moveFocus}
+              onKeyDown={onSelectDay && moveFocus}
             >
               {columns.flatMap((days, column) =>
                 days.map((day, row) => {
@@ -161,6 +162,21 @@ export function HabitGrid({
                   if (!day) return <span key={key} aria-hidden />;
                   if (!isInteractive(day)) {
                     return <span key={key} aria-hidden className="habit-cell" data-kind={day.kind} />;
+                  }
+                  if (!onSelectDay) {
+                    const label = cellLabel(t, day, unit);
+                    return (
+                      <span
+                        key={key}
+                        role="img"
+                        className="habit-cell"
+                        data-kind={day.kind}
+                        data-level={day.level}
+                        data-today={day.isToday}
+                        aria-label={label}
+                        title={label}
+                      />
+                    );
                   }
                   return (
                     <button

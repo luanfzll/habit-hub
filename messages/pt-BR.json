@@ -207,5 +207,40 @@
   "embed": {
     "streak": "{count, plural, =0 {Nenhum dia seguido} one {# dia seguido} other {# dias seguidos}}",
     "unavailable": "Hábito indisponível"
+  },
+  "share": {
+    "title": "Perfil público",
+    "isPrivate": "Só você vê este hábito. Ao publicá-lo, ele aparece no seu perfil público e pode virar uma imagem no README do GitHub. Você pode publicar até {max} hábitos, e o motivo dos dias pulados nunca aparece.",
+    "isPublic": "Qualquer pessoa vê este hábito em <link>{address}</link>. O motivo dos dias pulados nunca aparece.",
+    "chooseUsername": "Para publicar, escolha um nome de usuário. Dá para trocá-lo depois nas configurações.",
+    "publish": "Tornar público",
+    "unpublish": "Tornar privado",
+    "unpublishHint": "Ao tornar privado, a imagem nos READMEs passa a mostrar “Hábito indisponível”.",
+    "unpublished": "“{name}” agora é privado.",
+    "limitReached": "Você já tem {max} hábitos públicos. Torne um deles privado para publicar este.",
+    "emailNotVerified": "Confirme seu e-mail para publicar.",
+    "readme": "Imagem para o README",
+    "readmeHint": "Cole o código no README do GitHub. A imagem segue o tema claro ou escuro de quem lê e se atualiza sozinha, com até 1 hora de atraso.",
+    "imageAlt": "{name} no HabitHub",
+    "copy": "Copiar código para o README",
+    "copied": "Código copiado.",
+    "copyFailed": "Não foi possível copiar. Selecione o código e copie à mão."
+  },
+  "username": {
+    "label": "Nome de usuário",
+    "address": "Endereço do perfil:",
+    "changeHint": "Se você trocar, os links antigos do perfil deixam de funcionar. As imagens nos READMEs continuam funcionando.",
+    "saved": "Nome de usuário salvo.",
+    "format": "Use de 3 a 20 caracteres: letras minúsculas, números e hífen, sem hífen no começo ou no fim.",
+    "reserved": "Esse nome é reservado. Escolha outro.",
+    "taken": "Esse nome já está em uso."
+  },
+  "profile": {
+    "subtitle": "Hábitos públicos no HabitHub"
+  },
+  "notFound": {
+    "title": "Página não encontrada",
+    "description": "O endereço pode estar errado, ou a página não está mais disponível.",
+    "home": "Ir para o início"
   }
 }
