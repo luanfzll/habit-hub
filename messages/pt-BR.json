@@ -60,7 +60,8 @@
     "createFirst": "Criar primeiro hábito",
     "limitReached": "Você chegou ao limite de {max} hábitos ativos.",
     "edit": "Editar {name}",
-    "archivedLink": "Hábitos arquivados ({count})"
+    "archivedLink": "Hábitos arquivados ({count})",
+    "orSuggestion": "Ou comece por uma sugestão:"
   },
   "habit": {
     "startsOn": "Começa em {date}",
@@ -317,5 +318,21 @@
     "confirm": "Excluir conta",
     "deleting": "Excluindo…",
     "deleted": "Sua conta foi excluída."
+  },
+  "suggestions": {
+    "ler": {
+      "label": "Ler 10 páginas",
+      "name": "Ler",
+      "unit": "páginas"
+    },
+    "agua": {
+      "label": "Beber 8 copos de água",
+      "name": "Beber água",
+      "unit": "copos"
+    },
+    "exercicio": {
+      "label": "Exercício seg/qua/sex",
+      "name": "Exercício"
+    }
   }
 }
