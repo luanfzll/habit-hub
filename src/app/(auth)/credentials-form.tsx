@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useId, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,8 @@ import { authClient } from "@/lib/auth-client";
 
 type Mode = "sign-in" | "sign-up";
 
-function errorKey(mode: Mode, code: string | undefined) {
+function errorKey(mode: Mode, code: string | undefined, status: number) {
+  if (status === 429) return "tooManyAttempts";
   if (mode === "sign-in") return code === "INVALID_EMAIL_OR_PASSWORD" ? "invalidCredentials" : "genericError";
   if (code === "SIGNUPS_CLOSED") return "signupsClosed";
   if (code === "PASSWORD_TOO_SHORT") return "weakPassword";
@@ -23,6 +24,8 @@ function errorKey(mode: Mode, code: string | undefined) {
 export function CredentialsForm({ mode }: { mode: Mode }) {
   const t = useTranslations("auth");
   const router = useRouter();
+  // Unique ids: Next keeps the previous page mounted (hidden), which may be the other auth form.
+  const id = useId();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -47,7 +50,7 @@ export function CredentialsForm({ mode }: { mode: Mode }) {
     setPending(false);
 
     if (error) {
-      setError(t(errorKey(mode, error.code)));
+      setError(t(errorKey(mode, error.code, error.status)));
       return;
     }
     router.replace("/painel");
@@ -63,13 +66,23 @@ export function CredentialsForm({ mode }: { mode: Mode }) {
       <form onSubmit={submit} className="flex flex-col gap-6">
         <FieldGroup>
           <Field>
-            <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
-            <Input id="email" name="email" type="email" required autoComplete="email" />
+            <FieldLabel htmlFor={`${id}-email`}>{t("email")}</FieldLabel>
+            <Input id={`${id}-email`} name="email" type="email" required autoComplete="email" />
           </Field>
           <Field>
-            <FieldLabel htmlFor="password">{t("password")}</FieldLabel>
+            <div className="flex items-center justify-between gap-2">
+              <FieldLabel htmlFor={`${id}-password`}>{t("password")}</FieldLabel>
+              {!signUp && (
+                <Link
+                  href="/recuperar-senha"
+                  className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                >
+                  {t("forgotPassword")}
+                </Link>
+              )}
+            </div>
             <Input
-              id="password"
+              id={`${id}-password`}
               name="password"
               type="password"
               required

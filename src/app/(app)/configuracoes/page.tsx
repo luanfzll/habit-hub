@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 import { Separator } from "@/components/ui/separator";
 import { getUsername } from "@/server/public/service";
 import { requestOrigin } from "@/server/request-origin";
 import { requireUser } from "@/server/session";
+import { EmailForm } from "./email-form";
+import { PasswordForm } from "./password-form";
 import { TimezoneForm } from "./timezone-form";
 import { UsernameSettings } from "./username-settings";
 
@@ -19,7 +21,7 @@ export default function SettingsPage() {
         ← {t("habitPage.back")}
       </Link>
       <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-[1.75rem]">{t("settings.title")}</h1>
-      <Suspense fallback={<div className="h-24 animate-pulse rounded-xl bg-muted/40 motion-reduce:animate-none" />}>
+      <Suspense fallback={<div className="h-96 animate-pulse rounded-xl bg-muted/40 motion-reduce:animate-none" />}>
         <Settings />
       </Suspense>
     </div>
@@ -32,10 +34,36 @@ async function Settings() {
   const zones = Intl.supportedValuesOf("timeZone");
   const options = zones.includes(user.timezone) ? zones : [user.timezone, ...zones];
   return (
-    <div className="flex flex-col gap-8">
-      <TimezoneForm current={user.timezone} options={options} />
-      <Separator />
-      <UsernameSettings current={username} origin={origin} />
-    </div>
+    <SettingsSections
+      account={
+        <>
+          <EmailForm current={user.email} verified={user.emailVerified} />
+          <Separator />
+          <PasswordForm />
+        </>
+      }
+      profile={<UsernameSettings current={username} origin={origin} />}
+      preferences={<TimezoneForm current={user.timezone} options={options} />}
+    />
+  );
+}
+
+function SettingsSections(sections: { account: ReactNode; profile: ReactNode; preferences: ReactNode }) {
+  const t = useTranslations("settings");
+  return (
+    <>
+      {(["account", "profile", "preferences"] as const).map((key) => (
+        <section
+          key={key}
+          aria-labelledby={`settings-${key}`}
+          className="flex flex-col gap-5 rounded-[1.75rem] bg-card p-5 text-card-foreground sm:p-6"
+        >
+          <h2 id={`settings-${key}`} className="text-lg font-semibold">
+            {t(`sections.${key}`)}
+          </h2>
+          {sections[key]}
+        </section>
+      ))}
+    </>
   );
 }

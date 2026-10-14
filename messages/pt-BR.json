@@ -30,7 +30,27 @@
     "emailTaken": "Não foi possível criar a conta com esse e-mail.",
     "weakPassword": "A senha precisa ter pelo menos 8 caracteres.",
     "signupsClosed": "Os cadastros estão fechados por enquanto.",
-    "genericError": "Algo deu errado. Tente de novo."
+    "genericError": "Algo deu errado. Tente de novo.",
+    "forgotPassword": "Esqueceu a senha?",
+    "tooManyAttempts": "Muitas tentativas seguidas. Espere um pouco e tente de novo.",
+    "forgotTitle": "Recuperar senha",
+    "forgotHint": "Informe o e-mail da sua conta. Enviaremos um link para você escolher uma nova senha.",
+    "sendResetLink": "Enviar link",
+    "checkInbox": "Confira seu e-mail",
+    "resetSent": "Se existir uma conta com {email}, enviamos um link para redefinir a senha. Ele vale por 1 hora. Se não chegar em alguns minutos, olhe a caixa de spam.",
+    "backToSignIn": "Voltar para o login",
+    "resetTitle": "Nova senha",
+    "resetHint": "Escolha a nova senha da sua conta. Depois de salvar, você entra de novo com ela em todos os aparelhos.",
+    "newPassword": "Nova senha",
+    "resetSubmit": "Salvar nova senha",
+    "passwordReset": "Senha redefinida. Entre com a nova senha.",
+    "invalidLink": "Link inválido ou expirado",
+    "resetLinkHint": "Os links para redefinir a senha valem por 1 hora e só funcionam uma vez. Peça um novo.",
+    "requestNewLink": "Pedir um novo link",
+    "confirmLinkHint": "Os links de confirmação valem por 24 horas. Entre na sua conta e peça um novo no aviso do painel.",
+    "emailConfirmed": "E-mail confirmado",
+    "emailConfirmedHint": "Pronto: este é o e-mail da sua conta no HabitHub.",
+    "goToDashboard": "Ir para o painel"
   },
   "dashboard": {
     "title": "Seus hábitos",
@@ -136,7 +156,12 @@
     "timezone": "Fuso horário",
     "timezoneHint": "O dia vira à meia-noite deste fuso.",
     "saved": "Fuso horário atualizado.",
-    "invalidTimezone": "Fuso horário inválido."
+    "invalidTimezone": "Fuso horário inválido.",
+    "sections": {
+      "account": "Conta",
+      "profile": "Perfil público",
+      "preferences": "Preferências"
+    }
   },
   "timezoneBanner": {
     "text": "Parece que você está em outro fuso ({browser}). Seu perfil usa {profile}.",
@@ -256,5 +281,26 @@
       "subject": "Confirme seu novo e-mail no HabitHub",
       "text": "Olá!\n\nRecebemos um pedido para trocar o e-mail de uma conta no HabitHub para este endereço. Para confirmar a troca, abra o link abaixo:\n\n{url}\n\nO link vale por 24 horas. Se não foi você que pediu, ignore este e-mail: nada muda.\n\nHabitHub"
     }
+  },
+  "confirmEmail": {
+    "text": "Confirme seu e-mail pelo link que enviamos para {email}.",
+    "resend": "Reenviar link",
+    "sent": "Link enviado para {email}."
+  },
+  "account": {
+    "email": "E-mail",
+    "verified": "confirmado",
+    "notVerified": "não confirmado",
+    "newEmail": "Novo e-mail",
+    "newEmailHint": "Enviaremos um link para o novo endereço. O e-mail da conta só muda depois que você abrir esse link.",
+    "changeEmail": "Trocar e-mail",
+    "changeSent": "Enviamos um link para {email}. Abra o link para concluir a troca.",
+    "sameEmail": "Esse já é o e-mail da sua conta.",
+    "currentPassword": "Senha atual",
+    "newPassword": "Nova senha",
+    "newPasswordHint": "Pelo menos 8 caracteres. Ao trocar, as sessões nos outros aparelhos são encerradas.",
+    "changePassword": "Trocar senha",
+    "passwordChanged": "Senha alterada. As sessões nos outros aparelhos foram encerradas.",
+    "wrongPassword": "A senha atual está incorreta."
   }
 }
