@@ -25,6 +25,13 @@ const dayMonth = new Intl.DateTimeFormat(LOCALE, { day: "numeric", month: "short
 
 const monthName = new Intl.DateTimeFormat(LOCALE, { month: "short", timeZone: "UTC" });
 
+const weekdayDayMonth = new Intl.DateTimeFormat(LOCALE, {
+  weekday: "short",
+  day: "2-digit",
+  month: "2-digit",
+  timeZone: "UTC",
+});
+
 /** "ter., 13 de out. de 2026" */
 export function formatShortDate(date: CalendarDate): string {
   return shortDate.format(utcDate(date));
@@ -44,4 +51,9 @@ export function formatDayMonth(date: CalendarDate): string {
 export function formatMonthLabel(month: number): string {
   const label = monthName.format(new Date(Date.UTC(2026, month - 1, 1))).replace(".", "");
   return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
+/** "seg., 12/10" */
+export function formatWeekdayDayMonth(date: CalendarDate): string {
+  return weekdayDayMonth.format(utcDate(date));
 }

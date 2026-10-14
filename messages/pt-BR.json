@@ -186,5 +186,20 @@
     "targetAmountUnit": "{target} {unit} por dia",
     "everyDay": "todos os dias",
     "withSchedule": "{target}, {schedule}"
+  },
+  "today": {
+    "title": "Hoje",
+    "habits": "Hábitos de hoje",
+    "habitsEmpty": "Nenhum hábito agendado para hoje.",
+    "addOne": "Adicionar 1 a {name}",
+    "skipped": "pulado",
+    "tasks": "Tarefas do dia",
+    "newTask": "Nova tarefa",
+    "newTaskPlaceholder": "Adicionar tarefa…",
+    "addTask": "Adicionar tarefa",
+    "tasksEmpty": "Nenhuma tarefa por enquanto. O que não for feito hoje passa para amanhã.",
+    "pendingSince": "desde {date}",
+    "deleteTask": "Excluir “{title}”",
+    "taskLimit": "Você chegou ao limite de {max} tarefas pendentes."
   }
 }
