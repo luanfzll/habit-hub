@@ -1,7 +1,9 @@
-import { CheckIcon, FlameIcon, ImageIcon } from "lucide-react";
+import { FlameIcon, SquareCheckIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import type { ComponentType, SVGProps } from "react";
 import { Wordmark } from "@/components/brand";
+import { GithubIcon } from "@/components/github-icon";
 import { ExampleToday } from "@/components/home/example-today";
 import { ReadmePreview } from "@/components/home/readme-preview";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -10,10 +12,14 @@ import type { HabitColor } from "@/generated/prisma/enums";
 import { paletteVariables } from "@/lib/palette";
 
 const REPOSITORY_URL = "https://github.com/luanfzll/habit-hub";
-const FEATURES: { key: "tap" | "streaks" | "readme"; color: HabitColor; Icon: typeof CheckIcon }[] = [
-  { key: "tap", color: "green", Icon: CheckIcon },
+const FEATURES: {
+  key: "tap" | "streaks" | "readme";
+  color: HabitColor;
+  Icon: ComponentType<SVGProps<SVGSVGElement>>;
+}[] = [
+  { key: "tap", color: "green", Icon: SquareCheckIcon },
   { key: "streaks", color: "orange", Icon: FlameIcon },
-  { key: "readme", color: "purple", Icon: ImageIcon },
+  { key: "readme", color: "purple", Icon: GithubIcon },
 ];
 const navLink = "rounded-full px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground";
 
@@ -106,12 +112,7 @@ export default function HomePage() {
           <ul className="grid gap-10 sm:grid-cols-3 sm:gap-8">
             {FEATURES.map(({ key, color, Icon }) => (
               <li key={key} className="habit-scope flex flex-col gap-3" style={paletteVariables(color)}>
-                <span
-                  aria-hidden
-                  className="flex size-11 items-center justify-center rounded-[0.875rem] bg-[var(--habit)] text-[var(--habit-text)]"
-                >
-                  <Icon className="size-5" strokeWidth={2.5} />
-                </span>
+                <Icon aria-hidden className="size-7 text-[var(--habit)]" />
                 <h3 className="text-lg font-semibold">{t(`features.${key}.title`)}</h3>
                 <p className="text-pretty text-muted-foreground">{t(`features.${key}.text`)}</p>
               </li>

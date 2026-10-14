@@ -146,6 +146,12 @@
   html {
     @apply font-sans;
   }
+  /* Links within a page (e.g. "Como funciona" on the home page) glide instead of jumping. */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
 }
 
 /* ------------------------------------------------------------------
