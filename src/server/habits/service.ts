@@ -14,6 +14,9 @@ export class DayNotEditableError extends Error {}
 /** Serializable habit with everything the grid and the stats need. */
 export interface HabitView {
   id: string;
+  /** Id used in the README image URL. */
+  publicId: string;
+  isPublic: boolean;
   name: string;
   color: HabitColor;
   unit: string | null;
@@ -36,6 +39,8 @@ function toVersion(row: { effectiveFrom: Date; target: number; weekdays: number 
 
 type HabitRow = {
   id: string;
+  publicId: string;
+  isPublic: boolean;
   name: string;
   color: HabitColor;
   unit: string | null;
@@ -44,9 +49,11 @@ type HabitRow = {
   entries: { date: Date; value: number; skipped: boolean; skipReason: string | null }[];
 };
 
-function toHabitView(habit: HabitRow): HabitView {
+export function toHabitView(habit: HabitRow): HabitView {
   return {
     id: habit.id,
+    publicId: habit.publicId,
+    isPublic: habit.isPublic,
     name: habit.name,
     color: habit.color,
     unit: habit.unit,
@@ -223,7 +230,8 @@ export async function setEntry(
 export async function archiveHabit(userId: string, habitId: string) {
   const { count } = await db.habit.updateMany({
     where: { id: habitId, userId, archivedAt: null },
-    data: { archivedAt: new Date() },
+    // An archived habit also leaves the public profile, so it never takes a public slot.
+    data: { archivedAt: new Date(), isPublic: false },
   });
   if (count === 0) throw new HabitNotFoundError();
 }
