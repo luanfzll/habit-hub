@@ -1,13 +1,32 @@
 import "server-only";
+import * as Sentry from "@sentry/nextjs";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
+import { after } from "next/server";
 import { isValidTimeZone } from "@/domain/calendar-date";
+import { sendConfirmationEmail, sendPasswordResetEmail } from "./auth-emails";
 import { db } from "./db";
 import { isSignupAllowed } from "./signup-policy";
 
 const DAY_IN_SECONDS = 60 * 60 * 24;
+
+/**
+ * E-mails go out after the response, so how long sending takes does not reveal whether
+ * an account exists. Outside a request (scripts, tests) the task simply runs on its own.
+ */
+function runAfterResponse(task: Promise<unknown>) {
+  const reported = task.catch((error) => {
+    console.error(error);
+    Sentry.captureException(error);
+  });
+  try {
+    after(() => reported);
+  } catch {
+    // Not inside a request: nothing to wait for.
+  }
+}
 
 export const auth = betterAuth({
   database: prismaAdapter(db, { provider: "postgresql" }),
@@ -15,6 +34,17 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 8,
     maxPasswordLength: 128,
+    // Single-use link, valid for 1 hour (Better Auth's default), to /redefinir-senha.
+    sendResetPassword: async ({ user, url }) => {
+      await sendPasswordResetEmail(user, url);
+    },
+    revokeSessionsOnPasswordReset: true,
+  },
+  emailVerification: {
+    // Never blocks using the app: the e-mail is only required to publish (once sign-ups open).
+    sendOnSignUp: true,
+    expiresIn: DAY_IN_SECONDS,
+    sendVerificationEmail: ({ user, url }) => sendConfirmationEmail(user, url),
   },
   session: {
     // 30 days, renewed while the person keeps using the app.
@@ -22,6 +52,8 @@ export const auth = betterAuth({
     updateAge: DAY_IN_SECONDS,
   },
   user: {
+    // The address only changes after the link sent to the new one is opened.
+    changeEmail: { enabled: true },
     additionalFields: {
       timezone: { type: "string", required: true, input: true },
     },
@@ -43,6 +75,9 @@ export const auth = betterAuth({
         },
       },
     },
+  },
+  advanced: {
+    backgroundTasks: { handler: runAfterResponse },
   },
   // Must stay last: lets Server Actions set auth cookies.
   plugins: [nextCookies()],

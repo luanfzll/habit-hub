@@ -1,6 +1,11 @@
 import "dotenv/config";
+import { readdir, readFile } from "node:fs/promises";
+import path from "node:path";
 import { expect, type Page } from "@playwright/test";
 import { Client } from "pg";
+
+/** Where the app saves the e-mails it "sends" during the tests (see playwright.config.ts). */
+export const OUTBOX = process.env.EMAIL_OUTBOX_DIR || ".outbox";
 
 const randomOctet = () => Math.floor(Math.random() * 256);
 
@@ -76,4 +81,24 @@ export function todayHabits(page: Page) {
 /** The "Tarefas do dia" panel. */
 export function todayTasks(page: Page) {
   return page.getByRole("region", { name: "Tarefas do dia" });
+}
+
+/** The link in the newest e-mail to `to` whose subject matches, waiting for it to be sent. */
+export async function emailLink(to: string, subject: RegExp): Promise<string> {
+  let link = "";
+  await expect
+    .poll(
+      async () => {
+        const files = (await readdir(OUTBOX).catch(() => [] as string[])).sort();
+        const emails = await Promise.all(
+          files.map(async (file) => JSON.parse(await readFile(path.join(OUTBOX, file), "utf8"))),
+        );
+        const email = emails.filter((e) => e.to === to && subject.test(e.subject)).at(-1);
+        link = email?.text.match(/https?:\/\/\S+/)?.[0] ?? "";
+        return link;
+      },
+      { message: `e-mail to ${to} matching ${subject}` },
+    )
+    .not.toBe("");
+  return link;
 }

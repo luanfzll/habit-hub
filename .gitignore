@@ -43,6 +43,9 @@ next-env.d.ts
 
 /src/generated/prisma
 
+# e-mails saved in development and tests (EMAIL_OUTBOX_DIR)
+/.outbox/
+
 # playwright
 /test-results/
 /playwright-report/

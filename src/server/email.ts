@@ -1,4 +1,7 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
 import nodemailer from "nodemailer";
 
 export interface Email {
@@ -11,10 +14,18 @@ export interface EmailSender {
   send(email: Email): Promise<void>;
 }
 
-/** Development and tests: prints the e-mail (and its links) to the terminal. */
+/**
+ * Development and tests: prints the e-mail (and its links) to the terminal. With
+ * EMAIL_OUTBOX_DIR set, also saves it there as JSON, so end-to-end tests can open the links.
+ */
 const consoleSender: EmailSender = {
   async send(email) {
     console.info(`\n[email] To: ${email.to}\n[email] Subject: ${email.subject}\n${email.text}\n`);
+    const outbox = process.env.EMAIL_OUTBOX_DIR;
+    if (outbox) {
+      await mkdir(outbox, { recursive: true });
+      await writeFile(path.join(outbox, `${Date.now()}-${randomUUID()}.json`), JSON.stringify(email));
+    }
   },
 };
 

@@ -6,13 +6,13 @@ As decisões de produto e de arquitetura, cada uma com a justificativa, estão e
 
 ## Estado atual
 
-| Marco                | Conteúdo                                                                                                          | Situação                                                                    |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| M0, Fundação         | Next.js, Prisma, Postgres, testes, CI, deploy na Vercel com Neon e Sentry, cadastro fechado em produção           | Pronto, no ar em [habithub-app.vercel.app](https://habithub-app.vercel.app) |
-| M1, Versão mínima    | Cadastro e login, fuso no perfil, criar e editar hábito, registrar dias, grade                                    | Pronto                                                                      |
-| M2, Regras completas | Pular dia com motivo, arquivar e excluir, página do hábito com estatísticas, visual novo, painel "Hoje" e tarefas | Pronto                                                                      |
-| M3, Perfil público   | Hábitos públicos (até 2), nome de usuário, `/u/<nome>`, imagem SVG para o README                                  | Pronto. A confirmação de e-mail chega no M4, com o envio de e-mails         |
-| M4 e M5              | Contas completas (recuperar senha, GitHub, exclusão, exportação), cadastro aberto, lançamento                     | A fazer                                                                     |
+| Marco                | Conteúdo                                                                                                          | Situação                                                                                    |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| M0, Fundação         | Next.js, Prisma, Postgres, testes, CI, deploy na Vercel com Neon e Sentry, cadastro fechado em produção           | Pronto, no ar em [habithub-app.vercel.app](https://habithub-app.vercel.app)                 |
+| M1, Versão mínima    | Cadastro e login, fuso no perfil, criar e editar hábito, registrar dias, grade                                    | Pronto                                                                                      |
+| M2, Regras completas | Pular dia com motivo, arquivar e excluir, página do hábito com estatísticas, visual novo, painel "Hoje" e tarefas | Pronto                                                                                      |
+| M3, Perfil público   | Hábitos públicos (até 2), nome de usuário, `/u/<nome>`, imagem SVG para o README                                  | Pronto. A confirmação de e-mail chega no M4, com o envio de e-mails                         |
+| M4 e M5              | Contas completas (recuperar senha, GitHub, exclusão, exportação), cadastro aberto, lançamento                     | Em andamento: recuperação de senha, confirmação de e-mail e troca de e-mail e senha prontas |
 
 ## Stack
 
@@ -33,7 +33,7 @@ npm run dev                   # http://localhost:3100
 
 A conta de exemplo criada pelo seed é `dev@habithub.local`, com a senha `senha-de-dev-123`.
 
-Em desenvolvimento, os e-mails não são enviados: o texto e os links aparecem no terminal (`EMAIL_TRANSPORT=console`).
+Em desenvolvimento, os e-mails não são enviados: o texto e os links aparecem no terminal e ficam salvos em `.outbox/` (`EMAIL_TRANSPORT=console`).
 
 ## Deploy
 
