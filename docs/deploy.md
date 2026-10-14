@@ -32,7 +32,9 @@ Em Settings → Environment Variables. Os valores secretos nunca vão para o cha
 | `BETTER_AUTH_SECRET` | Production, Preview | Gere com `openssl rand -base64 32`. Use um valor diferente do `.env` local. |
 | `BETTER_AUTH_URL` | **só Production** | `https://habithub-app.vercel.app`. Nas previews, o Better Auth usa o endereço da própria preview. |
 | `SIGNUP_ALLOWLIST` | Production, Preview | O seu e-mail. Até o M4, só ele pode criar conta. |
-| `EMAIL_TRANSPORT` | Production, Preview | `console` (nenhum e-mail é enviado antes do M3) |
+| `EMAIL_TRANSPORT` | Production, Preview | `gmail` (envia de verdade) ou `console` (só escreve nos logs da Vercel) |
+| `GMAIL_USER` | Production, Preview | `habithub.mail@gmail.com`, a conta Gmail criada só para o app |
+| `GMAIL_APP_PASSWORD` | Production, Preview | A senha de app de 16 letras dessa conta (Conta Google → Segurança → Verificação em duas etapas → Senhas de app), sem espaços. É secreta. |
 | `NEXT_PUBLIC_SENTRY_DSN` | Production, Preview | O DSN do Sentry (não é segredo) |
 | `SENTRY_ORG` | Production, Preview | `luan-felizola-leal` |
 | `SENTRY_PROJECT` | Production, Preview | O identificador do projeto no Sentry (`javascript-nextjs`, se não foi renomeado) |
