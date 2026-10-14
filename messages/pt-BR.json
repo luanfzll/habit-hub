@@ -160,7 +160,8 @@
     "sections": {
       "account": "Conta",
       "profile": "Perfil público",
-      "preferences": "Preferências"
+      "preferences": "Preferências",
+      "data": "Seus dados"
     }
   },
   "timezoneBanner": {
@@ -302,5 +303,19 @@
     "changePassword": "Trocar senha",
     "passwordChanged": "Senha alterada. As sessões nos outros aparelhos foram encerradas.",
     "wrongPassword": "A senha atual está incorreta."
+  },
+  "accountData": {
+    "exportTitle": "Exportar dados",
+    "exportHint": "Um arquivo JSON com a sua conta, todos os hábitos (inclusive os arquivados), os registros e as tarefas.",
+    "export": "Baixar meus dados",
+    "deleteTitle": "Excluir conta",
+    "deleteHint": "Apaga a conta e tudo o que há nela, na hora e para sempre. As imagens nos READMEs passam a mostrar “Hábito indisponível”.",
+    "dialogTitle": "Excluir sua conta?",
+    "dialogDescription": "Seus hábitos, registros, tarefas e o perfil público serão apagados agora, sem como desfazer.",
+    "exportFirst": "Se quiser guardar uma cópia, <link>baixe seus dados</link> antes.",
+    "confirmLabel": "Digite {email} para confirmar",
+    "confirm": "Excluir conta",
+    "deleting": "Excluindo…",
+    "deleted": "Sua conta foi excluída."
   }
 }

@@ -8,6 +8,7 @@ import { requestOrigin } from "@/server/request-origin";
 import { requireUser } from "@/server/session";
 import { EmailForm } from "./email-form";
 import { PasswordForm } from "./password-form";
+import { AccountData } from "./account-data";
 import { TimezoneForm } from "./timezone-form";
 import { UsernameSettings } from "./username-settings";
 
@@ -44,15 +45,21 @@ async function Settings() {
       }
       profile={<UsernameSettings current={username} origin={origin} />}
       preferences={<TimezoneForm current={user.timezone} options={options} />}
+      data={<AccountData email={user.email} />}
     />
   );
 }
 
-function SettingsSections(sections: { account: ReactNode; profile: ReactNode; preferences: ReactNode }) {
+function SettingsSections(sections: {
+  account: ReactNode;
+  profile: ReactNode;
+  preferences: ReactNode;
+  data: ReactNode;
+}) {
   const t = useTranslations("settings");
   return (
     <>
-      {(["account", "profile", "preferences"] as const).map((key) => (
+      {(["account", "profile", "preferences", "data"] as const).map((key) => (
         <section
           key={key}
           aria-labelledby={`settings-${key}`}
