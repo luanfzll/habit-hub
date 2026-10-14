@@ -154,12 +154,12 @@ Resultado da entrevista de produto feita entre 09/10/2026 e 13/10/2026. Cada dec
 
 ### 2.8.1 Direção visual
 
-Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidade própria, referências Spotify, Uber e Linear, nada com cara de SaaS genérico, tipografia técnica e geométrica, tema claro como versão oficial (depois trocado: o escuro virou o padrão), ousadia na cor e no placar, cartões arejados e retorno sutil.
+Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidade própria, referências Spotify, Uber e Linear, nada com cara de SaaS genérico, tipografia técnica e geométrica, tema claro como versão oficial (depois trocado: o escuro virou o padrão, inclusive nas capturas do portfólio e do README no M5), ousadia na cor e no placar, cartões arejados e retorno sutil.
 
 | Decisão | Justificativa |
 |---|---|
 | Fundo "névoa" `#F1F3F2`, superfícies brancas `#FFFFFF`, tinta preta `#000000`, texto secundário `#5B616B`. No escuro: `#0F1113`, `#181B1E` e `#F4F6F5`. Quadradinho vazio `#D3D9D7` no claro e `#383E44` no escuro (contraste de cerca de 1,45:1 e 1,6:1 com o cartão) | A cor fica nos hábitos, não na moldura. O preto e o branco firmes vêm da referência do Uber. Os vazios precisam ser visíveis, porque um dia vazio também é informação. |
-| Figtree para o texto e Unbounded (geométrica larga) só para números, títulos e a marca | Técnica e geométrica, como pedido. A Unbounded dá personalidade aos números sem pesar no texto corrido. |
+| Figtree para o texto e Unbounded (geométrica larga) só para números, títulos e a marca, as duas variáveis e servidas pelos pacotes Fontsource (sem buscar no Google durante o build) | Técnica e geométrica, como pedido. A Unbounded dá personalidade aos números sem pesar no texto corrido. Buscar no Google quebrava o build na CI. |
 | O elemento memorável é o **placar**: um bloco sólido na cor do hábito com a sequência em número grande, no cartão e, maior, na página do hábito | Junta as duas escolhas (cor e placar) num único gesto, inspirado nas capas do Spotify. Todo o resto fica discreto. |
 | Cartões sem borda nem sombra, com cantos bem arredondados. Botões em pílula. Quadradinhos com cantos de 3 px | Foge do "kit SaaS" (cartões iguais com sombra cinza). Cada forma tem um raio próprio, conforme a hierarquia. |
 | "Feito hoje" e a quantidade que atingiu a meta assumem a cor do hábito | O momento de cumprir fica visível sem precisar de comemoração. |
