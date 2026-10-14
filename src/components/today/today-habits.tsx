@@ -1,8 +1,9 @@
 "use client";
 
-import { CheckIcon, PlusIcon } from "lucide-react";
+import { CheckIcon, MinusIcon, PlusIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
+import { toast } from "sonner";
 import { useHabitEntries } from "@/components/habit/use-habit-entries";
 import { Button } from "@/components/ui/button";
 import type { CalendarDate } from "@/domain/calendar-date";
@@ -53,46 +54,72 @@ function TodayHabitRow({ habit, today }: { habit: HabitView; today: CalendarDate
 
   const done = day.kind === "done";
   const skipped = day.kind === "skipped";
+  const numeric = day.target > 1;
   const amount = habit.unit
     ? t("grid.amountUnit", { value: day.value, target: day.target, unit: habit.unit })
     : t("grid.amount", { value: day.value, target: day.target });
 
+  /**
+   * The check completes the day in one click (the whole target for numeric habits).
+   * Unchecking clears the day; when that throws away a registered amount, the toast
+   * offers to put it back.
+   */
+  function toggle() {
+    if (!done) {
+      save(today, { value: day.target });
+      return;
+    }
+    const previous = day.value;
+    save(today, { value: 0 });
+    if (numeric) {
+      toast(t("today.cleared", { name: habit.name }), {
+        action: { label: t("habitPage.undo"), onClick: () => save(today, { value: previous }) },
+      });
+    }
+  }
+
+  const step = (delta: number) => save(today, { value: Math.min(MAX_VALUE, Math.max(0, day.value + delta)) });
+
   return (
     <li
-      className="habit-scope flex min-h-12 items-center gap-3 border-b py-2 last:border-b-0"
+      className="habit-scope flex min-h-12 items-center gap-2 border-b py-2 last:border-b-0"
       style={paletteVariables(habit.color)}
     >
-      {day.target === 1 ? (
-        <button
-          type="button"
-          role="checkbox"
-          aria-checked={done}
-          onClick={() => save(today, { value: done ? 0 : 1 })}
-          className="group flex min-w-0 flex-1 items-center gap-3 rounded-lg py-1 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          <Check checked={done} />
+      <button
+        type="button"
+        role="checkbox"
+        aria-checked={done}
+        onClick={toggle}
+        className="flex min-w-0 flex-1 items-center gap-3 rounded-lg py-1 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+      >
+        <Check checked={done} />
+        <span className="min-w-0">
           <Name done={done}>{habit.name}</Name>
-        </button>
-      ) : (
-        <div className="flex min-w-0 flex-1 items-center gap-3">
-          <Check checked={done} />
-          <div className="min-w-0">
-            <Name done={done}>{habit.name}</Name>
-            <p className="text-xs text-muted-foreground tabular-nums">{amount}</p>
-          </div>
-        </div>
-      )}
+          {numeric && <span className="block text-xs text-muted-foreground tabular-nums">{amount}</span>}
+        </span>
+      </button>
       {skipped && <span className="text-xs text-muted-foreground">{t("today.skipped")}</span>}
-      {day.target > 1 && (
-        <Button
-          variant="outline"
-          size="icon"
-          aria-label={t("today.addOne", { name: habit.name })}
-          disabled={day.value >= MAX_VALUE}
-          onClick={() => save(today, { value: Math.min(MAX_VALUE, day.value + 1) })}
-        >
-          <PlusIcon />
-        </Button>
+      {numeric && (
+        <>
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label={t("today.removeOne", { name: habit.name })}
+            disabled={day.value === 0}
+            onClick={() => step(-1)}
+          >
+            <MinusIcon />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label={t("today.addOne", { name: habit.name })}
+            disabled={day.value >= MAX_VALUE}
+            onClick={() => step(1)}
+          >
+            <PlusIcon />
+          </Button>
+        </>
       )}
     </li>
   );
@@ -114,5 +141,7 @@ function Check({ checked }: { checked: boolean }) {
 }
 
 function Name({ done, children }: { done: boolean; children: string }) {
-  return <span className={cn("truncate font-medium", done && "text-muted-foreground line-through")}>{children}</span>;
+  return (
+    <span className={cn("block truncate font-medium", done && "text-muted-foreground line-through")}>{children}</span>
+  );
 }

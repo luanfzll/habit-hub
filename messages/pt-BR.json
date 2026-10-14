@@ -200,6 +200,8 @@
     "tasksEmpty": "Nenhuma tarefa por enquanto. O que não for feito hoje passa para amanhã.",
     "pendingSince": "desde {date}",
     "deleteTask": "Excluir “{title}”",
-    "taskLimit": "Você chegou ao limite de {max} tarefas pendentes."
+    "taskLimit": "Você chegou ao limite de {max} tarefas pendentes.",
+    "removeOne": "Remover 1 de {name}",
+    "cleared": "“{name}” voltou para zero hoje."
   }
 }
