@@ -12,18 +12,56 @@
     "saveFailed": "Não foi possível salvar. Tente de novo."
   },
   "home": {
-    "title": "Seus hábitos numa grade, um quadradinho por dia.",
-    "subtitle": "Marque o que fez hoje, veja a sequência crescer e, se quiser, mostre a grade no README do GitHub. Ela se atualiza sozinha.",
-    "createAccount": "Criar conta",
+    "navHow": "Como funciona",
+    "navReadme": "README",
+    "sourceCode": "Código-fonte",
     "signIn": "Entrar",
-    "exampleName": "Ler",
-    "exampleUnit": "páginas",
+    "badge": "Funciona no README do GitHub",
+    "title": "Seus hábitos numa grade, um quadradinho por dia.",
+    "subtitle": "Marque o que fez hoje, veja a sequência crescer e mostre a grade no seu perfil do GitHub. Ela se atualiza sozinha.",
+    "createAccount": "Criar conta",
+    "seeExample": "Ver exemplo",
     "exampleBadge": "Exemplo",
+    "todayTitle": "Hoje",
+    "todayCount": "{done} de {total} feitos",
+    "exampleGridLabel": "Últimas {weeks} semanas de {name}",
+    "examples": {
+      "ler": {
+        "name": "Ler",
+        "unit": "páginas"
+      },
+      "treinar": {
+        "name": "Treinar",
+        "unit": "minutos"
+      },
+      "meditar": {
+        "name": "Meditar",
+        "unit": "minutos"
+      }
+    },
+    "readmeTitle": "Sua constância, no seu perfil",
+    "readmeText": "Publique um hábito, copie o código e cole no README do GitHub. A grade aparece no seu perfil, sempre atualizada, no tema claro ou escuro de quem lê.",
+    "readmeCode": "![Ler no HabitHub](https://habithub-app.vercel.app/api/embed/k7m2p9qx4a.svg)",
+    "readmeFile": "luanfzll / README.md",
+    "readmeGreeting": "Oi, eu sou o Luan",
+    "readmeBio": "Dev, leitor e tentando treinar todo dia.",
+    "features": {
+      "tap": {
+        "title": "Um toque por dia",
+        "text": "Marque o hábito e pronto. Também dá para contar páginas, copos ou minutos e escolher os dias da semana."
+      },
+      "streaks": {
+        "title": "Sequências visíveis",
+        "text": "Veja os dias seguidos crescerem. Pular um dia com motivo não quebra a sequência."
+      },
+      "readme": {
+        "title": "Grade no README",
+        "text": "Mostre até 2 hábitos no seu perfil do GitHub. A imagem se atualiza sozinha."
+      }
+    },
     "author": "Um projeto de Luan Leal",
     "footer": "Links do rodapé",
-    "sourceCode": "Código-fonte",
-    "privacy": "Privacidade",
-    "exampleCaption": "Um hábito de leitura depois de um ano de uso."
+    "privacy": "Privacidade"
   },
   "auth": {
     "email": "E-mail",
