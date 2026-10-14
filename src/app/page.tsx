@@ -1,4 +1,4 @@
-import { FlameIcon, SquareCheckIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowRightIcon, FlameIcon, SquareCheckIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import type { ComponentType, SVGProps } from "react";
@@ -10,6 +10,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { buttonVariants } from "@/components/ui/button";
 import type { HabitColor } from "@/generated/prisma/enums";
 import { paletteVariables } from "@/lib/palette";
+import { cn } from "@/lib/utils";
 
 const REPOSITORY_URL = "https://github.com/luanfzll/habit-hub";
 const FEATURES: {
@@ -22,6 +23,40 @@ const FEATURES: {
   { key: "readme", color: "purple", Icon: GithubIcon },
 ];
 const navLink = "rounded-full px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground";
+
+/*
+ * Hover feedback: "Criar conta" lifts a little over a green glow and its arrow points
+ * on; "Como funciona" lights its border and its arrow nudges down, where it scrolls.
+ * With reduced motion only the colors change.
+ */
+const ARROW = "transition-transform duration-200 ease-out motion-reduce:transition-none";
+const outlineHover = "hover:border-foreground/30";
+
+function CreateAccountButton({ label, className }: { label: string; className?: string }) {
+  return (
+    <Link
+      href="/cadastro"
+      style={paletteVariables("green")}
+      className={cn(
+        "habit-scope",
+        buttonVariants({
+          size: "lg",
+          className: cn(
+            "duration-200 ease-out hover:-translate-y-0.5 hover:bg-primary hover:shadow-[0_12px_28px_-10px_var(--habit)] motion-reduce:hover:translate-y-0",
+            className,
+          ),
+        }),
+      )}
+    >
+      {label}
+      <ArrowRightIcon
+        data-icon="inline-end"
+        aria-hidden
+        className={`${ARROW} group-hover/button:translate-x-1 motion-reduce:group-hover/button:translate-x-0`}
+      />
+    </Link>
+  );
+}
 
 /** Home page for visitors (signed-in people go straight to the dashboard, see proxy.ts). */
 export default function HomePage() {
@@ -36,7 +71,10 @@ export default function HomePage() {
               {t("sourceCode")}
             </a>
             <ThemeToggle />
-            <Link href="/entrar" className={buttonVariants({ variant: "outline", className: "ml-1" })}>
+            <Link
+              href="/entrar"
+              className={buttonVariants({ variant: "outline", className: cn("ml-1", outlineHover) })}
+            >
               {t("signIn")}
             </Link>
           </div>
@@ -59,11 +97,14 @@ export default function HomePage() {
             </h1>
             <p className="max-w-xl text-lg text-pretty text-muted-foreground">{t("subtitle")}</p>
             <div className="flex flex-wrap gap-3">
-              <Link href="/cadastro" className={buttonVariants({ size: "lg" })}>
-                {t("createAccount")}
-              </Link>
-              <a href="#readme" className={buttonVariants({ size: "lg", variant: "outline" })}>
+              <CreateAccountButton label={t("createAccount")} />
+              <a href="#readme" className={buttonVariants({ size: "lg", variant: "outline", className: outlineHover })}>
                 {t("howItWorks")}
+                <ArrowDownIcon
+                  data-icon="inline-end"
+                  aria-hidden
+                  className={`${ARROW} group-hover/button:translate-y-0.5 motion-reduce:group-hover/button:translate-y-0`}
+                />
               </a>
             </div>
           </div>
@@ -119,9 +160,7 @@ export default function HomePage() {
             </h2>
             <p className="text-pretty text-muted-foreground">{t("ctaText")}</p>
           </div>
-          <Link href="/cadastro" className={buttonVariants({ size: "lg", className: "shrink-0" })}>
-            {t("createAccount")}
-          </Link>
+          <CreateAccountButton label={t("createAccount")} className="shrink-0" />
         </section>
       </main>
 
