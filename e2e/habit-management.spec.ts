@@ -70,10 +70,11 @@ test("habit page shows stats; a habit can be archived, restored and deleted", as
   await expect(page.getByText("Nenhum hábito ainda")).toBeVisible();
 });
 
-test("theme can be switched and is remembered", async ({ page }) => {
+test("dark is the default theme; light can be chosen and is remembered", async ({ page }) => {
   await signUp(page);
-  await page.getByRole("button", { name: "Tema escuro" }).click();
   await expect(page.locator("html")).toHaveClass(/\bdark\b/);
+  await page.getByRole("button", { name: "Tema claro" }).click();
+  await expect(page.locator("html")).not.toHaveClass(/\bdark\b/);
   await page.reload();
-  await expect(page.locator("html")).toHaveClass(/\bdark\b/);
+  await expect(page.locator("html")).not.toHaveClass(/\bdark\b/);
 });
