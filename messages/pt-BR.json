@@ -12,9 +12,17 @@
     "saveFailed": "Não foi possível salvar. Tente de novo."
   },
   "home": {
+    "title": "Seus hábitos numa grade, um quadradinho por dia.",
+    "subtitle": "Marque o que fez hoje, veja a sequência crescer e, se quiser, mostre a grade no README do GitHub. Ela se atualiza sozinha.",
     "createAccount": "Criar conta",
     "signIn": "Entrar",
-    "tagline": "Um quadradinho por dia para cada hábito. Calmo de usar, bom de ver crescer."
+    "exampleName": "Ler",
+    "exampleUnit": "páginas",
+    "exampleBadge": "Exemplo",
+    "author": "Um projeto de Luan Leal",
+    "footer": "Links do rodapé",
+    "sourceCode": "Código-fonte",
+    "privacy": "Privacidade"
   },
   "auth": {
     "email": "E-mail",
@@ -366,9 +374,7 @@
       },
       {
         "title": "Onde os dados ficam",
-        "paragraphs": [
-          "Os serviços abaixo ajudam o app a funcionar e só tratam os dados para isso:"
-        ],
+        "paragraphs": ["Os serviços abaixo ajudam o app a funcionar e só tratam os dados para isso:"],
         "items": [
           "Vercel: hospeda o app, com os servidores em São Paulo.",
           "Neon: guarda o banco de dados, também em São Paulo.",
@@ -393,9 +399,7 @@
       },
       {
         "title": "Seus direitos",
-        "paragraphs": [
-          "Pela LGPD, você pode, a qualquer momento:"
-        ],
+        "paragraphs": ["Pela LGPD, você pode, a qualquer momento:"],
         "items": [
           "ver e levar seus dados: Configurações → Seus dados → Baixar meus dados gera um arquivo com tudo;",
           "corrigir seus dados: editando os hábitos ou trocando o e-mail nas configurações;",
@@ -412,9 +416,7 @@
       },
       {
         "title": "Mudanças nesta página",
-        "paragraphs": [
-          "Se esta página mudar, a data no topo é atualizada."
-        ]
+        "paragraphs": ["Se esta página mudar, a data no topo é atualizada."]
       }
     ]
   }
