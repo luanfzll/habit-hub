@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useId, useState } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -35,6 +35,8 @@ export function HabitForm({ mode, action, defaults = NEW_HABIT }: HabitFormProps
   const t = useTranslations("habitForm");
   const tCommon = useTranslations("common");
   const tGrid = useTranslations("grid");
+  // Unique ids: Next may keep the other habit form (new or edit) mounted, hidden.
+  const id = useId();
   const [state, formAction, pending] = useActionState(action, {});
   const [everyDay, setEveryDay] = useState(defaults.weekdays === EVERY_DAY);
   const [days, setDays] = useState<Weekday[]>(weekdaysToList(defaults.weekdays));
@@ -47,9 +49,9 @@ export function HabitForm({ mode, action, defaults = NEW_HABIT }: HabitFormProps
     <form action={formAction} className="flex flex-col gap-6">
       <FieldGroup>
         <Field>
-          <FieldLabel htmlFor="name">{t("name")}</FieldLabel>
+          <FieldLabel htmlFor={`${id}-name`}>{t("name")}</FieldLabel>
           <Input
-            id="name"
+            id={`${id}-name`}
             name="name"
             required
             maxLength={40}
@@ -61,9 +63,9 @@ export function HabitForm({ mode, action, defaults = NEW_HABIT }: HabitFormProps
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field>
-            <FieldLabel htmlFor="target">{t("target")}</FieldLabel>
+            <FieldLabel htmlFor={`${id}-target`}>{t("target")}</FieldLabel>
             <Input
-              id="target"
+              id={`${id}-target`}
               name="target"
               type="number"
               inputMode="numeric"
@@ -76,9 +78,9 @@ export function HabitForm({ mode, action, defaults = NEW_HABIT }: HabitFormProps
             <FieldDescription>{t("targetHint")}</FieldDescription>
           </Field>
           <Field>
-            <FieldLabel htmlFor="unit">{t("unit")}</FieldLabel>
+            <FieldLabel htmlFor={`${id}-unit`}>{t("unit")}</FieldLabel>
             <Input
-              id="unit"
+              id={`${id}-unit`}
               name="unit"
               maxLength={15}
               defaultValue={defaults.unit ?? ""}
