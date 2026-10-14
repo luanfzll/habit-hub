@@ -12,8 +12,7 @@
     "saveFailed": "Não foi possível salvar. Tente de novo."
   },
   "home": {
-    "navFeatures": "Recursos",
-    "navReadme": "README",
+    "featuresTitle": "Recursos",
     "sourceCode": "Código-fonte",
     "signIn": "Entrar",
     "badge": "Funciona no README do GitHub",
@@ -126,7 +125,7 @@
     "todayValue": "Quantidade de hoje",
     "todayProgressUnit": "de {target} {unit}",
     "skippedToday": "Hoje foi pulado.",
-    "streakCaption": "{count, plural, =0 {dias seguidos} one {dia seguido} other {dias seguidos}}"
+    "streakCaption": "{count, plural, =0 {<big>dias</big> <small>seguidos</small>} one {<big>dia</big> <small>seguido</small>} other {<big>dias</big> <small>seguidos</small>}}"
   },
   "grid": {
     "label": "Grade de {name}: últimos 12 meses",

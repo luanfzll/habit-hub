@@ -32,12 +32,6 @@ export default function HomePage() {
         <nav className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 px-4 sm:h-20">
           <Wordmark className="text-lg" />
           <div className="flex items-center gap-1">
-            <a href="#recursos" className={`${navLink} hidden md:inline`}>
-              {t("navFeatures")}
-            </a>
-            <a href="#readme" className={`${navLink} hidden md:inline`}>
-              {t("navReadme")}
-            </a>
             <a href={REPOSITORY_URL} className={`${navLink} hidden md:inline`}>
               {t("sourceCode")}
             </a>
@@ -100,9 +94,9 @@ export default function HomePage() {
 
         <hr />
 
-        <section id="recursos" aria-labelledby="features-title" className="scroll-mt-6 py-14 sm:py-20">
+        <section aria-labelledby="features-title" className="py-14 sm:py-20">
           <h2 id="features-title" className="sr-only">
-            {t("navFeatures")}
+            {t("featuresTitle")}
           </h2>
           <ul className="grid gap-10 sm:grid-cols-3 sm:gap-8">
             {FEATURES.map(({ key, color, Icon }) => (

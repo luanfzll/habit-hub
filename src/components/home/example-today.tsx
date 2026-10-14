@@ -77,12 +77,20 @@ function ExampleRow({
       <div className="min-w-0 flex-1">
         {/* The same check as the app's "Today" panel tells at a glance which habit is still open. */}
         <p className="flex items-center gap-2 font-semibold">
-          <span className="truncate">{habit.name}</span>
           {todayState?.kind === "off-schedule" ? (
-            <span className="text-xs font-normal text-muted-foreground">{t("todayOff")}</span>
+            <>
+              {/* Not scheduled today: an empty, dashed box keeps the names aligned. */}
+              <span
+                aria-hidden
+                className="size-[1.125rem] shrink-0 rounded-[5px] border-2 border-dashed border-muted-foreground/40"
+              />
+              <span className="truncate">{habit.name}</span>
+              <span className="text-xs font-normal text-muted-foreground">{t("todayOff")}</span>
+            </>
           ) : (
             <>
               <Check checked={todayState?.kind === "done"} size="sm" />
+              <span className="truncate">{habit.name}</span>
               <span className="sr-only">{todayState?.kind === "done" ? t("todayDone") : t("todayPending")}</span>
             </>
           )}
