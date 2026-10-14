@@ -177,7 +177,6 @@
   },
   "theme": {
     "label": "Tema",
-    "system": "Tema do sistema",
     "light": "Tema claro",
     "dark": "Tema escuro"
   },

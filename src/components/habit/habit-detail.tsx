@@ -117,7 +117,7 @@ export function HabitDetail({ habit, today }: { habit: HabitView; today: Calenda
           onPopEnd={tracker.clearPop}
           onSelectDay={(day, anchor) => tracker.setSelection({ day, anchor })}
         />
-        <GridLegend />
+        <GridLegend {...tracker.legend} />
       </section>
 
       {skippedDays.length > 0 && (

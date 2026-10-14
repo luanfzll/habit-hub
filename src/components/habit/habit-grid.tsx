@@ -29,6 +29,8 @@ interface HabitGridProps {
 const ROWS = 7;
 /** Weekday labels column (24px) plus the gap after it (6px). */
 const LABELS_WIDTH = 30;
+/** Inner padding so today's outline and the focus ring are not clipped at the edges. */
+const OUTLINE_ROOM = 4;
 
 function isInteractive(day: DayState): boolean {
   return day.kind !== "before-start" && day.kind !== "future";
@@ -95,7 +97,7 @@ export function HabitGrid({
         className="flex gap-1.5 text-[10px] leading-none text-muted-foreground"
         style={
           {
-            "--cell-size": `clamp(${overflow === "scroll" ? 12 : 10}px, calc((100cqi - ${LABELS_WIDTH}px - ${columns.length - 1} * var(--cell-gap)) / ${columns.length}), 16px)`,
+            "--cell-size": `clamp(${overflow === "scroll" ? 12 : 10}px, calc((100cqi - ${LABELS_WIDTH + OUTLINE_ROOM * 2}px - ${columns.length - 1} * var(--cell-gap)) / ${columns.length}), 16px)`,
           } as CSSProperties
         }
       >
@@ -103,6 +105,7 @@ export function HabitGrid({
           aria-hidden
           className="grid w-6 shrink-0"
           style={{
+            paddingTop: OUTLINE_ROOM,
             gridTemplateRows: `calc(var(--cell-size) + 4px) repeat(${ROWS}, var(--cell-size))`,
             rowGap: "var(--cell-gap)",
           }}
@@ -124,7 +127,7 @@ export function HabitGrid({
                 "flex min-w-0 flex-1 justify-end overflow-hidden @max-[716px]:[mask-image:linear-gradient(to_right,transparent,black_1.5rem)]"
           }
         >
-          <div>
+          <div style={{ padding: OUTLINE_ROOM }}>
             <div
               aria-hidden
               className="mb-1 grid"
@@ -189,21 +192,24 @@ export function HabitGrid({
   );
 }
 
-/** Neutral legend (shades of the text color), shown once per page rather than on every habit. */
-export function GridLegend({ className }: { className?: string }) {
+/**
+ * Legend in the habit's own tones. "Not scheduled" and "skipped" only appear when
+ * the habit actually has such days, to keep the cards quiet.
+ */
+export function GridLegend({
+  showOffSchedule = true,
+  showSkipped = true,
+  className,
+}: {
+  showOffSchedule?: boolean;
+  showSkipped?: boolean;
+  className?: string;
+}) {
   const t = useTranslations("grid");
-  const neutralTones = Object.fromEntries(
-    [25, 45, 70, 100].map((strength, i) => [
-      `--tone-${i + 1}`,
-      `color-mix(in oklab, var(--foreground) ${strength}%, var(--cell-empty))`,
-    ]),
-  ) as CSSProperties;
-
   return (
     <div
       aria-hidden
       className={cn("flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground", className)}
-      style={neutralTones}
     >
       <span className="flex items-center gap-1">
         {t("less")}
@@ -212,14 +218,18 @@ export function GridLegend({ className }: { className?: string }) {
         ))}
         {t("more")}
       </span>
-      <span className="flex items-center gap-1.5">
-        <span className="habit-cell" data-kind="off-schedule" />
-        {t("offSchedule")}
-      </span>
-      <span className="flex items-center gap-1.5">
-        <span className="habit-cell" data-kind="skipped" />
-        {t("skipped")}
-      </span>
+      {showOffSchedule && (
+        <span className="flex items-center gap-1.5">
+          <span className="habit-cell" data-kind="off-schedule" />
+          {t("offSchedule")}
+        </span>
+      )}
+      {showSkipped && (
+        <span className="flex items-center gap-1.5">
+          <span className="habit-cell" data-kind="skipped" />
+          {t("skipped")}
+        </span>
+      )}
     </div>
   );
 }

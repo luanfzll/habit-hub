@@ -6,7 +6,7 @@ Guia para colocar o app no ar na Vercel com o banco no Neon e os erros no Sentry
 
 - A Vercel roda `npm run vercel-build`, que executa [`scripts/deploy/migrate.ts`](../scripts/deploy/migrate.ts) e depois `next build`.
 - **Produção:** o script cria uma cópia do banco no Neon (`backup-<data>`), mantém só as 3 mais recentes e aplica as migrações. Sem as credenciais do Neon, o build falha: a produção nunca é migrada sem backup.
-- **Versões de teste dos PRs (preview):** só migram com `MIGRATE_PREVIEW_DATABASE=true`. Ative isso apenas quando cada preview tiver um banco próprio (passo 2.3). Sem essa garantia, uma preview poderia migrar o banco de produção.
+- **Versões de teste dos PRs (preview):** não migram. Elas usam o banco de produção (passo 2.3).
 - As funções rodam em São Paulo (`gru1`, definido em [`vercel.json`](../vercel.json)), na mesma região do banco.
 
 ## 1. Neon
@@ -40,11 +40,11 @@ Em Settings → Environment Variables. Os valores secretos nunca vão para o cha
 | `NEON_API_KEY` | **só Production** | Passo 1.3 |
 | `NEON_PROJECT_ID` | **só Production** | Passo 1.2 |
 
-### 2.3 Banco próprio para cada preview (opcional, recomendado)
+### 2.3 Previews e banco de dados
 
-Integração Neon na Vercel (Marketplace → Neon → conectar o projeto existente), com a criação de branch por preview ligada e a exclusão automática de branches antigas ligada. Depois de confirmar que uma preview recebeu um `DATABASE_URL` próprio, adicione `MIGRATE_PREVIEW_DATABASE=true` **só no ambiente Preview**.
+As previews usam o mesmo banco da produção (decisão registrada em [decisoes.md](decisoes.md)): `DATABASE_URL` e `DATABASE_URL_UNPOOLED` do ambiente Preview apontam para a branch de produção. Por isso `MIGRATE_PREVIEW_DATABASE` **não** deve ser ligado: uma preview com migração nova a aplicaria na produção sem backup. O que você testar numa preview grava nos seus dados reais.
 
-O plano grátis do Neon permite 10 branches por projeto. A principal, os 3 backups e as previews abertas entram nessa conta.
+Para separar no futuro: crie uma branch no Neon (de preferência "schema only"), use as strings dela no ambiente Preview e só então ligue `MIGRATE_PREVIEW_DATABASE=true` no Preview.
 
 ## 3. Sentry
 

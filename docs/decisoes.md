@@ -146,7 +146,7 @@ Resultado da entrevista de produto feita entre 09/10/2026 e 13/10/2026. Cada dec
 | Clicar num quadradinho abre um menu com a data por extenso, o valor (alternar ou digitar) e "Pular dia" / "Desfazer pulo" | Evita marcações por engano em quadradinhos de 11 px e deixa o "pular" fácil de achar. |
 | No celular, a tela principal mostra só as semanas mais recentes que cabem na largura (alinhadas à direita, com a sobra da esquerda cortada só com CSS). A página do hábito tem a grade completa com rolagem lateral | Sem rolagem dentro de rolagem, e com o mesmo HTML gerado no servidor para todas as telas. |
 | Cada hábito escolhe uma de 8 cores com nome (Menta, Oceano, Uva, Chiclete, Tomate, Tangerina, Girassol, Lagoa), Menta por padrão. Os 4 tons da grade são derivados da cor do hábito, misturada com o cinza do quadradinho vazio, e calculados em TypeScript para o app e a imagem do README | Os cartões ficam fáceis de distinguir, e os nomes deixam a escolha mais divertida. Um teste garante que o número sobre cada cor tenha contraste de pelo menos 4,5:1 nos dois temas. |
-| Tema claro e escuro, seguindo o sistema, com um botão para trocar | Devs esperam modo escuro, e a imagem do README precisa dos dois temas de qualquer forma. |
+| Tema claro e escuro, com **escuro como padrão**, e um botão sol/lua para trocar. A opção de seguir o sistema foi removida | Escolha do autor depois de usar o app. A imagem do README continua com as duas versões. |
 | Painel vazio: botão "Criar primeiro hábito" e 3 sugestões (Ler 10 páginas, Beber 8 copos de água, Exercício seg/qua/sex) que preenchem o formulário | Mostra logo na primeira tela que existem meta numérica e dias da semana. |
 | Tom dos textos: "você", informal e sem culpa. O app nunca diz "falhou": um dia vazio é "não registrado" | Combina com a grade sem vermelho. |
 | Acessibilidade no nível WCAG 2.2 AA: cada quadradinho tem uma descrição para leitores de tela; o foco do teclado fica visível; cada grade é uma única parada da tecla Tab, com as setas andando entre os dias e o Enter abrindo o menu; a cor nunca é a única informação (hachura nos dias neutros, contorno no dia de hoje) | A grade é a peça central do capricho de front-end. |
@@ -154,16 +154,16 @@ Resultado da entrevista de produto feita entre 09/10/2026 e 13/10/2026. Cada dec
 
 ### 2.8.1 Direção visual
 
-Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidade própria, referências Spotify, Uber e Linear, nada com cara de SaaS genérico, tipografia técnica e geométrica, tema claro como versão oficial, ousadia na cor e no placar, cartões arejados e retorno sutil.
+Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidade própria, referências Spotify, Uber e Linear, nada com cara de SaaS genérico, tipografia técnica e geométrica, tema claro como versão oficial (depois trocado: o escuro virou o padrão, inclusive nas capturas do portfólio e do README no M5), ousadia na cor e no placar, cartões arejados e retorno sutil.
 
 | Decisão | Justificativa |
 |---|---|
-| Fundo "névoa" `#F1F3F2`, superfícies brancas `#FFFFFF`, tinta preta `#000000`, texto secundário `#5B616B`. No escuro: `#0F1113`, `#181B1E` e `#F4F6F5` | A cor fica nos hábitos, não na moldura. O preto e o branco firmes vêm da referência do Uber. |
-| Figtree para o texto e Unbounded (geométrica larga) só para números, títulos e a marca | Técnica e geométrica, como pedido. A Unbounded dá personalidade aos números sem pesar no texto corrido. |
+| Fundo "névoa" `#F1F3F2`, superfícies brancas `#FFFFFF`, tinta preta `#000000`, texto secundário `#5B616B`. No escuro: `#0F1113`, `#181B1E` e `#F4F6F5`. Quadradinho vazio `#D3D9D7` no claro e `#383E44` no escuro (contraste de cerca de 1,45:1 e 1,6:1 com o cartão) | A cor fica nos hábitos, não na moldura. O preto e o branco firmes vêm da referência do Uber. Os vazios precisam ser visíveis, porque um dia vazio também é informação. |
+| Figtree para o texto e Unbounded (geométrica larga) só para números, títulos e a marca, as duas variáveis e servidas pelos pacotes Fontsource (sem buscar no Google durante o build) | Técnica e geométrica, como pedido. A Unbounded dá personalidade aos números sem pesar no texto corrido. Buscar no Google quebrava o build na CI. |
 | O elemento memorável é o **placar**: um bloco sólido na cor do hábito com a sequência em número grande, no cartão e, maior, na página do hábito | Junta as duas escolhas (cor e placar) num único gesto, inspirado nas capas do Spotify. Todo o resto fica discreto. |
 | Cartões sem borda nem sombra, com cantos bem arredondados. Botões em pílula. Quadradinhos com cantos de 3 px | Foge do "kit SaaS" (cartões iguais com sombra cinza). Cada forma tem um raio próprio, conforme a hierarquia. |
 | "Feito hoje" e a quantidade que atingiu a meta assumem a cor do hábito | O momento de cumprir fica visível sem precisar de comemoração. |
-| A legenda da grade é neutra (tons de cinza) e aparece uma vez por página, não em cada cartão | Menos repetição no painel, mais calma. |
+| Cada hábito tem a sua legenda, nos tons da própria cor. "Fora da agenda" e "pulado" só aparecem quando o hábito tem esses dias | A legenda explica a cor que a pessoa está vendo, sem repetir itens que não se aplicam. |
 | Marca: "habithub" em minúsculas na Unbounded, com 4 quadradinhos coloridos | É a grade reduzida a um símbolo. |
 
 ### 2.9 Stack e arquitetura
@@ -190,9 +190,9 @@ Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidad
 | Testes de integração com um Postgres de verdade em contêiner no GitHub Actions: o usuário A não lê nem altera dados do usuário B; o banco aceita um registro por dia; um hábito privado não aparece no perfil público nem na imagem; um GitHub não vinculado não consegue entrar nem criar conta | Cobre as regras de segurança e de integridade. |
 | Testes ponta a ponta (Playwright) em 4 fluxos: cadastro → hábito → marcar → grade; recuperação de senha com o e-mail falso; publicar → perfil público; a imagem retorna um SVG. Mais a verificação de acessibilidade com axe | Cobre o produto de ponta a ponta. |
 | A CI roda a cada pull request: lint, checagem de tipos e as três camadas de teste. Sem meta de porcentagem de cobertura | O que vale é cobrir as partes críticas, e o avaliador confere isso pela pasta de testes. |
-| Cada pull request ganha uma versão de teste do site na Vercel, com uma cópia própria do banco no Neon (integração Neon–Vercel) | A versão de teste nunca toca os dados reais. |
+| Cada pull request ganha uma versão de teste do site na Vercel, usando o banco de produção (ver seção 2.9) | Basta para conferir telas e fluxos sem custo de configuração extra. |
 | As migrações rodam no build de produção: o script só age quando `VERCEL_ENV=production`, cria o backup e depois roda `prisma migrate deploy`. Sem as credenciais do Neon, o build falha. As migrações usam a conexão direta (`DATABASE_URL_UNPOOLED`), e o app usa a conexão com pooling. As migrações precisam ser compatíveis com a versão anterior do código (adicionar primeiro, remover depois) | Durante o deploy, o código antigo roda com o banco novo, e o processo não depende de memória humana. |
-| As previews só migram com `MIGRATE_PREVIEW_DATABASE=true`, ligado apenas quando cada preview tem um banco próprio | Sem essa garantia, uma preview poderia migrar o banco de produção sem backup. |
+| As previews usam **o mesmo banco da produção** e **nunca** rodam migrações (`MIGRATE_PREVIEW_DATABASE` fica desligado). Risco aceito: o que for testado numa preview grava nos dados reais, e um PR com migração só é verificado depois do merge (com backup) | Projeto de portfólio com um único usuário, sem plano de virar produto. As previews ficam protegidas pelo login da Vercel. |
 
 ### 2.11 Repositório e ambiente local
 

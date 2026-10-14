@@ -132,6 +132,13 @@
        advances at text sizes and leaves visible gaps (e.g. after "t"). */
     text-rendering: geometricPrecision;
   }
+  /* Browsers reset text-rendering on form controls instead of inheriting it. */
+  button,
+  input,
+  select,
+  textarea {
+    text-rendering: inherit;
+  }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
@@ -169,13 +176,13 @@
 :root {
   --cell-size: 11px;
   --cell-gap: 3px;
-  --cell-empty: #e5e8e7;
-  --cell-line: #c4c9c8;
+  --cell-empty: #d3d9d7;
+  --cell-line: #a9b1af;
 }
 
 .dark {
-  --cell-empty: #23272b;
-  --cell-line: #3e444b;
+  --cell-empty: #383e44;
+  --cell-line: #59616a;
 }
 
 .habit-cell {
@@ -217,7 +224,7 @@
 /* Before the habit started: faint outline only. */
 .habit-cell[data-kind="before-start"] {
   background: transparent;
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--cell-empty) 70%, transparent);
+  box-shadow: inset 0 0 0 1px var(--cell-empty);
 }
 
 .habit-cell[data-today="true"] {
