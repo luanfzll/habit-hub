@@ -66,3 +66,28 @@ test("dashboard has no detectable accessibility violations", async ({ page }) =>
   const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
   expect(results.violations).toEqual([]);
 });
+
+test("the check completes a numeric target in one click; minus and undo fix mistakes", async ({ page }) => {
+  await signUp(page);
+  await createHabit(page, { name: "Ler", target: 20, unit: "páginas" });
+  const today = todayHabits(page);
+  const check = today.getByRole("checkbox", { name: /Ler/ });
+
+  await check.click();
+  await expect(check).toHaveAttribute("aria-checked", "true");
+  await expect(today.getByText("20 de 20 páginas")).toBeVisible();
+
+  await today.getByRole("button", { name: "Remover 1 de Ler" }).click();
+  await expect(today.getByText("19 de 20 páginas")).toBeVisible();
+  await expect(check).toHaveAttribute("aria-checked", "false");
+
+  // Unchecking a done day clears it; the toast puts the amount back.
+  await today.getByRole("button", { name: "Adicionar 1 a Ler" }).click();
+  await check.click();
+  await expect(today.getByText("0 de 20 páginas")).toBeVisible();
+  await page.getByRole("button", { name: "Desfazer" }).click();
+  await expect(today.getByText("20 de 20 páginas")).toBeVisible();
+
+  await reloadAfterSave(page);
+  await expect(todayHabits(page).getByText("20 de 20 páginas")).toBeVisible();
+});
