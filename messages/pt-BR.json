@@ -12,18 +12,21 @@
     "saveFailed": "Não foi possível salvar. Tente de novo."
   },
   "home": {
-    "navHow": "Como funciona",
+    "navFeatures": "Recursos",
     "navReadme": "README",
     "sourceCode": "Código-fonte",
     "signIn": "Entrar",
     "badge": "Funciona no README do GitHub",
-    "title": "Seus hábitos numa grade, um quadradinho por dia.",
+    "title": "<line>Seus hábitos numa grade,</line> <line>um quadradinho por dia.</line>",
     "subtitle": "Marque o que fez hoje, veja a sequência crescer e mostre a grade no seu perfil do GitHub. Ela se atualiza sozinha.",
     "createAccount": "Criar conta",
-    "seeExample": "Ver exemplo",
+    "howItWorks": "Como funciona",
     "exampleBadge": "Exemplo",
     "todayTitle": "Hoje",
     "todayCount": "{done} de {total} feitos",
+    "todayDone": "feito hoje",
+    "todayPending": "falta hoje",
+    "todayOff": "folga hoje",
     "exampleGridLabel": "Últimas {weeks} semanas de {name}",
     "examples": {
       "ler": {
@@ -59,6 +62,8 @@
         "text": "Mostre até 2 hábitos no seu perfil do GitHub. A imagem se atualiza sozinha."
       }
     },
+    "ctaTitle": "Seu primeiro quadradinho pode ser hoje.",
+    "ctaText": "É grátis, sem anúncios, e seus hábitos ficam privados até você decidir mostrar.",
     "author": "Um projeto de Luan Leal",
     "footer": "Links do rodapé",
     "privacy": "Privacidade"

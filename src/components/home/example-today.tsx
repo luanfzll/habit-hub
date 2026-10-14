@@ -3,10 +3,12 @@
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { StreakTile } from "@/components/habit/streak-tile";
+import { Check } from "@/components/today/today-habits";
 import { historyOf } from "@/components/habit/use-habit-entries";
 import { useHabitSummary } from "@/components/habit/use-habit-summary";
 import type { CalendarDate } from "@/domain/calendar-date";
 import { computeStats } from "@/domain/day-state";
+import type { DayState } from "@/domain/day-state";
 import { buildGrid, gridStart, type GridLayout } from "@/domain/grid";
 import { exampleHabits } from "@/lib/example-habits";
 import { paletteVariables } from "@/lib/palette";
@@ -38,20 +40,33 @@ export function ExampleToday() {
 
   return (
     <div className="flex flex-col rounded-[1.75rem] bg-card p-5 text-card-foreground sm:p-6">
-      <div className="flex items-baseline justify-between gap-4 pb-2">
-        <p className="font-semibold">{t("todayTitle")}</p>
+      <div className="flex items-center justify-between gap-4 pb-2">
+        <p className="flex items-center gap-2 font-semibold">
+          {t("todayTitle")}
+          <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium">{t("exampleBadge")}</span>
+        </p>
         <p className="text-sm text-muted-foreground">{t("todayCount", { done, total: scheduled })}</p>
       </div>
       <ul className="flex flex-col divide-y">
         {habits.map((habit, i) => (
-          <ExampleRow key={habit.id} habit={habit} today={today} layout={layouts[i]} />
+          <ExampleRow key={habit.id} habit={habit} today={today} layout={layouts[i]} todayState={todays[i]} />
         ))}
       </ul>
     </div>
   );
 }
 
-function ExampleRow({ habit, today, layout }: { habit: HabitView; today: CalendarDate; layout: GridLayout }) {
+function ExampleRow({
+  habit,
+  today,
+  layout,
+  todayState,
+}: {
+  habit: HabitView;
+  today: CalendarDate;
+  layout: GridLayout;
+  todayState: DayState | null | undefined;
+}) {
   const t = useTranslations("home");
   const summary = useHabitSummary(habit, today);
   const { currentStreak } = computeStats(historyOf(habit), today, gridStart({ today }));
@@ -60,7 +75,18 @@ function ExampleRow({ habit, today, layout }: { habit: HabitView; today: Calenda
     <li className="habit-scope flex items-center gap-4 py-4 last:pb-0" style={paletteVariables(habit.color)}>
       <StreakTile count={currentStreak} size="sm" />
       <div className="min-w-0 flex-1">
-        <p className="truncate font-semibold">{habit.name}</p>
+        {/* The same check as the app's "Today" panel tells at a glance which habit is still open. */}
+        <p className="flex items-center gap-2 font-semibold">
+          <span className="truncate">{habit.name}</span>
+          {todayState?.kind === "off-schedule" ? (
+            <span className="text-xs font-normal text-muted-foreground">{t("todayOff")}</span>
+          ) : (
+            <>
+              <Check checked={todayState?.kind === "done"} size="sm" />
+              <span className="sr-only">{todayState?.kind === "done" ? t("todayDone") : t("todayPending")}</span>
+            </>
+          )}
+        </p>
         <p className="line-clamp-2 text-sm text-muted-foreground">{summary}</p>
       </div>
       <div

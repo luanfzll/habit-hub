@@ -32,8 +32,8 @@ export default function HomePage() {
         <nav className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 px-4 sm:h-20">
           <Wordmark className="text-lg" />
           <div className="flex items-center gap-1">
-            <a href="#como-funciona" className={`${navLink} hidden md:inline`}>
-              {t("navHow")}
+            <a href="#recursos" className={`${navLink} hidden md:inline`}>
+              {t("navFeatures")}
             </a>
             <a href="#readme" className={`${navLink} hidden md:inline`}>
               {t("navReadme")}
@@ -50,7 +50,7 @@ export default function HomePage() {
       </header>
 
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4">
-        <section className="grid grid-cols-[minmax(0,1fr)] items-center gap-10 py-10 sm:py-16 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-14">
+        <section className="grid grid-cols-[minmax(0,1fr)] items-center gap-10 py-10 sm:py-16 lg:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)] lg:gap-12">
           <div className="flex flex-col items-start gap-6">
             <p
               className="habit-scope flex items-center gap-2 rounded-full bg-[color-mix(in_oklch,var(--habit)_16%,transparent)] py-1 pr-3.5 pl-2.5 text-sm font-medium"
@@ -59,8 +59,9 @@ export default function HomePage() {
               <span aria-hidden className="size-2.5 rounded-[3px] bg-[var(--habit)]" />
               {t("badge")}
             </p>
-            <h1 className="font-display text-4xl leading-[1.1] font-semibold tracking-tight text-balance sm:text-5xl lg:text-[2.75rem]">
-              {t("title")}
+            {/* Each half on its own line, so "um" never ends up alone after "grade,". */}
+            <h1 className="font-display text-4xl leading-[1.1] font-semibold tracking-tight sm:text-5xl lg:text-[2.15rem] xl:text-[2.5rem]">
+              {t.rich("title", { line: (chunks) => <span className="block text-balance">{chunks}</span> })}
             </h1>
             <p className="max-w-xl text-lg text-pretty text-muted-foreground">{t("subtitle")}</p>
             <div className="flex flex-wrap gap-3">
@@ -68,17 +69,11 @@ export default function HomePage() {
                 {t("createAccount")}
               </Link>
               <a href="#readme" className={buttonVariants({ size: "lg", variant: "outline" })}>
-                {t("seeExample")}
+                {t("howItWorks")}
               </a>
             </div>
           </div>
-          {/* Labelled outside the card, so "Exemplo" does not read as part of it. */}
-          <div className="flex flex-col gap-3">
-            <p className="self-start rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium lg:self-end">
-              {t("exampleBadge")}
-            </p>
-            <ExampleToday />
-          </div>
+          <ExampleToday />
         </section>
 
         <hr />
@@ -105,9 +100,9 @@ export default function HomePage() {
 
         <hr />
 
-        <section id="como-funciona" aria-labelledby="how-title" className="scroll-mt-6 py-14 sm:py-20">
-          <h2 id="how-title" className="sr-only">
-            {t("navHow")}
+        <section id="recursos" aria-labelledby="features-title" className="scroll-mt-6 py-14 sm:py-20">
+          <h2 id="features-title" className="sr-only">
+            {t("navFeatures")}
           </h2>
           <ul className="grid gap-10 sm:grid-cols-3 sm:gap-8">
             {FEATURES.map(({ key, color, Icon }) => (
@@ -118,6 +113,21 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
+        </section>
+        {/* A last invitation, so whoever read this far doesn't have to scroll back up. */}
+        <section
+          aria-labelledby="cta-title"
+          className="mb-14 flex flex-col items-start gap-6 rounded-[1.75rem] bg-card p-6 sm:mb-20 sm:flex-row sm:items-center sm:justify-between sm:p-10"
+        >
+          <div className="flex flex-col gap-2">
+            <h2 id="cta-title" className="font-display text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+              {t("ctaTitle")}
+            </h2>
+            <p className="text-pretty text-muted-foreground">{t("ctaText")}</p>
+          </div>
+          <Link href="/cadastro" className={buttonVariants({ size: "lg", className: "shrink-0" })}>
+            {t("createAccount")}
+          </Link>
         </section>
       </main>
 

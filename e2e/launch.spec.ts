@@ -12,7 +12,10 @@ test("the home page shows an example grid and links to the privacy page", async 
   await expect(
     page.getByRole("heading", { level: 1, name: "Seus hábitos numa grade, um quadradinho por dia." }),
   ).toBeVisible();
+  await expect(page.getByText("2 de 3 feitos")).toBeVisible();
+  await expect(page.getByRole("listitem").filter({ hasText: "Meditar" })).toContainText("falta hoje");
   const reading = page.getByRole("listitem").filter({ hasText: "Ler" });
+  await expect(reading).toContainText("feito hoje");
   await expect(streak(reading)).toHaveText(/^5\s*dias seguidos$/);
   await expect(reading.getByRole("img", { name: "Últimas 12 semanas de Ler" })).toBeVisible();
   // The README preview is drawn by the same function as the real README image.
