@@ -16,12 +16,13 @@ test("reset a forgotten password through the e-mailed link", async ({ page }) =>
   const link = await emailLink(email, /^Redefina sua senha/);
   await page.goto(link);
   await expect(page).toHaveURL(/\/redefinir-senha\?token=/);
-  await page.getByLabel("Nova senha").fill("outra-senha-456");
+  // Role queries skip hidden copies of the page, which Next may keep for a moment after loading.
+  await page.getByRole("textbox", { name: "Nova senha" }).fill("outra-senha-456");
   await page.getByRole("button", { name: "Salvar nova senha" }).click();
   await expect(page).toHaveURL(/\/entrar$/);
 
   await page.getByRole("textbox", { name: "E-mail" }).fill(email);
-  await page.getByLabel("Senha", { exact: true }).fill("outra-senha-456");
+  await page.getByRole("textbox", { name: "Senha", exact: true }).fill("outra-senha-456");
   await page.getByRole("button", { name: "Entrar" }).click();
   await expect(page).toHaveURL(/\/painel$/);
 

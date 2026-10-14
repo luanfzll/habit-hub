@@ -89,7 +89,7 @@ export async function emailLink(to: string, subject: RegExp): Promise<string> {
   await expect
     .poll(
       async () => {
-        const files = (await readdir(OUTBOX).catch(() => [] as string[])).sort();
+        const files = (await readdir(OUTBOX).catch(() => [] as string[])).filter((f) => f.endsWith(".json")).sort();
         const emails = await Promise.all(
           files.map(async (file) => JSON.parse(await readFile(path.join(OUTBOX, file), "utf8"))),
         );
