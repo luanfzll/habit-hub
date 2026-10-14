@@ -24,6 +24,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   habits        Habit[]
+  tasks         Task[]
 
   @@map("users")
 }
@@ -151,4 +152,25 @@ model HabitEntry {
 
   @@id([habitId, date])
   @@map("habit_entries")
+}
+
+// ---------------------------------------------------------------------------
+// One-off tasks ("tarefas do dia")
+// ---------------------------------------------------------------------------
+
+/// A one-off task. While pending it shows up every day; once done it stays visible
+/// until the day ends. Tasks are always private.
+model Task {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String    @db.VarChar(120)
+  /// Calendar day (user's time zone) the task was created for.
+  createdFor  DateTime  @map("created_for") @db.Date
+  /// Calendar day it was completed; null while pending.
+  completedOn DateTime? @map("completed_on") @db.Date
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([userId, completedOn])
+  @@map("tasks")
 }
