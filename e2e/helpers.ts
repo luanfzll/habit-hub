@@ -1,4 +1,6 @@
+import "dotenv/config";
 import { expect, type Page } from "@playwright/test";
+import { Client } from "pg";
 
 const randomOctet = () => Math.floor(Math.random() * 256);
 
@@ -13,6 +15,22 @@ export async function signUp(page: Page) {
   await page.getByRole("button", { name: "Criar conta" }).click();
   await expect(page).toHaveURL(/\/painel$/);
   return email;
+}
+
+/** Runs a query straight on the app's database, for states the UI cannot reach in a test. */
+export async function sql(query: string, params: unknown[] = []) {
+  const client = new Client({ connectionString: process.env.DATABASE_URL });
+  await client.connect();
+  try {
+    await client.query(query, params);
+  } finally {
+    await client.end();
+  }
+}
+
+/** Sign-ups are open to everyone in the tests, so publishing needs a confirmed e-mail. */
+export async function confirmEmail(email: string) {
+  await sql(`UPDATE users SET email_verified = true WHERE email = $1`, [email]);
 }
 
 export async function createHabit(

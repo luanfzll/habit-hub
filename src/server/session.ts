@@ -9,6 +9,7 @@ import { auth } from "./auth";
 export interface CurrentUser {
   id: string;
   email: string;
+  emailVerified: boolean;
   timezone: string;
 }
 
@@ -16,10 +17,10 @@ export interface CurrentUser {
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return null;
-  const { id, email, timezone } = session.user;
+  const { id, email, emailVerified, timezone } = session.user;
   // Lets an error be traced to an account without sending its e-mail to Sentry.
   Sentry.setUser({ id });
-  return { id, email, timezone };
+  return { id, email, emailVerified, timezone };
 });
 
 export async function requireUser(): Promise<CurrentUser> {

@@ -1,21 +1,13 @@
-import "dotenv/config";
 import { expect, test } from "@playwright/test";
-import { Client } from "pg";
-import { reloadAfterSave, signUp, todayTasks } from "./helpers";
+import { reloadAfterSave, signUp, sql, todayTasks } from "./helpers";
 
 /** Pretends a task was created two days ago, as if the days had turned without it being done. */
 async function ageTask(email: string, title: string) {
-  const client = new Client({ connectionString: process.env.DATABASE_URL });
-  await client.connect();
-  try {
-    await client.query(
-      `UPDATE tasks SET created_for = created_for - 2
-       WHERE title = $1 AND user_id = (SELECT id FROM users WHERE email = $2)`,
-      [title, email],
-    );
-  } finally {
-    await client.end();
-  }
+  await sql(
+    `UPDATE tasks SET created_for = created_for - 2
+     WHERE title = $1 AND user_id = (SELECT id FROM users WHERE email = $2)`,
+    [title, email],
+  );
 }
 
 test("add, complete and delete tasks for the day", async ({ page }) => {

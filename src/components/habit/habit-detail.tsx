@@ -17,21 +17,29 @@ import { DeleteHabitDialog } from "./delete-habit-dialog";
 import { GridLegend, HabitGrid } from "./habit-grid";
 import { StreakTile } from "./streak-tile";
 import { TodayControl } from "./today-control";
+import { ShareHabit } from "./share-habit";
 import { HabitEntriesProvider, useHabitTracker } from "./use-habit-entries";
 import { useHabitSummary } from "./use-habit-summary";
 
 const percent = new Intl.NumberFormat(LOCALE, { style: "percent", maximumFractionDigits: 0 });
 
-/** The habit's own page: the scoreboard, the whole year and the habit's actions. */
-export function HabitDetail({ habit, today }: { habit: HabitView; today: CalendarDate }) {
+interface HabitDetailProps {
+  habit: HabitView;
+  today: CalendarDate;
+  username: string | null;
+  origin: string;
+}
+
+/** The habit's own page: the scoreboard, the whole year, sharing and the habit's actions. */
+export function HabitDetail(props: HabitDetailProps) {
   return (
-    <HabitEntriesProvider habits={[habit]}>
-      <HabitDetailContent habit={habit} today={today} />
+    <HabitEntriesProvider habits={[props.habit]}>
+      <HabitDetailContent {...props} />
     </HabitEntriesProvider>
   );
 }
 
-function HabitDetailContent({ habit, today }: { habit: HabitView; today: CalendarDate }) {
+function HabitDetailContent({ habit, today, username, origin }: HabitDetailProps) {
   const t = useTranslations("habitPage");
   const tCommon = useTranslations("common");
   const router = useRouter();
@@ -148,6 +156,8 @@ function HabitDetailContent({ habit, today }: { habit: HabitView; today: Calenda
           </ul>
         </section>
       )}
+
+      <ShareHabit habit={habit} username={username} origin={origin} />
 
       <DayMenu
         selection={tracker.selection}

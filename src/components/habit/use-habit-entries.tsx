@@ -32,6 +32,22 @@ interface HabitEntriesValue {
 
 const HabitEntriesContext = createContext<HabitEntriesValue | null>(null);
 
+export function historyOf(habit: HabitView, entries = habit.entries): HabitHistory {
+  return {
+    startDate: habit.startDate,
+    versions: habit.versions,
+    entries: new Map(entries.map(({ date, value, skipped, skipReason }) => [date, { value, skipped, skipReason }])),
+  };
+}
+
+/** "Not scheduled" and "skipped" only appear in the legend when the habit has such days. */
+export function legendFor(habit: HabitView, history: HabitHistory) {
+  return {
+    showOffSchedule: habit.versions.some((version) => version.weekdays !== EVERY_DAY),
+    showSkipped: [...history.entries.values()].some((entry) => entry.skipped),
+  };
+}
+
 /**
  * Optimistic registrations shared by everything that shows the same habits (the
  * "Today" list and the habit cards), so a change made in one place shows at once
@@ -78,14 +94,7 @@ export function useHabitEntries(habit: HabitView) {
   if (!context) throw new Error("useHabitEntries must be used inside a HabitEntriesProvider");
   const entries = context.entries[habit.id] ?? habit.entries;
 
-  const history: HabitHistory = useMemo(
-    () => ({
-      startDate: habit.startDate,
-      versions: habit.versions,
-      entries: new Map(entries.map(({ date, value, skipped, skipReason }) => [date, { value, skipped, skipReason }])),
-    }),
-    [habit.startDate, habit.versions, entries],
-  );
+  const history = useMemo(() => historyOf(habit, entries), [habit, entries]);
 
   return {
     history,
@@ -124,9 +133,6 @@ export function useHabitTracker(habit: HabitView, today: CalendarDate) {
     popDate,
     clearPop: () => setPopDate(null),
     animateStreak: registered,
-    legend: {
-      showOffSchedule: habit.versions.some((version) => version.weekdays !== EVERY_DAY),
-      showSkipped: [...history.entries.values()].some((entry) => entry.skipped),
-    },
+    legend: legendFor(habit, history),
   };
 }

@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Suspense } from "react";
+import { Separator } from "@/components/ui/separator";
+import { getUsername } from "@/server/public/service";
+import { requestOrigin } from "@/server/request-origin";
 import { requireUser } from "@/server/session";
 import { TimezoneForm } from "./timezone-form";
+import { UsernameSettings } from "./username-settings";
 
 export const metadata: Metadata = { title: "Configurações · HabitHub" };
 
@@ -24,7 +28,14 @@ export default function SettingsPage() {
 
 async function Settings() {
   const user = await requireUser();
+  const [username, origin] = await Promise.all([getUsername(user.id), requestOrigin()]);
   const zones = Intl.supportedValuesOf("timeZone");
   const options = zones.includes(user.timezone) ? zones : [user.timezone, ...zones];
-  return <TimezoneForm current={user.timezone} options={options} />;
+  return (
+    <div className="flex flex-col gap-8">
+      <TimezoneForm current={user.timezone} options={options} />
+      <Separator />
+      <UsernameSettings current={username} origin={origin} />
+    </div>
+  );
 }

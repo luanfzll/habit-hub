@@ -25,6 +25,8 @@ const unbounded = localFont({
 });
 
 export const metadata: Metadata = {
+  // Permanent address of the app, used for the absolute URLs of link previews.
+  metadataBase: new URL("https://habithub-app.vercel.app"),
   title: "HabitHub",
   description: "Seus hábitos numa grade, um quadradinho por dia.",
 };

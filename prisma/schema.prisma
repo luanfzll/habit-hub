@@ -19,6 +19,8 @@ model User {
   image         String?
   /// IANA time zone (e.g. "America/Sao_Paulo"). Every "today" is computed with it.
   timezone      String
+  /// Public profile address (/u/<username>), chosen the first time something is published. Lowercase.
+  username      String?   @unique @db.VarChar(20)
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
   sessions      Session[]
