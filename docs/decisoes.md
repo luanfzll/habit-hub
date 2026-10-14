@@ -27,7 +27,7 @@ Resultado da entrevista de produto feita entre 09/10/2026 e 13/10/2026. Cada dec
 
 | Decisão | Justificativa |
 |---|---|
-| Nome **HabitHub**, no endereço `habithub.vercel.app`, sem domínio próprio | Projeto de portfólio sem custo. O subdomínio estava livre e vira o endereço permanente das imagens nos READMEs. |
+| Nome **HabitHub**, no endereço **`habithub-app.vercel.app`**, sem domínio próprio | Projeto de portfólio sem custo. `habithub.vercel.app` pertence a outra conta (o 404 da verificação inicial vinha de um projeto sem deploy, não de um nome livre). É o endereço permanente das imagens nos READMEs. |
 | A v1 inclui: cadastro, login, recuperação de senha e exclusão de conta; criar, editar, arquivar e excluir hábitos; registrar hoje e dias passados; uma grade por hábito e um painel; sequência atual, maior sequência e taxa de conclusão; perfil público e imagem para README; exportação em JSON; página de privacidade | Cobre o produto de ponta a ponta, sem itens que não mostram nada novo. |
 | Diferencial: perfil público + imagem SVG da grade para o README, com os tons de intensidade como apoio | Nenhum concorrente faz isso. O avaliador vê funcionando no README do autor. Mostra geração de imagem no servidor, cache e controle de privacidade. |
 | Interface em português. Todos os textos ficam num arquivo de mensagens, com a biblioteca de tradução configurada só para pt-BR. Datas formatadas com `Intl` | Traduzir no futuro vira adicionar um arquivo, sem mexer nos componentes. |
@@ -179,6 +179,7 @@ Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidad
 | E-mail enviado por um Gmail criado só para o app, via SMTP com senha de app (Nodemailer), atrás de uma interface `EmailSender`. Em desenvolvimento e nos testes, uma versão falsa mostra os links no terminal | É grátis e funciona sem domínio próprio. Trocar pelo Resend no futuro é mexer em um arquivo. |
 | **Tailwind CSS + shadcn/ui** | Componentes acessíveis prontos sem uma cara genérica, com o esforço visual concentrado na grade. |
 | **Sentry** no plano grátis, para erros do servidor e do navegador. Sem estatísticas de uso | No plano grátis, a Vercel guarda os logs por cerca de 1 hora. |
+| Sentry com dados na região da União Europeia, só erros (sem métricas de desempenho nem gravação de sessão) e com a coleta de dados restrita: sem cookies, corpos de requisição, parâmetros de banco nem variáveis locais. Dos cabeçalhos, só o user-agent. O usuário é identificado apenas pelo id interno | A versão 11 do SDK coleta tudo isso por padrão. A UE tem a GDPR, mais próxima da LGPD. |
 | Hospedagem na **Vercel**, no plano grátis (Hobby) | Combina com o Next.js, não tem custo e serve para uso não comercial. |
 
 ### 2.10 Qualidade, CI e deploy
@@ -190,7 +191,8 @@ Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidad
 | Testes ponta a ponta (Playwright) em 4 fluxos: cadastro → hábito → marcar → grade; recuperação de senha com o e-mail falso; publicar → perfil público; a imagem retorna um SVG. Mais a verificação de acessibilidade com axe | Cobre o produto de ponta a ponta. |
 | A CI roda a cada pull request: lint, checagem de tipos e as três camadas de teste. Sem meta de porcentagem de cobertura | O que vale é cobrir as partes críticas, e o avaliador confere isso pela pasta de testes. |
 | Cada pull request ganha uma versão de teste do site na Vercel, com uma cópia própria do banco no Neon (integração Neon–Vercel) | A versão de teste nunca toca os dados reais. |
-| As migrações rodam no build de produção: o script só age quando `VERCEL_ENV=production`, cria o backup e depois roda `prisma migrate deploy`. As migrações precisam ser compatíveis com a versão anterior do código (adicionar primeiro, remover depois) | Durante o deploy, o código antigo roda com o banco novo, e o processo não depende de memória humana. |
+| As migrações rodam no build de produção: o script só age quando `VERCEL_ENV=production`, cria o backup e depois roda `prisma migrate deploy`. Sem as credenciais do Neon, o build falha. As migrações usam a conexão direta (`DATABASE_URL_UNPOOLED`), e o app usa a conexão com pooling. As migrações precisam ser compatíveis com a versão anterior do código (adicionar primeiro, remover depois) | Durante o deploy, o código antigo roda com o banco novo, e o processo não depende de memória humana. |
+| As previews só migram com `MIGRATE_PREVIEW_DATABASE=true`, ligado apenas quando cada preview tem um banco próprio | Sem essa garantia, uma preview poderia migrar o banco de produção sem backup. |
 
 ### 2.11 Repositório e ambiente local
 
@@ -239,7 +241,7 @@ Nenhuma decisão ficou em aberto. As duas abaixo foram tomadas "por enquanto" e 
 | Decisão | Situação atual | O que precisa acontecer para decidir |
 |---|---|---|
 | Versão em inglês | Só pt-BR, com a estrutura de tradução pronta | Decidir quando o autor for se candidatar a vagas fora do Brasil. O custo é escrever o `en.json`, um seletor de idioma e um parâmetro de idioma na imagem do README. |
-| Domínio próprio | Só `habithub.vercel.app` | Rever se os e-mails do Gmail começarem a cair no spam, se o Gmail limitar a conta ou se o projeto virar produto. Um domínio adicionado ao mesmo projeto na Vercel mantém `habithub.vercel.app` funcionando, então as imagens já coladas não quebram, desde que o projeto continue na Vercel. |
+| Domínio próprio | Só `habithub-app.vercel.app` | Rever se os e-mails do Gmail começarem a cair no spam, se o Gmail limitar a conta ou se o projeto virar produto. Um domínio adicionado ao mesmo projeto na Vercel mantém `habithub-app.vercel.app` funcionando, então as imagens já coladas não quebram, desde que o projeto continue na Vercel. |
 
 ## 5. Riscos e dúvidas técnicas
 
