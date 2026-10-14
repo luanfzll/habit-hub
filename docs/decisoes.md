@@ -126,13 +126,13 @@ Acrescentado depois das primeiras semanas de uso. Tarefas avulsas são um recurs
 | Decisão | Justificativa |
 |---|---|
 | O cadastro é feito **só com e-mail e senha** | Toda conta tem uma forma de entrar que não depende de terceiros. |
-| O GitHub pode ser vinculado nas configurações, já logado, mesmo que o e-mail do GitHub seja outro. Depois de vinculado, "Entrar com GitHub" funciona. Criar conta pelo GitHub e unir contas automaticamente ficam desligados. Um GitHub sem conta vinculada recebe a mensagem "Nenhuma conta vinculada a este GitHub". Sempre dá para desvincular | Elimina por completo o ataque de sequestro de conta por união automática, e devs costumam usar outro e-mail no GitHub. |
-| Verificação de e-mail sem bloquear o uso: a pessoa usa o app na hora e vê um aviso fixo, com um botão para reenviar o link. O link de confirmação vale por 24 horas. A confirmação só é exigida para publicar algo (quando o cadastro abrir) e para vincular o GitHub | O cadastro continua rápido, e o e-mail é confirmado antes de qualquer coisa ficar pública. |
+| **Sem login pelo GitHub na v1.** O plano era vincular o GitHub nas configurações para entrar mais rápido numa conta já existente (sem criar conta nem unir contas pelo GitHub). Saiu do escopo no M4 | Só encurtaria o login de quem já tem conta, e quem avalia o portfólio não ganharia nada, porque o GitHub não criaria conta. Custaria um app OAuth, regras de vínculo e desvínculo, testes de um login externo e não funcionaria nas versões de teste dos PRs. A ligação do projeto com o GitHub já está na imagem do README. |
+| Verificação de e-mail sem bloquear o uso: a pessoa usa o app na hora e vê um aviso fixo, com um botão para reenviar o link. O link de confirmação vale por 24 horas. A confirmação só é exigida para publicar algo (quando o cadastro abrir) | O cadastro continua rápido, e o e-mail é confirmado antes de qualquer coisa ficar pública. |
 | Recuperação de senha por um link enviado por e-mail, que funciona uma vez e vale por 1 hora. A tela responde a mesma coisa exista ou não uma conta com aquele e-mail. São no máximo 3 e-mails por hora para cada conta, mais o limite por IP do Better Auth (3 pedidos por minuto). Os e-mails saem depois da resposta, então nem o tempo de resposta revela se a conta existe. Redefinir ou trocar a senha encerra as outras sessões | Segue as boas práticas e protege a cota de e-mails do Gmail. |
 | Até o M4, o cadastro em produção fica fechado: só os e-mails listados em `SIGNUP_ALLOWLIST` criam conta (`*` libera para todos). Sem a variável, produção fica fechada por padrão | O site vai ao ar antes de existirem recuperação de senha e página de privacidade. Ninguém de fora cria uma conta que não conseguiria recuperar. |
 | A sessão dura 30 dias e se renova a cada uso | Quem abre o app todo dia nunca precisa entrar de novo. |
 | Trocar a senha exige a senha atual e encerra as outras sessões. Trocar o e-mail só acontece depois do clique num link enviado ao novo endereço | Segue as boas práticas. |
-| Exclusão de conta imediata e definitiva, depois de a pessoa digitar o próprio e-mail para confirmar. A janela de confirmação oferece exportar os dados antes. Tudo é apagado de uma vez, as sessões são encerradas e as imagens passam a mostrar "indisponível" | Simples e definitiva, sem rotina agendada. |
+| Exclusão de conta imediata e definitiva, depois de a pessoa digitar o próprio e-mail para confirmar. A janela de confirmação oferece exportar os dados antes. Tudo é apagado de uma vez (hábitos, registros, tarefas, sessões e códigos de recuperação pendentes), o nome de usuário fica livre e as imagens passam a mostrar "indisponível". A exclusão é feita pelo app, e não pelo endpoint do Better Auth, que sem a senha só aceita sessões criadas há menos de um dia | Simples e definitiva, sem rotina agendada. |
 | Os limites de tentativas do Better Auth guardam as contagens **no banco**: valores padrão para login e cadastro, e o limite específico para a recuperação de senha. Sem captcha | Na Vercel, contagens guardadas na memória não são compartilhadas entre as instâncias, então o limite não funcionaria. |
 
 ### 2.7 Dados e privacidade
@@ -140,7 +140,7 @@ Acrescentado depois das primeiras semanas de uso. Tarefas avulsas são um recurs
 | Decisão | Justificativa |
 |---|---|
 | O servidor guarda a versão oficial dos dados, no Postgres. A interface atualiza na hora do clique e volta ao estado anterior, com uma mensagem, se o salvamento falhar. Sem funcionamento offline | Sincronizar dados offline e resolver conflitos daria um projeto inteiro. O nicho "funciona sem servidor" já é do HabitGrid. |
-| Exportação em JSON, gerada na hora, com `formatVersion: 1`. Inclui a conta (e-mail, nome de usuário, fuso, data de criação, se o GitHub está vinculado), os hábitos (inclusive arquivados), as versões e os registros. Não inclui o hash da senha, as sessões, os códigos de verificação e recuperação, nem os dados internos do vínculo com o GitHub | Atende o direito de portabilidade da LGPD. O campo de versão permite uma futura importação. |
+| Exportação em JSON, gerada na hora, com `formatVersion: 1`, num botão das configurações ("Baixar meus dados"). Inclui a conta (e-mail, se está confirmado, nome de usuário, fuso, data de criação), os hábitos (inclusive arquivados, com o código da imagem), as versões (dias da semana de 0, domingo, a 6), os registros com os motivos de dias pulados e as tarefas. Não inclui o hash da senha, as sessões, os códigos de verificação e recuperação, nem os ids internos | Atende os direitos de acesso e de portabilidade da LGPD sem atendimento manual, e deixa a pessoa guardar uma cópia antes de excluir a conta. O campo de versão permite uma futura importação. |
 | Banco Neon em `aws-sa-east-1` e funções da Vercel em `gru1`, ambos em São Paulo | Menor latência para usuários no Brasil e dados no país. A região do Neon não pode ser mudada depois, por isso é decidida antes do primeiro deploy. |
 | Página de privacidade em português na v1, sem termos de uso | A LGPD se aplica, porque o app guarda dados de outras pessoas. |
 | Antes de cada migração, uma cópia de backup do banco é criada no Neon, e só as 3 mais recentes são mantidas | É a única proteção real dos dados (o Neon grátis só restaura algumas horas para trás). Também limita por quanto tempo os dados de contas excluídas ficam nos backups. |
@@ -191,7 +191,7 @@ Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidad
 | A grade é calculada por uma única função pura e desenhada por dois componentes: HTML no app e SVG na imagem | A imagem do README e o app nunca discordam. |
 | **Postgres 17 no Neon** (plano grátis) com **Prisma** | Postgres tem `DATE` e permite garantir um registro por dia no próprio banco. O Neon cria cópias instantâneas do banco e não pausa por falta de uso. Prisma foi escolha do autor. |
 | Datas: coluna `DATE` e um único módulo de conversão. Em todo o resto do código, um dia é um `CalendarDate` no formato `'YYYY-MM-DD'`, convertido só com funções UTC | O Prisma devolve `DATE` como um `Date` à meia-noite UTC, o que desloca o dia no Brasil. |
-| **Better Auth ≥ 1.6.11** | Já traz e-mail e senha, verificação, recuperação, OAuth e limite de tentativas. As versões anteriores têm a CVE-2026-53516, de sequestro de conta pela união automática. |
+| **Better Auth ≥ 1.6.11** | Já traz e-mail e senha, verificação, recuperação e limite de tentativas. As versões anteriores têm a CVE-2026-53516, de sequestro de conta pela união automática. |
 | E-mail enviado por um Gmail criado só para o app, via SMTP com senha de app (Nodemailer), atrás de uma interface `EmailSender`. Em desenvolvimento e nos testes, uma versão falsa mostra os e-mails no terminal e os salva em `.outbox/`, de onde os testes ponta a ponta abrem os links | É grátis e funciona sem domínio próprio. Trocar pelo Resend no futuro é mexer em um arquivo. |
 | **Tailwind CSS + shadcn/ui** | Componentes acessíveis prontos sem uma cara genérica, com o esforço visual concentrado na grade. |
 | **Sentry** no plano grátis, para erros do servidor e do navegador. Sem estatísticas de uso | No plano grátis, a Vercel guarda os logs por cerca de 1 hora. |
@@ -203,7 +203,7 @@ Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidad
 | Decisão | Justificativa |
 |---|---|
 | Testes unitários (Vitest) para datas, estados, sequências, versões e o cálculo da grade, rodando em `America/Sao_Paulo` e `Asia/Tokyo` | Encontra deslocamentos de fuso, que são o tipo de erro mais provável. |
-| Testes de integração com um Postgres de verdade em contêiner no GitHub Actions: o usuário A não lê nem altera dados do usuário B; o banco aceita um registro por dia; um hábito privado não aparece no perfil público nem na imagem; um GitHub não vinculado não consegue entrar nem criar conta | Cobre as regras de segurança e de integridade. |
+| Testes de integração com um Postgres de verdade em contêiner no GitHub Actions: o usuário A não lê nem altera dados do usuário B; o banco aceita um registro por dia; um hábito privado não aparece no perfil público nem na imagem; a exclusão de conta apaga tudo e a exportação não leva segredos | Cobre as regras de segurança e de integridade. |
 | Testes ponta a ponta (Playwright) em 4 fluxos: cadastro → hábito → marcar → grade; recuperação de senha com o e-mail falso; publicar → perfil público; a imagem retorna um SVG. Mais a verificação de acessibilidade com axe | Cobre o produto de ponta a ponta. |
 | A CI roda a cada pull request: lint, checagem de tipos e as três camadas de teste. Sem meta de porcentagem de cobertura | O que vale é cobrir as partes críticas, e o avaliador confere isso pela pasta de testes. |
 | Cada pull request ganha uma versão de teste do site na Vercel, usando o banco de produção (ver seção 2.9) | Basta para conferir telas e fluxos sem custo de configuração extra. |
@@ -241,7 +241,7 @@ Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidad
 - Reordenar hábitos
 - Descrição e emoji nos hábitos
 - Registrar dias anteriores à criação do hábito
-- Criar conta pelo GitHub e unir contas automaticamente
+- Entrar com o GitHub (vincular, criar conta ou unir contas). Ver a seção 2.6
 - Demonstração interativa sem cadastro (conta demo ou ambiente temporário)
 - Prazo para desistir da exclusão de conta
 - Redirecionar nomes de usuário antigos para o novo
@@ -268,8 +268,7 @@ Nenhuma decisão ficou em aberto. As duas abaixo foram tomadas "por enquanto" e 
 | O banco do Neon hiberna depois de 5 minutos parado, e a primeira visita seguinte leva até alguns segundos | Aceito na v1. O cache da imagem reduz o problema. Medir em produção antes de pensar em qualquer outra solução. |
 | Cota grátis do Neon (100 horas de processamento por mês e 0,5 GB). As imagens dos READMEs acordam o banco | O cache de 1 hora limita a uma geração por hora para cada imagem e tema. Acompanhar o consumo no painel do Neon. |
 | Gmail via SMTP: cerca de 500 e-mails por dia, e-mails no spam ou a conta bloqueada pelo Google | Interface `EmailSender` para trocar de provedor, o limite na recuperação de senha e uma conta Gmail usada só pelo app. |
-| Falha de sequestro de conta no Better Auth (CVE-2026-53516) | Fixar a versão em 1.6.11 ou mais nova, desligar a união automática e o cadastro pelo GitHub, e cobrir com um teste de integração. |
-| O login pelo GitHub não funciona nas versões de teste de cada pull request, porque o GitHub aceita só um endereço de retorno por app | As versões de teste usam login por e-mail. Avaliar um segundo app OAuth para o desenvolvimento local. |
+| Falha de sequestro de conta no Better Auth (CVE-2026-53516) | Versão 1.6.11 ou mais nova. Sem login pelo GitHub na v1, a união automática de contas nem chega a ser usada. |
 | Uma migração rodar no banco de produção a partir de uma versão de teste mal configurada | O script só age com `VERCEL_ENV=production`, e os previews usam cópias próprias do banco. Revisar as variáveis de ambiente antes do primeiro deploy. |
 | O Neon grátis só restaura algumas horas para trás. Um erro fora de uma migração pode apagar a vitrine | Backups antes de cada migração. O autor pode exportar o próprio JSON de vez em quando. |
 | Os backups guardam dados de contas excluídas até serem substituídos | Mantendo só os 3 backups mais recentes, esses dados somem depois de 3 migrações. A política de privacidade informa isso. |

@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import nodemailer from "nodemailer";
 
@@ -23,8 +23,11 @@ const consoleSender: EmailSender = {
     console.info(`\n[email] To: ${email.to}\n[email] Subject: ${email.subject}\n${email.text}\n`);
     const outbox = process.env.EMAIL_OUTBOX_DIR;
     if (outbox) {
+      // Written under another name and then renamed, so a reader never sees half a file.
+      const file = path.join(outbox, `${Date.now()}-${randomUUID()}`);
       await mkdir(outbox, { recursive: true });
-      await writeFile(path.join(outbox, `${Date.now()}-${randomUUID()}.json`), JSON.stringify(email));
+      await writeFile(`${file}.tmp`, JSON.stringify(email));
+      await rename(`${file}.tmp`, `${file}.json`);
     }
   },
 };
