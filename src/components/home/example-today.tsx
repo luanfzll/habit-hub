@@ -70,6 +70,8 @@ function ExampleRow({
   const t = useTranslations("home");
   const summary = useHabitSummary(habit, today);
   const { currentStreak } = computeStats(historyOf(habit), today, gridStart({ today }));
+  const off = todayState?.kind === "off-schedule";
+  const done = todayState?.kind === "done";
 
   return (
     <li className="habit-scope flex items-center gap-4 py-4 last:pb-0" style={paletteVariables(habit.color)}>
@@ -77,25 +79,20 @@ function ExampleRow({
       <div className="min-w-0 flex-1">
         {/* The same check as the app's "Today" panel tells at a glance which habit is still open. */}
         <p className="flex items-center gap-2 font-semibold">
-          {todayState?.kind === "off-schedule" ? (
-            <>
-              {/* Not scheduled today: an empty, dashed box keeps the names aligned. */}
-              <span
-                aria-hidden
-                className="size-[1.125rem] shrink-0 rounded-[5px] border-2 border-dashed border-muted-foreground/40"
-              />
-              <span className="truncate">{habit.name}</span>
-              <span className="text-xs font-normal text-muted-foreground">{t("todayOff")}</span>
-            </>
+          {off ? (
+            // Not scheduled today: an empty, dashed box keeps the names aligned.
+            <span
+              aria-hidden
+              className="size-[1.125rem] shrink-0 rounded-[5px] border-2 border-dashed border-muted-foreground/40"
+            />
           ) : (
-            <>
-              <Check checked={todayState?.kind === "done"} size="sm" />
-              <span className="truncate">{habit.name}</span>
-              <span className="sr-only">{todayState?.kind === "done" ? t("todayDone") : t("todayPending")}</span>
-            </>
+            <Check checked={done} size="sm" />
           )}
+          <span className="truncate">{habit.name}</span>
+          {!off && <span className="sr-only">{done ? t("todayDone") : t("todayPending")}</span>}
         </p>
-        <p className="line-clamp-2 text-sm text-muted-foreground">{summary}</p>
+        {/* On a day off the second line says so; the striped squares show the schedule. */}
+        <p className="line-clamp-2 text-sm text-muted-foreground">{off ? t("todayOff") : summary}</p>
       </div>
       <div
         role="img"
