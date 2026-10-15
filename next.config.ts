@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
+  // The "N" button in the corner during development. Compile and runtime errors still show.
+  devIndicators: false,
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

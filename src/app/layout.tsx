@@ -35,6 +35,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={LOCALE}
+      // Smooth scrolling (globals.css) is for links within a page; Next jumps on route changes.
+      data-scroll-behavior="smooth"
       className={`${figtree.variable} ${unbounded.variable} h-full antialiased`}
       suppressHydrationWarning
     >

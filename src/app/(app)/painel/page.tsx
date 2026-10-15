@@ -10,10 +10,13 @@ import { TodayHabits } from "@/components/today/today-habits";
 import { TodayTasks } from "@/components/today/today-tasks";
 import { buttonVariants } from "@/components/ui/button";
 import { MAX_ACTIVE_HABITS } from "@/domain/habit-config";
+import { HABIT_SUGGESTIONS, type HabitSuggestion } from "@/domain/habit-suggestions";
 import { formatLongDate } from "@/lib/format";
 import { listActiveHabits, listArchivedHabits } from "@/server/habits/service";
 import { requireUser, userToday } from "@/server/session";
 import { listTodayTasks } from "@/server/tasks/service";
+
+const SUGGESTIONS = Object.keys(HABIT_SUGGESTIONS) as HabitSuggestion[];
 
 export const metadata: Metadata = { title: "Hoje · HabitHub" };
 
@@ -38,6 +41,7 @@ async function Dashboard() {
     listTodayTasks(user.id, today),
   ]);
   const t = await getTranslations("dashboard");
+  const tSuggestions = await getTranslations("suggestions");
 
   return (
     // One shared source of optimistic registrations: ticking a habit in "Today"
@@ -68,6 +72,21 @@ async function Dashboard() {
             <Link href="/habitos/novo" className={buttonVariants()}>
               {t("createFirst")}
             </Link>
+            <div className="mt-4 flex flex-col items-center gap-3">
+              <p className="text-sm text-muted-foreground">{t("orSuggestion")}</p>
+              <ul className="flex flex-wrap justify-center gap-2">
+                {SUGGESTIONS.map((key) => (
+                  <li key={key}>
+                    <Link
+                      href={`/habitos/novo?sugestao=${key}`}
+                      className={buttonVariants({ variant: "outline", size: "sm" })}
+                    >
+                      {tSuggestions(`${key}.label`)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         ) : (
           habits.map((habit) => <HabitCard key={habit.id} habit={habit} today={today} />)

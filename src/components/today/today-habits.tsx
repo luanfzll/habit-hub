@@ -125,17 +125,21 @@ function TodayHabitRow({ habit, today }: { habit: HabitView; today: CalendarDate
   );
 }
 
-/** Square, like a grid cell; tasks use round checks so the two lists read differently. */
-function Check({ checked }: { checked: boolean }) {
+/**
+ * Square, like a grid cell; tasks use round checks so the two lists read differently.
+ * Also drawn on the home page example, smaller.
+ */
+export function Check({ checked, size = "md" }: { checked: boolean; size?: "sm" | "md" }) {
   return (
     <span
       aria-hidden
       className={cn(
-        "flex size-6 shrink-0 items-center justify-center rounded-[6px] border-2 transition-colors motion-reduce:transition-none",
+        "flex shrink-0 items-center justify-center border-2 transition-colors motion-reduce:transition-none",
+        size === "sm" ? "size-[1.125rem] rounded-[5px]" : "size-6 rounded-[6px]",
         checked ? "border-transparent bg-[var(--habit)] text-[var(--habit-text)]" : "border-[var(--habit)]",
       )}
     >
-      {checked && <CheckIcon className="size-4" strokeWidth={3} />}
+      {checked && <CheckIcon className={size === "sm" ? "size-3" : "size-4"} strokeWidth={3} />}
     </span>
   );
 }

@@ -111,6 +111,17 @@ export function CredentialsForm({ mode }: { mode: Mode }) {
           {signUp ? t("signInTitle") : t("signUpTitle")}
         </Link>
       </p>
+      {signUp && (
+        <p className="text-center text-xs text-muted-foreground">
+          {t.rich("privacyNotice", {
+            link: (chunks) => (
+              <Link href="/privacidade" className="underline underline-offset-4 hover:text-foreground">
+                {chunks}
+              </Link>
+            ),
+          })}
+        </p>
+      )}
     </div>
   );
 }

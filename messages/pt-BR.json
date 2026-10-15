@@ -12,9 +12,60 @@
     "saveFailed": "Não foi possível salvar. Tente de novo."
   },
   "home": {
-    "createAccount": "Criar conta",
+    "featuresTitle": "Recursos",
+    "sourceCode": "Código-fonte",
     "signIn": "Entrar",
-    "tagline": "Um quadradinho por dia para cada hábito. Calmo de usar, bom de ver crescer."
+    "badge": "Funciona no README do GitHub",
+    "title": "<line>Seus hábitos numa grade,</line> <line>um quadradinho por dia.</line>",
+    "subtitle": "Marque o que fez hoje, veja a sequência crescer e mostre a grade no seu perfil do GitHub. Ela se atualiza sozinha.",
+    "createAccount": "Criar conta",
+    "howItWorks": "Como funciona",
+    "exampleBadge": "Exemplo",
+    "todayTitle": "Hoje",
+    "todayCount": "{done} de {total} feitos",
+    "todayDone": "feito hoje",
+    "todayPending": "falta hoje",
+    "todayOff": "folga hoje",
+    "exampleGridLabel": "Últimas {weeks} semanas de {name}",
+    "examples": {
+      "ler": {
+        "name": "Ler",
+        "unit": "páginas"
+      },
+      "treinar": {
+        "name": "Treinar",
+        "unit": "minutos"
+      },
+      "meditar": {
+        "name": "Meditar",
+        "unit": "minutos"
+      }
+    },
+    "readmeTitle": "Sua constância, no seu perfil",
+    "readmeText": "Publique um hábito, copie o código e cole no README do GitHub. A grade aparece no seu perfil, sempre atualizada, no tema claro ou escuro de quem lê.",
+    "readmeCode": "![Ler no HabitHub](https://habithub-app.vercel.app/api/embed/k7m2p9qx4a.svg)",
+    "readmeFile": "luanfzll / README.md",
+    "readmeGreeting": "Oi, eu sou o Luan",
+    "readmeBio": "Dev, leitor e tentando treinar todo dia.",
+    "features": {
+      "tap": {
+        "title": "Um toque por dia",
+        "text": "Marque o hábito e pronto. Também dá para contar páginas, copos ou minutos e escolher os dias da semana."
+      },
+      "streaks": {
+        "title": "Sequências visíveis",
+        "text": "Veja os dias seguidos crescerem. Pular um dia com motivo não quebra a sequência."
+      },
+      "readme": {
+        "title": "Grade no README",
+        "text": "Mostre até 2 hábitos no seu perfil do GitHub. A imagem se atualiza sozinha."
+      }
+    },
+    "ctaTitle": "Seu primeiro quadradinho pode ser hoje.",
+    "ctaText": "É grátis, sem anúncios, e seus hábitos ficam privados até você decidir mostrar.",
+    "author": "Um projeto de Luan Leal",
+    "footer": "Links do rodapé",
+    "privacy": "Privacidade"
   },
   "auth": {
     "email": "E-mail",
@@ -50,7 +101,8 @@
     "confirmLinkHint": "Os links de confirmação valem por 24 horas. Entre na sua conta e peça um novo no aviso do painel.",
     "emailConfirmed": "E-mail confirmado",
     "emailConfirmedHint": "Pronto: este é o e-mail da sua conta no HabitHub.",
-    "goToDashboard": "Ir para o painel"
+    "goToDashboard": "Ir para o painel",
+    "privacyNotice": "Veja como cuidamos dos seus dados na <link>página de privacidade</link>."
   },
   "dashboard": {
     "title": "Seus hábitos",
@@ -60,7 +112,8 @@
     "createFirst": "Criar primeiro hábito",
     "limitReached": "Você chegou ao limite de {max} hábitos ativos.",
     "edit": "Editar {name}",
-    "archivedLink": "Hábitos arquivados ({count})"
+    "archivedLink": "Hábitos arquivados ({count})",
+    "orSuggestion": "Ou comece por uma sugestão:"
   },
   "habit": {
     "startsOn": "Começa em {date}",
@@ -72,7 +125,7 @@
     "todayValue": "Quantidade de hoje",
     "todayProgressUnit": "de {target} {unit}",
     "skippedToday": "Hoje foi pulado.",
-    "streakCaption": "{count, plural, =0 {dias seguidos} one {dia seguido} other {dias seguidos}}"
+    "streakCaption": "{count, plural, =0 {<big>dias</big> <small>seguidos</small>} one {<big>dia</big> <small>seguido</small>} other {<big>dias</big> <small>seguidos</small>}}"
   },
   "grid": {
     "label": "Grade de {name}: últimos 12 meses",
@@ -317,5 +370,97 @@
     "confirm": "Excluir conta",
     "deleting": "Excluindo…",
     "deleted": "Sua conta foi excluída."
+  },
+  "suggestions": {
+    "ler": {
+      "label": "Ler 10 páginas",
+      "name": "Ler",
+      "unit": "páginas"
+    },
+    "agua": {
+      "label": "Beber 8 copos de água",
+      "name": "Beber água",
+      "unit": "copos"
+    },
+    "exercicio": {
+      "label": "Exercício seg/qua/sex",
+      "name": "Exercício"
+    }
+  },
+  "privacy": {
+    "title": "Privacidade",
+    "updated": "Atualizada em 14 de outubro de 2026.",
+    "intro": "O HabitHub é um projeto pessoal e gratuito. Esta página explica, sem juridiquês, quais dados o app guarda, para quê e o que você pode fazer com eles, de acordo com a Lei Geral de Proteção de Dados (LGPD).",
+    "sections": [
+      {
+        "title": "Quem cuida dos seus dados",
+        "paragraphs": [
+          "O responsável pelos dados (o controlador, na LGPD) é Luan Leal, autor do HabitHub. Para qualquer dúvida ou pedido sobre os seus dados, escreva para habithub.mail@gmail.com."
+        ]
+      },
+      {
+        "title": "O que o app guarda",
+        "items": [
+          "Sua conta: e-mail, senha (guardada só como um código que não pode ser revertido, nunca a senha em si), fuso horário e, se você escolher, um nome de usuário.",
+          "O que você registra: hábitos, metas, dias marcados e pulados, os motivos dos dias pulados e as tarefas.",
+          "Segurança: o endereço IP e o navegador de cada sessão aberta, e contagens temporárias de tentativas por IP, para barrar quem tenta adivinhar senhas.",
+          "Erros: quando algo quebra, um relatório técnico com o navegador usado e o código interno da sua conta, sem o seu e-mail e sem o conteúdo dos seus hábitos."
+        ],
+        "note": "O HabitHub não usa ferramentas de estatística, anúncios nem rastreamento."
+      },
+      {
+        "title": "Para que os dados são usados",
+        "paragraphs": [
+          "Só para o app funcionar: entrar na sua conta, guardar e mostrar seus hábitos, enviar os e-mails de confirmação e de recuperação de senha, proteger as contas e corrigir erros. Os dados não são vendidos nem usados para outra finalidade.",
+          "Na LGPD, a base para isso é a execução do serviço que você pediu ao criar a conta e, para a segurança e a correção de erros, o legítimo interesse de manter o app funcionando e protegido."
+        ]
+      },
+      {
+        "title": "Onde os dados ficam",
+        "paragraphs": ["Os serviços abaixo ajudam o app a funcionar e só tratam os dados para isso:"],
+        "items": [
+          "Vercel: hospeda o app, com os servidores em São Paulo.",
+          "Neon: guarda o banco de dados, também em São Paulo.",
+          "Sentry: recebe os relatórios de erro, com os dados na União Europeia.",
+          "Google (Gmail): envia os e-mails do app e, para isso, recebe o seu endereço e o texto do e-mail."
+        ]
+      },
+      {
+        "title": "O que fica público",
+        "paragraphs": [
+          "Tudo é privado por padrão. Se você publicar um hábito, qualquer pessoa pode ver, no seu perfil público e na imagem para o README, o seu nome de usuário, o nome do hábito, a grade e a sequência. O motivo dos dias pulados nunca aparece, e o perfil público pede aos buscadores para não ser indexado. Ao tornar o hábito privado de novo, ele sai do perfil e a imagem passa a mostrar “Hábito indisponível”."
+        ]
+      },
+      {
+        "title": "Por quanto tempo",
+        "items": [
+          "Seus dados ficam guardados enquanto a conta existir. Ao excluir a conta, tudo é apagado na hora.",
+          "Antes de cada atualização do banco de dados é feita uma cópia de segurança, e só as 3 mais recentes são mantidas. Por isso, dados apagados podem continuar numa dessas cópias até que ela seja substituída.",
+          "Sessões expiram depois de 30 dias sem uso, e os links de recuperação de senha, em 1 hora.",
+          "Os relatórios de erro são apagados automaticamente pelo Sentry, no prazo de retenção do plano gratuito dele."
+        ]
+      },
+      {
+        "title": "Seus direitos",
+        "paragraphs": ["Pela LGPD, você pode, a qualquer momento:"],
+        "items": [
+          "ver e levar seus dados: Configurações → Seus dados → Baixar meus dados gera um arquivo com tudo;",
+          "corrigir seus dados: editando os hábitos ou trocando o e-mail nas configurações;",
+          "apagar tudo: Configurações → Seus dados → Excluir conta;",
+          "pedir informações sobre o uso dos seus dados, ou qualquer outro direito da LGPD, pelo e-mail habithub.mail@gmail.com."
+        ],
+        "note": "Se achar que algo não foi resolvido, você também pode recorrer à Autoridade Nacional de Proteção de Dados (ANPD)."
+      },
+      {
+        "title": "Cookies e armazenamento no navegador",
+        "paragraphs": [
+          "O app usa um único cookie, necessário para manter você conectado. O tema escolhido (claro ou escuro) e o aviso de fuso horário dispensado ficam guardados só no seu navegador."
+        ]
+      },
+      {
+        "title": "Mudanças nesta página",
+        "paragraphs": ["Se esta página mudar, a data no topo é atualizada."]
+      }
+    ]
   }
 }
