@@ -1,5 +1,5 @@
 import "server-only";
-import { createTranslator } from "next-intl";
+import { createTranslator } from "use-intl/core";
 import { LOCALE } from "@/i18n/request";
 import messages from "../../messages/pt-BR.json";
 import { db } from "./db";
