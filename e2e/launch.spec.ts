@@ -47,6 +47,18 @@ test("on a day off, the training example says so instead of counting it", async 
   await expect(streak(training)).toHaveText(/^4\s*dias seguidos$/);
 });
 
+test("phones can install the app with its own icons", async ({ page, request }) => {
+  await page.goto("/");
+  const href = await page.locator('head link[rel="manifest"]').getAttribute("href");
+  const manifest = await (await request.get(href!)).json();
+  expect(manifest).toMatchObject({ name: "HabitHub", display: "standalone", background_color: "#0f1113" });
+  expect(manifest.icons.map((icon: { purpose: string }) => icon.purpose)).toContain("maskable");
+  for (const icon of manifest.icons as { src: string }[]) {
+    const response = await request.get(icon.src);
+    expect(response.headers()["content-type"], icon.src).toBe("image/png");
+  }
+});
+
 test("a suggestion on the empty dashboard fills the new-habit form", async ({ page }) => {
   await signUp(page);
   await page.getByRole("link", { name: "Beber 8 copos de água" }).click();
