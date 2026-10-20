@@ -45,5 +45,6 @@ test("an unfinished task carries over to the following days", async ({ page }) =
 
   const carried = todayTasks(page).getByRole("checkbox", { name: /Renovar a CNH/ });
   await expect(carried).toHaveAttribute("aria-checked", "false");
-  await expect(carried).toContainText(/desde \w{3}\., \d{2}\/\d{2}/);
+  // \p{L}, not \w: "sáb." has an accented letter, which \w does not match.
+  await expect(carried).toContainText(/desde \p{L}{3}\., \d{2}\/\d{2}/u);
 });

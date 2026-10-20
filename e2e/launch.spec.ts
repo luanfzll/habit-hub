@@ -7,7 +7,13 @@ async function expectNoAxeViolations(page: Page) {
   expect(results.violations).toEqual([]);
 }
 
+// The examples are drawn with the visitor's "today", and training is only on Mon/Wed/Fri,
+// so the browser clock is fixed to keep the counts the same on every day of the week.
+const WEDNESDAY = new Date("2026-10-14T12:00:00-03:00");
+const THURSDAY = new Date("2026-10-15T12:00:00-03:00");
+
 test("the home page shows an example grid and links to the privacy page", async ({ page }) => {
+  await page.clock.setFixedTime(WEDNESDAY);
   await page.goto("/");
   await expect(
     page.getByRole("heading", { level: 1, name: "Seus hábitos numa grade, um quadradinho por dia." }),
@@ -29,6 +35,16 @@ test("the home page shows an example grid and links to the privacy page", async 
     "mailto:habithub.mail@gmail.com",
   );
   await expectNoAxeViolations(page);
+});
+
+test("on a day off, the training example says so instead of counting it", async ({ page }) => {
+  await page.clock.setFixedTime(THURSDAY);
+  await page.goto("/");
+  await expect(page.getByText("1 de 2 feitos")).toBeVisible();
+  const training = page.getByRole("listitem").filter({ hasText: "Treinar" });
+  await expect(training).toContainText("Folga hoje");
+  await expect(training.getByText("Treinar", { exact: true })).toBeVisible();
+  await expect(streak(training)).toHaveText(/^4\s*dias seguidos$/);
 });
 
 test("a suggestion on the empty dashboard fills the new-habit form", async ({ page }) => {
