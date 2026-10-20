@@ -210,6 +210,9 @@ Definida a partir de: "calmo e divertido", inspirado no GitHub mas com identidad
 | Cada pull request ganha uma versão de teste do site na Vercel, usando o banco de produção (ver seção 2.9) | Basta para conferir telas e fluxos sem custo de configuração extra. |
 | As migrações rodam no build de produção: o script só age quando `VERCEL_ENV=production`, cria o backup e depois roda `prisma migrate deploy`. Sem as credenciais do Neon, o build falha. As migrações usam a conexão direta (`DATABASE_URL_UNPOOLED`), e o app usa a conexão com pooling. As migrações precisam ser compatíveis com a versão anterior do código (adicionar primeiro, remover depois) | Durante o deploy, o código antigo roda com o banco novo, e o processo não depende de memória humana. |
 | As previews usam **o mesmo banco da produção** e **nunca** rodam migrações (`MIGRATE_PREVIEW_DATABASE` fica desligado). Risco aceito: o que for testado numa preview grava nos dados reais, e um PR com migração só é verificado depois do merge (com backup) | Projeto de portfólio com um único usuário, sem plano de virar produto. As previews ficam protegidas pelo login da Vercel. |
+| Cabeçalhos de segurança em todas as respostas (`next.config.ts`): CSP, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy` e `Permissions-Policy`; o HSTS vem da Vercel. A CSP não usa nonces: aceita scripts inline (os do Next e do tema), mas nada de outros sites além do envio de erros ao Sentry, nenhum plugin, formulários só para o próprio app e nenhum site pode exibir o app dentro de outro. Sem `upgrade-insecure-requests`. Um teste ponta a ponta percorre as telas principais e falha se a CSP bloquear algo | Nonces exigiriam que todas as páginas fossem dinâmicas, e a página inicial é estática. O HSTS já obriga HTTPS, e `upgrade-insecure-requests` quebraria os testes, que rodam em `http://localhost`. As versões de teste da Vercel liberam só os endereços da barra de comentários. |
+| Proteções do GitHub ligadas: alertas e PRs do Dependabot, varredura de segredos com bloqueio no envio e CodeQL | Grátis em repositório público, e avisam sozinhas quando surge uma falha. |
+
 
 ### 2.11 Repositório e ambiente local
 
@@ -265,6 +268,7 @@ Nenhuma decisão ficou em aberto. As duas abaixo foram tomadas "por enquanto" e 
 
 | Risco ou dúvida | Mitigação ou próximo passo |
 |---|---|
+| A ferramenta do shadcn depende da `braces` 3.0.3, com uma falha de lentidão provocada por padrões maliciosos (GHSA-vfj7-8cjw-p6xm), ainda sem versão corrigida | Só roda no desenvolvimento e nunca recebe texto de usuário. O Dependabot abre o PR quando sair a correção. |
 | Deslocamento de um dia nas datas, porque o Prisma devolve `DATE` como um `Date` à meia-noite UTC | Um único módulo de conversão, o tipo `CalendarDate` e testes rodando em dois fusos (seção 2.9). |
 | O banco do Neon hiberna depois de 5 minutos parado, e a primeira visita seguinte leva até alguns segundos | Aceito na v1. O cache da imagem reduz o problema. Medir em produção antes de pensar em qualquer outra solução. |
 | Cota grátis do Neon (100 horas de processamento por mês e 0,5 GB). As imagens dos READMEs acordam o banco | O cache de 1 hora limita a uma geração por hora para cada imagem e tema. Acompanhar o consumo no painel do Neon. |
