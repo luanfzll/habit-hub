@@ -7,29 +7,44 @@ import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 
-/** The account e-mail. A new address only replaces it after the link sent there is opened. */
+/**
+ * The account e-mail. Asks for the current password (checked by the server, see auth.ts),
+ * and a new address only replaces the old one after the link sent there is opened.
+ */
 export function EmailForm({ current, verified }: { current: string; verified: boolean }) {
   const t = useTranslations("account");
   const tAuth = useTranslations("auth");
   const id = useId();
   const [sentTo, setSentTo] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  // Shown under the field it is about: the new address, or the password (and other failures).
+  const [error, setError] = useState<{ field: "email" | "password"; message: string } | null>(null);
   const [pending, setPending] = useState(false);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
-    const newEmail = String(new FormData(form).get("email")).trim();
+    const data = new FormData(form);
+    const newEmail = String(data.get("email")).trim();
     if (newEmail.toLowerCase() === current.toLowerCase()) {
-      setError(t("sameEmail"));
+      setError({ field: "email", message: t("sameEmail") });
       return;
     }
     setPending(true);
     setError(null);
-    const { error } = await authClient.changeEmail({ newEmail, callbackURL: "/email-confirmado" });
+    // Through $fetch because the typed changeEmail() has no field for the password.
+    const { error } = await authClient.$fetch("/change-email", {
+      method: "POST",
+      body: { newEmail, callbackURL: "/email-confirmado", password: String(data.get("password")) },
+    });
     setPending(false);
     if (error) {
-      setError(tAuth(error.status === 429 ? "tooManyAttempts" : "genericError"));
+      const message =
+        error.status === 429
+          ? tAuth("tooManyAttempts")
+          : (error as { code?: string }).code === "INVALID_PASSWORD"
+            ? t("wrongPassword")
+            : tAuth("genericError");
+      setError({ field: "password", message });
       return;
     }
     form.reset();
@@ -45,11 +60,31 @@ export function EmailForm({ current, verified }: { current: string; verified: bo
           <span className="text-sm text-muted-foreground">({verified ? t("verified") : t("notVerified")})</span>
         </p>
       </div>
-      <Field data-invalid={Boolean(error)}>
+      <Field data-invalid={error?.field === "email"}>
         <FieldLabel htmlFor={id}>{t("newEmail")}</FieldLabel>
-        <Input id={id} name="email" type="email" required autoComplete="email" aria-invalid={Boolean(error)} />
+        <Input
+          id={id}
+          name="email"
+          type="email"
+          required
+          autoComplete="email"
+          aria-invalid={error?.field === "email"}
+        />
         <FieldDescription>{t("newEmailHint")}</FieldDescription>
-        {error && <FieldError>{error}</FieldError>}
+        {error?.field === "email" && <FieldError>{error.message}</FieldError>}
+      </Field>
+      <Field data-invalid={error?.field === "password"}>
+        <FieldLabel htmlFor={`${id}-password`}>{t("currentPassword")}</FieldLabel>
+        <Input
+          id={`${id}-password`}
+          name="password"
+          type="password"
+          required
+          maxLength={128}
+          autoComplete="current-password"
+          aria-invalid={error?.field === "password"}
+        />
+        {error?.field === "password" && <FieldError>{error.message}</FieldError>}
       </Field>
       {sentTo && (
         <p role="status" className="text-sm">

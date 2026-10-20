@@ -12,6 +12,24 @@ test("every response carries the security headers", async ({ request }) => {
   }
 });
 
+test("account changes through Better Auth's own routes are checked too", async ({ page }) => {
+  await signUp(page);
+  const origin = new URL(page.url()).origin;
+  const post = (path: string, data: object) => page.request.post(`/api/auth/${path}`, { data, headers: { origin } });
+
+  // Without the current password, a stolen session cannot move the account to another address.
+  const noPassword = await post("change-email", { newEmail: "outro@example.com" });
+  expect(noPassword.status()).toBe(400);
+  expect((await noPassword.json()).code).toBe("INVALID_PASSWORD");
+  const wrongPassword = await post("change-email", { newEmail: "outro@example.com", password: "errada-123" });
+  expect((await wrongPassword.json()).code).toBe("INVALID_PASSWORD");
+
+  // An invalid time zone would break every page that computes "today" for the account.
+  expect((await post("update-user", { timezone: "Nao/Existe" })).ok()).toBe(false);
+  await page.goto("/painel");
+  await expect(page.getByRole("heading", { level: 1, name: "Hoje" })).toBeVisible();
+});
+
 /** Records what the Content Security Policy blocks, on every page the browser loads. */
 async function recordViolations(page: Page) {
   await page.addInitScript(() => {
