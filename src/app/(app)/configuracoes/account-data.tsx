@@ -90,6 +90,7 @@ function DeleteAccountDialog({ email }: { email: string }) {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <form
+          method="post"
           onSubmit={(event) => {
             event.preventDefault();
             if (matches) confirm();

@@ -136,7 +136,7 @@ function DayMenuBody({
           </Button>
         </div>
       ) : (
-        <form onSubmit={submit} className="flex flex-col gap-2">
+        <form method="post" onSubmit={submit} className="flex flex-col gap-2">
           <Label htmlFor={`day-value-${day.date}`}>
             {t("value")}
             {unit ? ` (${unit})` : ""}
@@ -202,6 +202,7 @@ function SkipForm({
 
   return (
     <form
+      method="post"
       className="flex flex-col gap-2"
       onSubmit={(event) => {
         event.preventDefault();

@@ -45,7 +45,7 @@ export function ForgotPasswordForm() {
         <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-[1.75rem]">{t("forgotTitle")}</h1>
         <p className="text-sm text-muted-foreground">{t("forgotHint")}</p>
       </div>
-      <form onSubmit={submit} className="flex flex-col gap-6">
+      <form method="post" onSubmit={submit} className="flex flex-col gap-6">
         <Field>
           <FieldLabel htmlFor={id}>{t("email")}</FieldLabel>
           <Input id={id} name="email" type="email" required autoComplete="email" />

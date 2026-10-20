@@ -52,7 +52,7 @@ export function EmailForm({ current, verified }: { current: string; verified: bo
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-4">
+    <form method="post" onSubmit={submit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
         <span className="text-sm font-medium">{t("email")}</span>
         <p className="break-all">

@@ -9,6 +9,8 @@ test("every response carries the security headers", async ({ request }) => {
     expect(headers["x-frame-options"], path).toBe("DENY");
     expect(headers["x-content-type-options"], path).toBe("nosniff");
     expect(headers["referrer-policy"], path).toBe("strict-origin-when-cross-origin");
+    expect(headers["cross-origin-opener-policy"], path).toBe("same-origin");
+    expect(headers["x-powered-by"], path).toBeUndefined();
   }
 });
 
@@ -28,6 +30,22 @@ test("account changes through Better Auth's own routes are checked too", async (
   expect((await post("update-user", { timezone: "Nao/Existe" })).ok()).toBe(false);
   await page.goto("/painel");
   await expect(page.getByRole("heading", { level: 1, name: "Hoje" })).toBeVisible();
+});
+
+test("a form sent before the page finishes loading keeps the password out of the URL", async ({ browser }) => {
+  // Without JavaScript the browser submits the form itself, as it does before hydration.
+  const context = await browser.newContext({ javaScriptEnabled: false, baseURL: "http://localhost:3100" });
+  const page = await context.newPage();
+  for (const path of ["/entrar", "/cadastro"]) {
+    await page.goto(path);
+    await page.getByRole("textbox", { name: "E-mail" }).fill("alguem@example.com");
+    await page.getByLabel("Senha", { exact: true }).fill("senha-secreta-123");
+    await page.locator("form").getByRole("button").last().click();
+    await page.waitForLoadState();
+    expect(page.url(), path).not.toContain("senha-secreta");
+    expect(page.url(), path).not.toContain("alguem");
+  }
+  await context.close();
 });
 
 /** Records what the Content Security Policy blocks, on every page the browser loads. */

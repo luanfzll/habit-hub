@@ -41,7 +41,7 @@ export function PasswordForm() {
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-4">
+    <form method="post" onSubmit={submit} className="flex flex-col gap-4">
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor={`${id}-current`}>{t("currentPassword")}</FieldLabel>
