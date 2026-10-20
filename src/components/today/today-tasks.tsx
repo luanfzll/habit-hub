@@ -77,7 +77,7 @@ export function TodayTasks({ tasks, today }: { tasks: TaskRecord[]; today: Calen
         {t("today.tasks")}
       </h2>
 
-      <form onSubmit={add} className="flex gap-2">
+      <form method="post" onSubmit={add} className="flex gap-2">
         <label htmlFor="new-task" className="sr-only">
           {t("today.newTask")}
         </label>

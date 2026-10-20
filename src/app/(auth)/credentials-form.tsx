@@ -63,7 +63,8 @@ export function CredentialsForm({ mode }: { mode: Mode }) {
       <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-[1.75rem]">
         {signUp ? t("signUpTitle") : t("signInTitle")}
       </h1>
-      <form onSubmit={submit} className="flex flex-col gap-6">
+      {/* POST: submitted before the page finishes loading, the browser must not put the password in the URL. */}
+      <form method="post" onSubmit={submit} className="flex flex-col gap-6">
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor={`${id}-email`}>{t("email")}</FieldLabel>

@@ -14,6 +14,7 @@ export function TimezoneForm({ current, options }: { current: string; options: s
 
   return (
     <form
+      method="post"
       className="flex flex-col gap-4"
       onSubmit={(event) => {
         event.preventDefault();

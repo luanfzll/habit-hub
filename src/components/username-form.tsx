@@ -41,6 +41,7 @@ export function UsernameForm({
 
   return (
     <form
+      method="post"
       className={cn("flex flex-col gap-4", className)}
       onSubmit={(event) => {
         event.preventDefault();
