@@ -23,6 +23,17 @@ Tracker de hábitos em que cada hábito vira uma grade de quadradinhos, um por d
   <img src="docs/screenshots/celular.png" alt="Painel no celular" width="280">
 </p>
 
+## A grade no README
+
+A imagem abaixo é a grade real do meu hábito de academia. Ela vem do próprio app, se atualiza sozinha (com até 1 hora de atraso) e segue o tema claro ou escuro de quem lê. O código para colar é gerado na página do hábito, no botão "Copiar código para o README". O perfil público fica em [habithub-app.vercel.app/u/luanfzll](https://habithub-app.vercel.app/u/luanfzll).
+
+<a href="https://habithub-app.vercel.app/u/luanfzll">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://habithub-app.vercel.app/api/embed/kvq8i6kx3g.svg?theme=dark">
+    <img alt="Academia no HabitHub" src="https://habithub-app.vercel.app/api/embed/kvq8i6kx3g.svg?theme=light">
+  </picture>
+</a>
+
 ## Destaques técnicos
 
 - **Uma função, dois desenhos.** `buildGrid`, em TypeScript puro, calcula a grade. O app a desenha em HTML e a rota `/api/embed/<código>.svg` a desenha em SVG, então os dois nunca discordam.
