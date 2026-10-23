@@ -161,6 +161,8 @@
 .habit-scope {
   --habit: var(--habit-light);
   --habit-text: var(--habit-light-text);
+  --habit-wash: var(--habit-light-wash);
+  --habit-ink: var(--habit-light-ink);
   --tone-1: var(--habit-light-1);
   --tone-2: var(--habit-light-2);
   --tone-3: var(--habit-light-3);
@@ -170,6 +172,8 @@
 .dark .habit-scope {
   --habit: var(--habit-dark);
   --habit-text: var(--habit-dark-text);
+  --habit-wash: var(--habit-dark-wash);
+  --habit-ink: var(--habit-dark-ink);
   --tone-1: var(--habit-dark-1);
   --tone-2: var(--habit-dark-2);
   --tone-3: var(--habit-dark-3);

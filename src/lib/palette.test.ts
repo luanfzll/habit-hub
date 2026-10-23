@@ -10,6 +10,14 @@ describe("habit palette", () => {
     }
   });
 
+  it.each(HABIT_COLORS)("keeps %s text readable on its light wash in both themes", (color) => {
+    for (const theme of ["light", "dark"] as const) {
+      const { wash, ink } = habitPalette(color, theme);
+      // Selected weekdays in the habit form: normal-size text, so 4.5:1.
+      expect(contrast(ink, wash)).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
   it("goes from a pale tint to the full color", () => {
     const { base, tones } = habitPalette("blue", "light");
     expect(tones).toHaveLength(4);

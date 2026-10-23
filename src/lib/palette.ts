@@ -18,6 +18,13 @@ const BASE: Record<HabitColor, Record<Theme, string>> = {
 const EMPTY: Record<Theme, string> = { light: "#d3d9d7", dark: "#383e44" };
 const TONE_STRENGTH = [0.28, 0.52, 0.76, 1];
 
+/** Page background, where forms sit. Mirrors --background in globals.css. */
+const BACKGROUND: Record<Theme, string> = { light: "#f1f3f2", dark: "#0f1113" };
+/** How much of the habit color goes into the light wash behind selected options. */
+const WASH_STRENGTH = 0.16;
+/** WCAG AA for normal text. */
+const READABLE = 4.5;
+
 export const HABIT_COLORS = Object.keys(BASE) as HabitColor[];
 
 function channels(hex: string): [number, number, number] {
@@ -53,30 +60,53 @@ export function textOn(background: string): string {
   return contrast(background, "#000000") >= contrast(background, "#ffffff") ? "#000000" : "#ffffff";
 }
 
+/**
+ * The habit color as text on `background`: darkened (light theme) or lightened (dark
+ * theme) just enough to read at 4.5:1. Several colors, yellow above all, are too light
+ * to be text on a light background as they are.
+ */
+function inkOn(background: string, base: string, theme: Theme): string {
+  const towards = theme === "light" ? "#000000" : "#ffffff";
+  for (let amount = 0; amount <= 1; amount += 0.02) {
+    const ink = mix(base, towards, amount);
+    if (contrast(ink, background) >= READABLE) return ink;
+  }
+  return towards;
+}
+
 export interface HabitPalette {
   base: string;
   /** Tones for levels 1 to 4. */
   tones: string[];
   /** Text color used on top of `base`. */
   text: string;
+  /** Light wash of the color over the page background, behind selected options. */
+  wash: string;
+  /** The color as readable text on `wash` (and on the page background). */
+  ink: string;
 }
 
 export function habitPalette(color: HabitColor, theme: Theme): HabitPalette {
   const base = BASE[color][theme];
+  const wash = mix(BACKGROUND[theme], base, WASH_STRENGTH);
   return {
     base,
     tones: TONE_STRENGTH.map((strength) => mix(EMPTY[theme], base, strength)),
     text: textOn(base),
+    wash,
+    ink: inkOn(wash, base, theme),
   };
 }
 
-/** CSS variables consumed by globals.css (grid tones, streak tile, buttons in the habit color). */
+/** CSS variables consumed by globals.css (grid tones, streak tile, buttons and options in the habit color). */
 export function paletteVariables(color: HabitColor): Record<string, string> {
   const variables: Record<string, string> = {};
   for (const theme of ["light", "dark"] as const) {
-    const { base, tones, text } = habitPalette(color, theme);
+    const { base, tones, text, wash, ink } = habitPalette(color, theme);
     variables[`--habit-${theme}`] = base;
     variables[`--habit-${theme}-text`] = text;
+    variables[`--habit-${theme}-wash`] = wash;
+    variables[`--habit-${theme}-ink`] = ink;
     tones.forEach((tone, i) => (variables[`--habit-${theme}-${i + 1}`] = tone));
   }
   return variables;

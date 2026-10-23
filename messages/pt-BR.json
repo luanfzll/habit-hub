@@ -188,6 +188,7 @@
     "specificDays": "Dias específicos",
     "weekdaysLabel": "Dias da semana",
     "weekdaysRequired": "Escolha pelo menos um dia.",
+    "weekdaysSummary": "O hábito vale em: {days}.",
     "color": "Cor",
     "colors": {
       "green": "Menta",
