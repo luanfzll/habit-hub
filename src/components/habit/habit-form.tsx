@@ -11,7 +11,8 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import type { Weekday } from "@/domain/calendar-date";
 import { EVERY_DAY, MAX_ACTIVE_HABITS, MAX_TARGET, weekdaysFromList, weekdaysToList } from "@/domain/habit-config";
 import type { HabitColor } from "@/generated/prisma/enums";
-import { HABIT_COLORS, habitPalette } from "@/lib/palette";
+import { LOCALE } from "@/i18n/request";
+import { HABIT_COLORS, habitPalette, paletteVariables } from "@/lib/palette";
 import type { HabitFormState } from "@/server/habits/form-state";
 
 export interface HabitFormValues {
@@ -24,6 +25,15 @@ export interface HabitFormValues {
 
 const NEW_HABIT: HabitFormValues = { name: "", color: "green", unit: null, target: 1, weekdays: EVERY_DAY };
 const WEEKDAYS: Weekday[] = [0, 1, 2, 3, 4, 5, 6];
+const list = new Intl.ListFormat(LOCALE, { type: "conjunction" });
+
+/**
+ * Selected days take the habit's color (border, light wash and bold text in a shade that
+ * reads at 4.5:1), unselected ones stay quiet: a person once picked the days to skip
+ * because the two states looked almost the same.
+ */
+const WEEKDAY_ITEM =
+  "min-w-11 text-muted-foreground aria-pressed:border-[var(--habit)] aria-pressed:bg-[var(--habit-wash)] aria-pressed:font-semibold aria-pressed:text-[var(--habit-ink)] aria-pressed:hover:bg-[var(--habit-wash)] aria-pressed:hover:text-[var(--habit-ink)]";
 
 interface HabitFormProps {
   mode: "create" | "edit";
@@ -90,7 +100,7 @@ export function HabitForm({ mode, action, defaults = NEW_HABIT }: HabitFormProps
           </Field>
         </div>
 
-        <FieldSet>
+        <FieldSet className="habit-scope" style={paletteVariables(color)}>
           <FieldLegend variant="label">{t("frequency")}</FieldLegend>
           <RadioGroup
             value={everyDay ? "every" : "specific"}
@@ -117,12 +127,24 @@ export function HabitForm({ mode, action, defaults = NEW_HABIT }: HabitFormProps
                 onValueChange={(value) => setDays(value.map((day) => Number(day) as Weekday))}
               >
                 {WEEKDAYS.map((day) => (
-                  <ToggleGroupItem key={day} value={String(day)} className="min-w-11">
+                  <ToggleGroupItem key={day} value={String(day)} className={WEEKDAY_ITEM}>
                     {tGrid("weekdayShort", { day: String(day) })}
                   </ToggleGroupItem>
                 ))}
               </ToggleGroup>
-              {missingDays && <p className="text-sm text-destructive">{t("weekdaysRequired")}</p>}
+              {/* Says in words which days count, so a wrong selection shows before saving. */}
+              <p
+                aria-live="polite"
+                className={missingDays ? "text-sm text-destructive" : "text-sm text-muted-foreground"}
+              >
+                {missingDays
+                  ? t("weekdaysRequired")
+                  : t("weekdaysSummary", {
+                      days: list.format(
+                        [...days].sort((a, b) => a - b).map((day) => tGrid("weekdayShort", { day: String(day) })),
+                      ),
+                    })}
+              </p>
             </>
           )}
           <input type="hidden" name="weekdays" value={weekdays} />

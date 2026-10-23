@@ -78,3 +78,16 @@ test("dark is the default theme; light can be chosen and is remembered", async (
   await page.reload();
   await expect(page.locator("html")).not.toHaveClass(/\bdark\b/);
 });
+
+test("the habit form says in words which days a habit counts on", async ({ page }) => {
+  await signUp(page);
+  await page.goto("/habitos/novo");
+  await page.getByRole("radio", { name: "Dias específicos" }).click();
+  const days = page.getByRole("group", { name: "Dias da semana" });
+  await expect(page.getByText("O hábito vale em: Dom, Seg, Ter, Qua, Qui, Sex e Sáb.")).toBeVisible();
+
+  await days.getByRole("button", { name: "Dom" }).click();
+  await days.getByRole("button", { name: "Sáb" }).click();
+  await expect(days.getByRole("button", { name: "Dom" })).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByText("O hábito vale em: Seg, Ter, Qua, Qui e Sex.")).toBeVisible();
+});
