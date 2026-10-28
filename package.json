@@ -17,6 +17,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test:e2e": "playwright test",
+    "readme:media": "tsx scripts/readme-media.ts",
     "vercel-build": "tsx scripts/deploy/migrate.ts && next build"
   },
   "dependencies": {
