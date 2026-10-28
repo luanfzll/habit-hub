@@ -1,6 +1,7 @@
 /**
  * Regenerates the README images in docs/screenshots/: the logo, the home page (light and
- * dark), the dashboard, a habit page, the phone view and the GIF of a habit being marked.
+ * dark), the README code of a published habit, a habit page, the phone view and the GIF of a
+ * habit being marked.
  *
  * Needs, in this order:
  *   docker compose up -d && npm run db:migrate && npm run db:seed
@@ -24,6 +25,8 @@ const EMAIL = "dev@habithub.local";
 const PASSWORD = "senha-de-dev-123";
 const DESKTOP = { width: 1280, height: 800 };
 const PHONE = { width: 390, height: 844 };
+/** The two desktop captures in the README gallery share this size. */
+const GALLERY = { width: 1280, height: 720 };
 
 async function sql(query: string, params: unknown[] = []) {
   const client = new Client({ connectionString: process.env.DATABASE_URL });
@@ -35,9 +38,16 @@ async function sql(query: string, params: unknown[] = []) {
   }
 }
 
-/** The example account, confirmed (no reminder banner) and with a recent reading streak. */
+/**
+ * The example account, confirmed (no reminder banner), with a recent reading streak and
+ * "Ler" published under the username "exemplo" (for the README code capture).
+ */
 async function prepareExampleAccount() {
-  await sql("UPDATE users SET email_verified = true WHERE email = $1", [EMAIL]);
+  await sql("UPDATE users SET email_verified = true, username = 'exemplo' WHERE email = $1", [EMAIL]);
+  await sql(
+    "UPDATE habits SET is_public = true WHERE name = 'Ler' AND user_id = (SELECT id FROM users WHERE email = $1)",
+    [EMAIL],
+  );
   await sql(
     `INSERT INTO habit_entries (habit_id, date, value, skipped, updated_at)
      SELECT h.id, d::date, 20 + (extract(day FROM d)::int % 7), false, now()
@@ -90,7 +100,7 @@ async function logo(browser: Browser, theme: "light" | "dark") {
   await page.context().close();
 }
 
-/** The home page down to the end of its first block (the hero). */
+/** The home page down to the end of its first block (the hero), just above the divider. */
 async function home(browser: Browser, theme: "light" | "dark") {
   const page = await themedPage(browser, theme);
   await page.goto("/");
@@ -99,7 +109,7 @@ async function home(browser: Browser, theme: "light" | "dark") {
   const hero = await page.locator("main section").first().boundingBox();
   await page.screenshot({
     path: path.join(OUT, `inicio-${theme === "light" ? "claro" : "escuro"}.png`),
-    clip: { x: 0, y: 0, width: DESKTOP.width, height: Math.ceil(hero!.y + hero!.height + 40) },
+    clip: { x: 0, y: 0, width: DESKTOP.width, height: Math.floor(hero!.y + hero!.height - 16) },
   });
   await page.context().close();
 }
@@ -195,26 +205,48 @@ async function main() {
 
     await gif(browser, storageState);
 
-    const dashboard = await themedPage(browser, "dark", DESKTOP, storageState);
-    await dashboard.goto("/painel");
-    await dashboard.getByRole("article", { name: "Ler" }).waitFor();
-    await settle(dashboard);
-    await dashboard.screenshot({ path: path.join(OUT, "painel-escuro.png") });
-    await dashboard.context().close();
+    // The habit page scrolled to "Perfil público": the README image preview and its code.
+    const share = await themedPage(browser, "dark", DESKTOP, storageState);
+    await share.goto("/painel");
+    await share.getByRole("article", { name: "Ler" }).getByRole("link", { name: "Ler" }).click();
+    const section = share.getByRole("region", { name: "Perfil público" });
+    const preview = section.getByRole("img", { name: "Ler no HabitHub" });
+    await preview.waitFor();
+    // The preview for the other theme stays hidden (and lazy), so only the visible one counts.
+    await share.waitForFunction(() =>
+      [...document.querySelectorAll<HTMLImageElement>("img[alt='Ler no HabitHub']")].some(
+        (img) => img.offsetParent !== null && img.complete && img.naturalWidth > 0,
+      ),
+    );
+    await settle(share);
+    // Same size as the habit page capture, starting at the section (it sits at the end
+    // of the page, so scrolling cannot bring it to the top of the window).
+    const top = await section.evaluate((element) => element.getBoundingClientRect().top + window.scrollY - 24);
+    await share.screenshot({
+      path: path.join(OUT, "codigo-readme-escuro.png"),
+      fullPage: true,
+      clip: { x: 0, y: Math.floor(top), ...GALLERY },
+    });
+    await share.context().close();
 
     const habit = await themedPage(browser, "light", DESKTOP, storageState);
     await habit.goto("/painel");
     await habit.getByRole("article", { name: "Ler" }).getByRole("link", { name: "Ler" }).click();
     await habit.getByRole("heading", { level: 1, name: "Ler" }).waitFor();
     await settle(habit);
-    await habit.screenshot({ path: path.join(OUT, "habito-claro.png") });
+    await habit.screenshot({ path: path.join(OUT, "habito-claro.png"), clip: { x: 0, y: 0, ...GALLERY } });
     await habit.context().close();
 
     const phone = await themedPage(browser, "dark", PHONE, storageState);
     await phone.goto("/painel");
     await phone.getByRole("region", { name: "Hábitos de hoje" }).waitFor();
     await settle(phone);
-    await phone.screenshot({ path: path.join(OUT, "celular-escuro.png") });
+    // Down to the end of the "Tarefas do dia" card, not in the middle of the next one.
+    const tasks = await phone.getByRole("region", { name: "Tarefas do dia" }).boundingBox();
+    await phone.screenshot({
+      path: path.join(OUT, "celular-escuro.png"),
+      clip: { x: 0, y: 0, width: PHONE.width, height: Math.ceil(tasks!.y + tasks!.height + 24) },
+    });
     await phone.context().close();
   } finally {
     await browser.close();

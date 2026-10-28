@@ -5,7 +5,7 @@
   </picture>
 </h1>
 
-<p align="center"><strong>Seus hábitos numa grade, um quadradinho por dia.</strong></p>
+<p align="center"><strong>Constância que dá para ver, no app e no README do GitHub.</strong></p>
 
 <p align="center">
   <a href="https://habithub-app.vercel.app">App no ar</a> ·
@@ -43,8 +43,8 @@ Uso o app no dia a dia desde outubro de 2026.
 <table>
   <tr>
     <td width="500">
-      <img alt="Painel no tema escuro com os hábitos e as tarefas de hoje e a grade de cada hábito" src="docs/screenshots/painel-escuro.png" width="500"><br>
-      <sub>Painel: o que fazer hoje e a grade de cada hábito</sub>
+      <img alt="Seção Perfil público de um hábito, no tema escuro, com a prévia da imagem do README, o código para colar e o botão Copiar código para o README" src="docs/screenshots/codigo-readme-escuro.png" width="500"><br>
+      <sub>Publicar um hábito e copiar o código para o README</sub>
     </td>
     <td rowspan="2" width="270" valign="top">
       <img alt="Painel no celular, no tema escuro" src="docs/screenshots/celular-escuro.png" width="270"><br>
@@ -102,6 +102,9 @@ flowchart LR
   app -. "e-mails" .-> gmail["Gmail SMTP"]
 ```
 
+<details>
+<summary>Ver modelo de dados</summary>
+
 O modelo de dados central (sem as tabelas da autenticação), a partir do [`schema.prisma`](prisma/schema.prisma):
 
 ```mermaid
@@ -146,6 +149,8 @@ erDiagram
     date completed_on
   }
 ```
+
+</details>
 
 Um registro não aponta para uma versão: para cada dia, vale a versão do mesmo hábito com o maior `effective_from` que não passa da data do registro.
 
@@ -218,17 +223,11 @@ Cada merge na `main` publica sozinho na Vercel. Antes do build, um script cria u
 - As cores de cada hábito saem de [`palette.ts`](src/lib/palette.ts), com contraste mínimo testado.
 - Os e-mails passam pela interface `EmailSender` ([`email.ts`](src/server/email.ts)); trocar de provedor é mexer só nela.
 
-## Próximos passos
+## Limitações e próximos passos
 
-- Versão em inglês.
-- Lembretes e notificações.
-- Diminuir o atraso da imagem do README.
-
-## Limitações conhecidas
-
-- Interface só em pt-BR.
-- A imagem do README pode levar até 1 hora para mostrar um registro novo; o proxy de imagens do GitHub pode guardá-la por mais tempo.
-- Os e-mails saem de uma conta Gmail: uns 500 por dia, e alguns podem cair no spam.
+- **Interface só em pt-BR** → a versão em inglês está nos planos.
+- **A imagem do README pode levar até 1 hora para mostrar um registro novo**, e o proxy de imagens do GitHub pode guardá-la por mais tempo → diminuir esse atraso está nos planos.
+- **Sem lembretes nem notificações** → lembretes estão nos planos.
 
 ## Licença
 
