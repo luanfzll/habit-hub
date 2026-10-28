@@ -282,7 +282,11 @@
     "deleteTask": "Excluir “{title}”",
     "taskLimit": "Você chegou ao limite de {max} tarefas pendentes.",
     "removeOne": "Remover 1 de {name}",
-    "cleared": "“{name}” voltou para zero hoje."
+    "cleared": "“{name}” voltou para zero hoje.",
+    "editTask": "Editar “{title}”",
+    "taskTitle": "Nome da tarefa",
+    "saveTask": "Salvar tarefa",
+    "cancelEdit": "Cancelar edição"
   },
   "embed": {
     "streak": "{count, plural, =0 {Nenhum dia seguido} one {# dia seguido} other {# dias seguidos}}",

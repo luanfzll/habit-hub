@@ -4,7 +4,7 @@ import { refresh } from "next/cache";
 import { z } from "zod";
 import { MAX_TASK_TITLE } from "@/domain/tasks";
 import { getCurrentUser, userToday } from "../session";
-import { createTask, deleteTask, setTaskDone, TaskLimitError, TaskNotFoundError } from "./service";
+import { createTask, deleteTask, renameTask, setTaskDone, TaskLimitError, TaskNotFoundError } from "./service";
 
 const taskIdSchema = z.uuid();
 const titleSchema = z.string().trim().min(1).max(MAX_TASK_TITLE);
@@ -45,6 +45,12 @@ export async function setTaskDoneAction(taskId: string, done: boolean) {
   const user = await getCurrentUser();
   if (!user) return { ok: false as const };
   return changeTask(taskId, (userId, id) => setTaskDone(userId, id, done === true, userToday(user)));
+}
+
+export async function renameTaskAction(taskId: string, title: string) {
+  const parsed = titleSchema.safeParse(title);
+  if (!parsed.success) return { ok: false as const };
+  return changeTask(taskId, (userId, id) => renameTask(userId, id, parsed.data));
 }
 
 export async function deleteTaskAction(taskId: string) {

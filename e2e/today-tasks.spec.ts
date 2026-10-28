@@ -48,3 +48,41 @@ test("an unfinished task carries over to the following days", async ({ page }) =
   // \p{L}, not \w: "sáb." has an accented letter, which \w does not match.
   await expect(carried).toContainText(/desde \p{L}{3}\., \d{2}\/\d{2}/u);
 });
+
+test("rename a task in place; Esc keeps the old name", async ({ page }) => {
+  await signUp(page);
+  const tasks = todayTasks(page);
+  await tasks.getByLabel("Nova tarefa").fill("Comprar pãp");
+  await tasks.getByLabel("Nova tarefa").press("Enter");
+  await expect(tasks.getByRole("checkbox", { name: "Comprar pãp" })).toBeEnabled();
+
+  await tasks.getByRole("button", { name: "Editar “Comprar pãp”" }).click();
+  const field = tasks.getByRole("textbox", { name: "Nome da tarefa" });
+  await field.fill("Comprar pão");
+  await field.press("Enter");
+  await expect(tasks.getByRole("checkbox", { name: "Comprar pão" })).toBeVisible();
+
+  await tasks.getByRole("button", { name: "Editar “Comprar pão”" }).click();
+  await tasks.getByRole("textbox", { name: "Nome da tarefa" }).fill("Outra coisa");
+  await tasks.getByRole("textbox", { name: "Nome da tarefa" }).press("Escape");
+  await expect(tasks.getByRole("checkbox", { name: "Comprar pão" })).toBeVisible();
+
+  await reloadAfterSave(page);
+  await expect(todayTasks(page).getByRole("checkbox", { name: "Comprar pão" })).toBeVisible();
+});
+
+test("a long task list scrolls on desktop and grows on phones", async ({ page }, info) => {
+  await signUp(page);
+  const tasks = todayTasks(page);
+  for (let i = 1; i <= 8; i++) {
+    await tasks.getByLabel("Nova tarefa").fill(`Tarefa ${i}`);
+    await tasks.getByLabel("Nova tarefa").press("Enter");
+    await expect(tasks.getByRole("checkbox", { name: `Tarefa ${i}` })).toBeVisible();
+  }
+  const list = tasks.getByRole("list");
+  const scrolls = await list.evaluate((el) => el.scrollHeight > el.clientHeight + 1);
+  expect(scrolls).toBe(info.project.name === "desktop");
+  // The list scrolls instead of squeezing the rows below their minimum height.
+  const heights = await list.getByRole("listitem").evaluateAll((items) => items.map((item) => item.clientHeight));
+  expect(Math.min(...heights)).toBeGreaterThanOrEqual(48);
+});

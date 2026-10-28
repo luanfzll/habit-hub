@@ -40,6 +40,11 @@ export async function setTaskDone(userId: string, taskId: string, done: boolean,
   if (count === 0) throw new TaskNotFoundError();
 }
 
+export async function renameTask(userId: string, taskId: string, title: string) {
+  const { count } = await db.task.updateMany({ where: { id: taskId, userId }, data: { title } });
+  if (count === 0) throw new TaskNotFoundError();
+}
+
 export async function deleteTask(userId: string, taskId: string) {
   const { count } = await db.task.deleteMany({ where: { id: taskId, userId } });
   if (count === 0) throw new TaskNotFoundError();

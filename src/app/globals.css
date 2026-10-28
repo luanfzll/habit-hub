@@ -155,6 +155,43 @@
 }
 
 /* ------------------------------------------------------------------
+ * Quiet scrollbar for lists inside cards: thin, no arrows, transparent
+ * track and a rounded gray thumb that darkens on hover.
+ * ------------------------------------------------------------------ */
+.scrollbar-quiet {
+  --scrollbar-thumb: color-mix(in oklch, var(--muted-foreground) 45%, transparent);
+  --scrollbar-thumb-hover: color-mix(in oklch, var(--muted-foreground) 75%, transparent);
+}
+/* Chrome and Safari: full control of the look, with no arrow buttons. */
+.scrollbar-quiet::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-quiet::-webkit-scrollbar-track,
+.scrollbar-quiet::-webkit-scrollbar-corner {
+  background: transparent;
+}
+.scrollbar-quiet::-webkit-scrollbar-button {
+  display: none;
+}
+.scrollbar-quiet::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: var(--scrollbar-thumb);
+}
+.scrollbar-quiet:hover::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-hover);
+}
+/* Firefox: the standard properties. Chrome would let them override the rules above. */
+@supports not selector(::-webkit-scrollbar) {
+  .scrollbar-quiet {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+  .scrollbar-quiet:hover {
+    scrollbar-color: var(--scrollbar-thumb-hover) transparent;
+  }
+}
+
+/* ------------------------------------------------------------------
  * Habit color: each habit sets --habit-{theme}, --habit-{theme}-text and
  * --habit-{theme}-1..4 inline (see lib/palette.ts).
  * ------------------------------------------------------------------ */
