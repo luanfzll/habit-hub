@@ -4,7 +4,15 @@ import { MAX_PENDING_TASKS } from "@/domain/tasks";
 import { db } from "@/server/db";
 import { toDbDate } from "@/server/db-dates";
 import { createUser } from "../../../tests/support/factories";
-import { createTask, deleteTask, listTodayTasks, setTaskDone, TaskLimitError, TaskNotFoundError } from "./service";
+import {
+  createTask,
+  deleteTask,
+  listTodayTasks,
+  renameTask,
+  setTaskDone,
+  TaskLimitError,
+  TaskNotFoundError,
+} from "./service";
 
 const today = parseCalendarDate("2026-10-14");
 
@@ -20,6 +28,13 @@ describe("tasks", () => {
     expect((await listTodayTasks(user.id, today))[0]).toMatchObject({ completedOn: "2026-10-14" });
     // Done tasks disappear once the day turns.
     expect(await listTodayTasks(user.id, addDays(today, 1))).toEqual([]);
+  });
+
+  it("can be renamed by their owner", async () => {
+    const user = await createUser();
+    const { id } = await createTask(user.id, "Pagar a cota de luz", today);
+    await renameTask(user.id, id, "Pagar a conta de luz");
+    expect((await listTodayTasks(user.id, today))[0]).toMatchObject({ id, title: "Pagar a conta de luz" });
   });
 
   it("can be marked as not done again", async () => {
@@ -38,6 +53,7 @@ describe("tasks", () => {
     expect(await listTodayTasks(stranger.id, today)).toEqual([]);
     await expect(setTaskDone(stranger.id, id, true, today)).rejects.toThrow(TaskNotFoundError);
     await expect(deleteTask(stranger.id, id)).rejects.toThrow(TaskNotFoundError);
+    await expect(renameTask(stranger.id, id, "Invadida")).rejects.toThrow(TaskNotFoundError);
 
     await deleteTask(owner.id, id);
     expect(await listTodayTasks(owner.id, today)).toEqual([]);
