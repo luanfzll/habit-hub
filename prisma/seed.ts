@@ -20,6 +20,12 @@ const TIMEZONE = "America/Sao_Paulo";
 if (process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production") {
   throw new Error("The seed only runs against a local database.");
 }
+// It deletes and recreates the demo account, so it also refuses any database that is not
+// on this machine (a .env pointing at Neon, for instance). SEED_ALLOW_REMOTE=1 overrides it.
+const databaseHost = new URL(process.env.DATABASE_URL ?? "postgresql://localhost").hostname;
+if (!["localhost", "127.0.0.1", "::1"].includes(databaseHost) && process.env.SEED_ALLOW_REMOTE !== "1") {
+  throw new Error(`The seed only runs against a local database (DATABASE_URL points at ${databaseHost}).`);
+}
 
 // Deterministic pseudo-random numbers, so every seed looks the same.
 let state = 42;
