@@ -101,7 +101,8 @@ export function TodayTasks({ tasks, today }: { tasks: TaskRecord[]; today: Calen
       ) : (
         // Desktop: the two Today panels sit side by side, so a long list scrolls instead of
         // stretching the habits panel. On phones the panels stack and the list just grows.
-        <ul className="flex flex-col lg:max-h-72 lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
+        // Rows never shrink (shrink-0): the list scrolls instead of squeezing them.
+        <ul className="scrollbar-quiet flex flex-col lg:max-h-72 lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
           {visible.map((task) => (
             <TaskRow key={task.id} task={task} today={today} run={run} />
           ))}
@@ -139,7 +140,7 @@ function TaskRow({ task, today, run }: { task: TaskRecord; today: CalendarDate; 
 
   if (editing) {
     return (
-      <li className="flex min-h-12 items-center border-b py-2 last:border-b-0">
+      <li className="flex min-h-12 shrink-0 items-center border-b py-2 last:border-b-0">
         <form method="post" onSubmit={save} className="flex flex-1 items-center gap-2">
           <Input
             name="title"
@@ -163,7 +164,7 @@ function TaskRow({ task, today, run }: { task: TaskRecord; today: CalendarDate; 
   }
 
   return (
-    <li className="flex min-h-12 items-center gap-1 border-b py-2 last:border-b-0">
+    <li className="flex min-h-12 shrink-0 items-center gap-1 border-b py-2 last:border-b-0">
       <button
         type="button"
         role="checkbox"

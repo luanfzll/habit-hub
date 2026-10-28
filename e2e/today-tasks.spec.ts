@@ -82,4 +82,7 @@ test("a long task list scrolls on desktop and grows on phones", async ({ page },
   const list = tasks.getByRole("list");
   const scrolls = await list.evaluate((el) => el.scrollHeight > el.clientHeight + 1);
   expect(scrolls).toBe(info.project.name === "desktop");
+  // The list scrolls instead of squeezing the rows below their minimum height.
+  const heights = await list.getByRole("listitem").evaluateAll((items) => items.map((item) => item.clientHeight));
+  expect(Math.min(...heights)).toBeGreaterThanOrEqual(48);
 });
