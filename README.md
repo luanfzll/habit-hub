@@ -1,10 +1,33 @@
-# HabitHub
+<h1 align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/logo-dark.png">
+    <img alt="HabitHub" src="docs/screenshots/logo-light.png" width="300">
+  </picture>
+</h1>
+
+<p align="center"><strong>Constância que dá para ver, no app e no README do GitHub.</strong></p>
+
+<p align="center">
+  <a href="https://habithub-app.vercel.app">App no ar</a> ·
+  <a href="https://habithub-app.vercel.app/u/luanfzll">Meu perfil público</a> ·
+  <a href="docs/decisoes.md">Decisões de produto e arquitetura</a> ·
+  <a href="https://www.linkedin.com/in/luanfleal/">LinkedIn</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/luanfzll/habit-hub/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/luanfzll/habit-hub/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="Licença MIT" src="https://img.shields.io/badge/licen%C3%A7a-MIT-blue"></a>
+  <a href="https://habithub-app.vercel.app"><img alt="Deploy na Vercel" src="https://img.shields.io/github/deployments/luanfzll/habit-hub/Production?label=vercel&logo=vercel"></a>
+</p>
 
 Tracker de hábitos em que cada hábito vira uma grade de quadradinhos, um por dia, como o gráfico de contribuições do GitHub. A grade de um hábito pode ir para o README do seu perfil no GitHub e se atualiza sozinha.
 
-**[habithub-app.vercel.app](https://habithub-app.vercel.app)** · [Decisões de produto e arquitetura](docs/decisoes.md) · Projeto de portfólio de Luan Leal
+Uso o app no dia a dia desde outubro de 2026.
 
-![Página inicial do HabitHub](docs/screenshots/inicio.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/inicio-escuro.png">
+  <img alt="Página inicial do HabitHub: o título, os botões de cadastro e um cartão de exemplo com três hábitos e suas grades" src="docs/screenshots/inicio-claro.png">
+</picture>
 
 ## O que dá para fazer
 
@@ -15,13 +38,26 @@ Tracker de hábitos em que cada hábito vira uma grade de quadradinhos, um por d
 - **Cuidar da conta e dos dados:** confirmação de e-mail, recuperação de senha, troca de e-mail e de senha, exportação em JSON e exclusão da conta.
 - **Usar em qualquer tela,** no tema claro ou escuro.
 
-<p>
-  <img src="docs/screenshots/painel.png" alt="Painel com os hábitos e as tarefas de hoje e a grade de cada hábito" width="49%">
-  <img src="docs/screenshots/habito.png" alt="Página de um hábito com a sequência, as estatísticas e a grade de 12 meses" width="49%">
-</p>
-<p align="center">
-  <img src="docs/screenshots/celular.png" alt="Painel no celular" width="280">
-</p>
+<img alt="Animação: no painel, um clique marca o hábito Ler como feito, a sequência sobe de 11 para 12 e o quadradinho de hoje acende na grade" src="docs/screenshots/marcar-habito.gif" width="880">
+
+<table>
+  <tr>
+    <td width="500">
+      <img alt="Seção Perfil público de um hábito, no tema escuro, com a prévia da imagem do README, o código para colar e o botão Copiar código para o README" src="docs/screenshots/codigo-readme-escuro.png" width="500"><br>
+      <sub>Publicar um hábito e copiar o código para o README</sub>
+    </td>
+    <td rowspan="2" width="270" valign="top">
+      <img alt="Painel no celular, no tema escuro" src="docs/screenshots/celular-escuro.png" width="270"><br>
+      <sub>No celular</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="500">
+      <img alt="Página de um hábito no tema claro com a sequência, as estatísticas e a grade de 12 meses" src="docs/screenshots/habito-claro.png" width="500"><br>
+      <sub>Página do hábito, no tema claro</sub>
+    </td>
+  </tr>
+</table>
 
 ## A grade no README
 
@@ -36,17 +72,97 @@ A imagem abaixo é a grade real do meu hábito de academia. Ela vem do próprio 
 
 ## Destaques técnicos
 
-- **Uma função, dois desenhos.** `buildGrid`, em TypeScript puro, calcula a grade. O app a desenha em HTML e a rota `/api/embed/<código>.svg` a desenha em SVG, então os dois nunca discordam.
-- **Datas sem fuso escondido.** Um dia é sempre `"2026-10-15"`, e "hoje" vem do fuso salvo no perfil. Os testes rodam nos fusos de São Paulo e de Tóquio.
-- **Metas com histórico.** Mudar a meta ou os dias da semana cria uma versão nova a partir de hoje, sem reescrever o passado.
-- **Imagem feita para o README.** Cache de 1 hora com `stale-while-revalidate` (poupa o banco gratuito), a mesma imagem "Hábito indisponível" para hábito privado, arquivado ou inexistente, e uma CSP que impede o SVG de executar qualquer coisa.
-- **Next.js 16 com Cache Components.** Casca estática com os dados em streaming, Server Actions com atualização otimista e "desfazer", e uma página inicial estática com os exemplos desenhados no navegador.
-- **Privacidade desde o modelo.** Hábitos privados por padrão, motivos de dias pulados nunca públicos, Sentry com coleta de dados restrita, e e-mails enviados depois da resposta, para não revelar se uma conta existe.
-- **Banco que se defende.** Restrições `CHECK` nas migrações e uma cópia de backup no Neon antes de cada migração em produção.
+- **Uma função, dois desenhos.** `buildGrid`, em TypeScript puro, calcula a grade. O app a desenha em HTML e a imagem do README em SVG, então os dois nunca discordam. [`grid.ts`](src/domain/grid.ts) · [`embed-svg.ts`](src/lib/embed-svg.ts) · testes: [`grid.test.ts`](src/domain/grid.test.ts), [`embed-svg.test.ts`](src/lib/embed-svg.test.ts)
+- **Datas sem fuso escondido.** Um dia é sempre uma data de calendário (`"2026-10-15"`), e "hoje" vem do fuso salvo no perfil. Os testes rodam nos fusos de São Paulo e de Tóquio para pegar erros de um dia. [`calendar-date.ts`](src/domain/calendar-date.ts) · teste: [`calendar-date.test.ts`](src/domain/calendar-date.test.ts)
+- **Metas com histórico.** Mudar a meta ou os dias da semana cria uma versão nova a partir de hoje, sem reescrever o passado. [`habit-config.ts`](src/domain/habit-config.ts) · teste: [`day-state.test.ts`](src/domain/day-state.test.ts)
+- **Imagem feita para o README.** Cache de 1 hora com `stale-while-revalidate` (poupa o banco gratuito), a mesma imagem "Hábito indisponível" para hábito privado, arquivado ou inexistente, e uma CSP que impede o SVG de executar qualquer coisa. [`route.ts`](src/app/api/embed/[file]/route.ts)
+- **Next.js 16 com Cache Components.** Casca estática com os dados em streaming, Server Actions com atualização otimista e "desfazer", e uma página inicial estática com os exemplos desenhados no navegador. [`next.config.ts`](next.config.ts) · [`use-habit-entries.tsx`](src/components/habit/use-habit-entries.tsx)
+- **Privacidade desde o modelo.** Hábitos privados por padrão, motivos de dias pulados nunca públicos, Sentry com coleta de dados restrita, e e-mails enviados depois da resposta, para não revelar se uma conta existe. [`public/service.ts`](src/server/public/service.ts) · [`sentry-options.ts`](src/lib/sentry-options.ts) · teste: [`service.int.test.ts`](src/server/public/service.int.test.ts)
+- **Segurança revisada.** Cabeçalhos de segurança e CSP em todas as respostas, senha atual exigida para trocar o e-mail, varredura com o OWASP ZAP sem falhas graves. [`next.config.ts`](next.config.ts) · [`auth.ts`](src/server/auth.ts) · teste: [`security.spec.ts`](e2e/security.spec.ts)
+- **Banco que se defende.** As regras do domínio também valem no Postgres, com restrições `CHECK` nas migrações (o Prisma não tem sintaxe para elas). [`migration.sql`](prisma/migrations/20261013170127_init/migration.sql)
+
+## Decisões
+
+Algumas trocas que fiz, entre as registradas em [docs/decisoes.md](docs/decisoes.md):
+
+- **E-mails pelo Gmail, sem domínio próprio.** É grátis e funciona sem domínio; em troca, o limite é de uns 500 e-mails por dia e alguns podem cair no spam.
+- **Sem login pelo GitHub na v1.** Só encurtaria o login de quem já tem conta e exigiria um app OAuth, regras de vínculo e testes de um login externo.
+- **CSP sem nonces.** Nonces deixariam todas as páginas dinâmicas; sem eles, a página inicial continua estática, e os scripts inline do Next e do tema seguem permitidos.
+
+## Arquitetura
+
+```mermaid
+flowchart LR
+  browser["Navegador"] --> app["Next.js na Vercel<br/>(gru1, São Paulo)"]
+  readme["README no GitHub"] --> proxy["Proxy de imagens<br/>do GitHub"]
+  proxy --> cache["Cache da Vercel: 1 h<br/>com stale-while-revalidate"]
+  cache -->|"/api/embed/código.svg"| app
+  app --> db[("Postgres no Neon<br/>(São Paulo)")]
+  app -. "erros" .-> sentry["Sentry (UE)"]
+  app -. "e-mails" .-> gmail["Gmail SMTP"]
+```
+
+<details>
+<summary>Ver modelo de dados</summary>
+
+O modelo de dados central (sem as tabelas da autenticação), a partir do [`schema.prisma`](prisma/schema.prisma):
+
+```mermaid
+erDiagram
+  users ||--o{ habits : "tem"
+  users ||--o{ tasks : "tem"
+  habits ||--|{ habit_config_versions : "meta e dias ao longo do tempo"
+  habits ||--o{ habit_entries : "um registro por dia"
+  users {
+    text id PK
+    text email
+    text timezone
+    varchar username
+  }
+  habits {
+    uuid id PK
+    text public_id
+    text user_id FK
+    varchar name
+    boolean is_public
+    date start_date
+    timestamp archived_at
+  }
+  habit_config_versions {
+    uuid habit_id PK, FK
+    date effective_from PK
+    int target
+    int weekdays
+  }
+  habit_entries {
+    uuid habit_id PK, FK
+    date date PK
+    int value
+    boolean skipped
+    varchar skip_reason
+  }
+  tasks {
+    uuid id PK
+    text user_id FK
+    varchar title
+    date created_for
+    date completed_on
+  }
+```
+
+</details>
+
+Um registro não aponta para uma versão: para cada dia, vale a versão do mesmo hábito com o maior `effective_from` que não passa da data do registro.
 
 ## Stack
 
-Next.js 16 (App Router, Cache Components) · React 19 · TypeScript · Postgres 17 · Prisma 7 · Better Auth · next-intl (pt-BR) · Tailwind CSS 4 + shadcn/ui (Base UI) · Vitest · Playwright
+| Camada                | Ferramentas                                                                                                                  |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Front-end             | Next.js 16 (App Router, Cache Components) · React 19 · TypeScript · Tailwind CSS 4 · shadcn/ui (Base UI) · next-intl (pt-BR) |
+| Back-end              | Server Actions e Route Handlers do Next.js · Better Auth · Zod · Nodemailer (Gmail SMTP)                                     |
+| Banco                 | Postgres 17 · Prisma 7                                                                                                       |
+| Testes                | Vitest · Playwright · axe                                                                                                    |
+| Infra/Observabilidade | Vercel · Neon · Sentry · Docker (Postgres local) · GitHub Actions                                                            |
 
 ## Rodando localmente
 
@@ -63,11 +179,11 @@ npm run dev                   # http://localhost:3100
 
 A conta de exemplo criada pelo seed é `dev@habithub.local`, com a senha `senha-de-dev-123`.
 
+Essa conta só existe no seu banco local: o seed se recusa a rodar em produção (`NODE_ENV` ou `VERCEL_ENV` igual a `production`) ou com um `DATABASE_URL` que não aponte para esta máquina ([`seed.ts`](prisma/seed.ts)).
+
 Em desenvolvimento, os e-mails não são enviados: o texto e os links aparecem no terminal e ficam salvos em `.outbox/` (`EMAIL_TRANSPORT=console`).
 
-## Deploy
-
-O app roda na Vercel (funções em São Paulo), com o banco no Neon e os erros no Sentry. Cada merge na `main` publica sozinho: antes do build, um script cria uma cópia de backup do banco e aplica as migrações. O passo a passo e as variáveis de ambiente estão em [docs/deploy.md](docs/deploy.md).
+As imagens deste README saem da conta de exemplo, com `npm run readme:media` ([`readme-media.ts`](scripts/readme-media.ts)).
 
 ## Testes
 
@@ -78,33 +194,45 @@ O app roda na Vercel (funções em São Paulo), com o banco no Neon e os erros n
 | `npm run test:e2e`                                            | Fluxos completos no navegador (desktop e celular) com verificação de acessibilidade (axe)                |
 | `npm run lint` · `npm run typecheck` · `npm run format:check` | Qualidade estática                                                                                       |
 
-A CI (`.github/workflows/ci.yml`) roda tudo isso em cada pull request.
+A CI ([`ci.yml`](.github/workflows/ci.yml)) roda tudo isso em cada pull request e em cada push na `main`.
+
+## Deploy
+
+Cada merge na `main` publica sozinho na Vercel. Antes do build, um script cria uma cópia de backup do banco no Neon e aplica as migrações ([`migrate.ts`](scripts/deploy/migrate.ts)). O passo a passo e as variáveis de ambiente estão em [docs/deploy.md](docs/deploy.md).
 
 ## Organização
 
-```
-src/
-  domain/          regras puras em TypeScript, sem Next nem banco (datas, estados do dia, sequências, grade)
-  server/          banco, autenticação, e-mails, serviços e Server Actions
-  lib/             código usado no servidor e no navegador (paleta, imagem SVG, exemplos, formatos)
-  components/      interface (habit/ = grade, cartão e menu do dia; home/ = exemplos da página inicial)
-  app/             rotas: página inicial, (auth) entrar e cadastro, (app) painel, hábitos e configurações,
-                   (public) perfil público e privacidade, api/ imagem do README e exportação
-  i18n/, messages/ textos da interface (só pt-BR por enquanto)
-prisma/            esquema, migrações (com as restrições CHECK do domínio) e seed local
-scripts/deploy/    backup no Neon e migrações antes de cada deploy
-e2e/               testes Playwright
-docs/              decisões, deploy e capturas de tela
-```
+| Pasta             | O que tem                                                                    |
+| ----------------- | ---------------------------------------------------------------------------- |
+| `src/domain/`     | Regras puras em TypeScript, sem Next nem banco: datas, estados do dia, grade |
+| `src/server/`     | Banco, autenticação, e-mails, serviços e Server Actions                      |
+| `src/lib/`        | Código do servidor e do navegador: paleta, imagem SVG, exemplos              |
+| `src/components/` | Interface: `habit/` (grade, cartão, menu do dia), `home/` (exemplos)         |
+| `src/app/`        | Rotas: página inicial, `(auth)`, `(app)`, `(public)` e `api/`                |
+| `messages/`       | Todos os textos da interface, só em pt-BR por enquanto                       |
+| `prisma/`         | Esquema, migrações (com as restrições `CHECK`) e seed local                  |
+| `scripts/`        | Backup e migrações do deploy, e as imagens do README                         |
+| `e2e/`            | Testes Playwright                                                            |
+| `docs/`           | Decisões, deploy e capturas de tela                                          |
 
-Algumas escolhas que valem conhecer antes de mexer no código:
+### Convenções
 
-- **Um dia é sempre um `CalendarDate` (`"2026-10-15"`)**, nunca um `Date`. A conversão para o formato do Prisma acontece só em `src/server/db-dates.ts`.
-- **"Hoje" vem do fuso salvo no perfil** (`userToday`), nunca do navegador. A exceção são os exemplos da página inicial, que usam o "hoje" de quem visita.
-- **Meta e agenda têm versões** (`habit_config_versions`). Uma mudança vale a partir de hoje e não reescreve o passado.
-- **A mesma função (`buildGrid`) calcula a grade** para o app (HTML) e para a imagem do README (SVG).
-- **Todo texto da interface está em `messages/pt-BR.json`**, inclusive os e-mails e a página de privacidade.
+- Um dia é sempre um `CalendarDate`, nunca um `Date`; a conversão para o Prisma fica só em [`db-dates.ts`](src/server/db-dates.ts).
+- "Hoje" vem de `userToday`, com o fuso do perfil ([`session.ts`](src/server/session.ts)); só os exemplos da página inicial usam o do navegador.
+- Todo texto da interface, inclusive os e-mails e a privacidade, fica em [`pt-BR.json`](messages/pt-BR.json).
+- As cores de cada hábito saem de [`palette.ts`](src/lib/palette.ts), com contraste mínimo testado.
+- Os e-mails passam pela interface `EmailSender` ([`email.ts`](src/server/email.ts)); trocar de provedor é mexer só nela.
+
+## Limitações e próximos passos
+
+- **Interface só em pt-BR** → a versão em inglês está nos planos.
+- **A imagem do README pode levar até 1 hora para mostrar um registro novo**, e o proxy de imagens do GitHub pode guardá-la por mais tempo → diminuir esse atraso está nos planos.
+- **Sem lembretes nem notificações** → lembretes estão nos planos.
 
 ## Licença
 
 [MIT](LICENSE)
+
+## Autor
+
+Luan Leal · [LinkedIn](https://www.linkedin.com/in/luanfleal/) · [GitHub](https://github.com/luanfzll)
